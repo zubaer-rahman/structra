@@ -1,0 +1,48 @@
+import { migration_000_create_migration_status_table } from "./000_create_migration_status_table";
+import { migration_016_create_agreements_table } from "./016_create_agreements_table";
+import { migration_017_create_project_views_table } from "./017_create_project_views_table";
+import { migration_018_drop_and_recreate_reviews_table } from "./018_drop_and_recreate_reviews_table";
+import { migration_019_create_subscriptions_table } from "./019_create_subscriptions_table";
+import { migration_022_update_subscriptions_tier_constraint } from "./022_update_subscriptions_tier_constraint";
+import { migration_025_drop_payments_table } from "./023_drop_payments_table";
+import { migration_026_create_transactions_table } from "./024_create_transactions_table";
+import { migration_027_extend_subscriptions_table } from "./025_extend_subscriptions_table";
+import { migration_028_add_amount_to_subscriptions } from "./028_add_amount_to_subscriptions";
+import { migration_029_add_valid_until_to_transactions } from "./029_add_valid_until_to_transactions";
+import { migration_030_add_work_guarantee_statement_to_contractor_profiles } from "./030_add_work_guarantee_statement_to_contractor_profiles";
+import { migration_031_add_delay_penalty_to_projects } from "./031_add_delay_penalty_to_projects";
+import { migration_032_add_delay_penalty_to_proposals } from "./032_add_delay_penalty_to_proposals";
+import { migration_033_add_work_guarantee_statement_to_proposals } from "./033_add_work_guarantee_statement_to_proposals";
+import { migration034_add_abandonment_penalty_to_projects_and_proposals } from "./034_add_abandonment_penalty_to_projects_and_proposals";
+import { migration_035_add_address_to_contractor_profiles } from "./035_add_address_to_contractor_profiles";
+import { migration_036_add_government_id_to_users } from "./036_add_government_id_to_users";
+import { migration_037_add_government_id_verified_to_users } from "./037_add_government_id_verified_to_users";
+import { migration_038_add_title_awarded_to_projects } from "./038_add_title_awarded_to_projects";
+import { migration_041_add_admin_verification_fields } from "./041_add_admin_verification_fields";
+import { migrationRegistry } from "../migrations";
+
+migrationRegistry.register(migration_000_create_migration_status_table);
+migrationRegistry.register(migration_016_create_agreements_table);
+migrationRegistry.register(migration_017_create_project_views_table);
+migrationRegistry.register(migration_018_drop_and_recreate_reviews_table);
+migrationRegistry.register(migration_019_create_subscriptions_table);
+migrationRegistry.register(migration_022_update_subscriptions_tier_constraint);
+migrationRegistry.register(migration_025_drop_payments_table);
+migrationRegistry.register(migration_026_create_transactions_table);
+migrationRegistry.register(migration_027_extend_subscriptions_table);
+migrationRegistry.register(migration_028_add_amount_to_subscriptions);
+migrationRegistry.register(migration_029_add_valid_until_to_transactions);
+migrationRegistry.register(migration_030_add_work_guarantee_statement_to_contractor_profiles);
+migrationRegistry.register(migration_031_add_delay_penalty_to_projects);
+migrationRegistry.register(migration_032_add_delay_penalty_to_proposals);
+migrationRegistry.register(migration_033_add_work_guarantee_statement_to_proposals);
+migrationRegistry.register(migration034_add_abandonment_penalty_to_projects_and_proposals);
+migrationRegistry.register(migration_035_add_address_to_contractor_profiles);
+migrationRegistry.register(migration_036_add_government_id_to_users);
+migrationRegistry.register(migration_037_add_government_id_verified_to_users);
+migrationRegistry.register(migration_038_add_title_awarded_to_projects);
+migrationRegistry.register(migration_041_add_admin_verification_fields);
+
+export { migrationRegistry } from "../migrations";
+
+export type { Migration, MigrationStatus, DatabaseClient } from "../migrations";

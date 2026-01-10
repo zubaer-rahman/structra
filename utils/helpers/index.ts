@@ -1,0 +1,5 @@
+export { capitalizeWords, capitalizeFirst } from './capitalizeText'
+export { getProjectStatusConfig } from './getProjectStatusConfig'
+export type { ProjectStatusConfig } from './getProjectStatusConfig'
+export { getProposalStatusConfig } from './getProposalStatusConfig'
+export type { ProposalStatusConfig } from './getProposalStatusConfig'

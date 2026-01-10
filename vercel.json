@@ -1,0 +1,19 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "pnpm build",
+  "installCommand": "pnpm install",
+  "env": {
+    "SKIP_ENV_VALIDATION": "true"
+  },
+  "build": {
+    "env": {
+      "NEXT_TELEMETRY_DISABLED": "1"
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/subscription-expiry",
+      "schedule": "0 0 * * *"
+    }
+  ]
+}
