@@ -115,7 +115,7 @@ export function useFileHandling<T extends Record<string, unknown>>(
 
       const uploadOptions = {
         fileType: (type === "photos" ? "photos" : "documents") as "photos" | "documents", // Auto-organize by file type
-        bucket: "buildready-files", // Single bucket for all files
+        bucket: "structra-files", // Single bucket for all files
       };
 
       try {

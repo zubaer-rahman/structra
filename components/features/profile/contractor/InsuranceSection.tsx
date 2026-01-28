@@ -141,7 +141,7 @@ export function InsuranceSection({ formData, onInputChange, missingFields = [], 
     try {
       const uploadResult = await supabaseStorageService.uploadFile(file, {
         fileType: 'documents',
-        bucket: 'buildready-files'
+        bucket: 'structra-files'
       });
 
       return {

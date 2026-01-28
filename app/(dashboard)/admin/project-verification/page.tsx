@@ -281,14 +281,14 @@ export default function ProjectVerificationPage() {
       const filePath = `certificates/${fileName}`
 
       const { error: uploadError } = await supabase.storage
-        .from('buildready-files')
+        .from('structra-files')
         .upload(filePath, certificateFile)
 
       if (uploadError) throw uploadError
 
       // Get the public URL
       const { data: { publicUrl } } = supabase.storage
-        .from('buildready-files')
+        .from('structra-files')
         .getPublicUrl(filePath)
 
       // Generate unique slug for the project when admin approves it

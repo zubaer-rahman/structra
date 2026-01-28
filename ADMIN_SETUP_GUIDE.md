@@ -1,6 +1,6 @@
 # Admin Account Setup Guide
 
-This guide explains how to add admin accounts to your BuildReady application.
+This guide explains how to add admin accounts to your Structra application.
 
 ## 🎯 What's Already Built
 
@@ -36,7 +36,7 @@ node create-admin-account.js
 ```
 
 This creates an admin account with:
-- **Email:** `admin@buildready.com`
+- **Email:** `admin@structra.com`
 - **Password:** `AdminPassword123!`
 
 ### Step 3: Login and Test

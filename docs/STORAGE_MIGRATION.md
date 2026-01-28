@@ -1,6 +1,6 @@
 # Storage Migration: Cloudinary to Supabase
 
-This document outlines the migration from Cloudinary to Supabase storage for handling file uploads in the BuildReady application.
+This document outlines the migration from Cloudinary to Supabase storage for handling file uploads in the Structra application.
 
 ## Overview
 
@@ -37,7 +37,7 @@ Modified `lib/hooks/useFileHandling.ts` to:
 
 The service uses a single storage bucket with organized folders:
 
-- `buildready-files`: Single bucket for all files, organized into folders:
+- `structra-files`: Single bucket for all files, organized into folders:
   - `photos/`: Photo storage for projects
   - `documents/`: Document storage for projects
   - `other/`: Other file types
@@ -73,7 +73,7 @@ node scripts/setup-storage.js
 
 Or manually create the bucket in the Supabase dashboard:
 
-- `buildready-files` (public) - Single bucket for all files with organized folders
+- `structra-files` (public) - Single bucket for all files with organized folders
 
 ### 4. Configure Storage Policies
 
@@ -82,14 +82,14 @@ Set up appropriate Row Level Security (RLS) policies for your storage buckets. E
 #### Public Read Access
 ```sql
 CREATE POLICY "Public read access" ON storage.objects
-FOR SELECT USING (bucket_id = 'buildready-files');
+FOR SELECT USING (bucket_id = 'structra-files');
 ```
 
 #### Authenticated User Upload
 ```sql
 CREATE POLICY "Authenticated users can upload" ON storage.objects
 FOR INSERT WITH CHECK (
-  bucket_id = 'buildready-files' 
+  bucket_id = 'structra-files' 
   AND auth.role() = 'authenticated'
 );
 ```
@@ -98,7 +98,7 @@ FOR INSERT WITH CHECK (
 ```sql
 CREATE POLICY "Users can delete own files" ON storage.objects
 FOR DELETE USING (
-  bucket_id = 'buildready-files' 
+  bucket_id = 'structra-files' 
   AND auth.uid()::text = (storage.foldername(name))[1]
 );
 ```

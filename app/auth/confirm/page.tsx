@@ -84,7 +84,7 @@ export default function EmailConfirmationPage() {
 
         // Show success message
         toast.success(
-          `Welcome to BuildReady! Your ${userRole} account has been successfully verified.`,
+          `Welcome to Structra! Your ${userRole} account has been successfully verified.`,
           {
             duration: 4000,
             position: 'top-center',

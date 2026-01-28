@@ -23,7 +23,7 @@ export function createClient() {
       },
       global: {
         headers: {
-          'X-Client-Info': 'buildready-web'
+          'X-Client-Info': 'structra-web'
         }
       }
     }

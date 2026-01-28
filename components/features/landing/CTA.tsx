@@ -18,7 +18,7 @@ export function CTA() {
             </h2>
             
             <p className="text-base sm:text-lg text-orange-50 max-w-xl sm:max-w-2xl mx-auto mb-6 sm:mb-8 px-4">
-              Join thousands of homeowners and contractors who trust BuildReady for professional 
+              Join thousands of homeowners and contractors who trust Structra for professional 
               project partnerships and exceptional delivery
             </p>
           </div>

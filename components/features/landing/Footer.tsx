@@ -10,12 +10,12 @@ export function Footer() {
             <div className="flex flex-col sm:flex-row items-center md:items-end mb-4 sm:mb-4 justify-center md:justify-start">
               <Image
                 src="/images/brand/app-icon.png"
-                alt="BuildReady Icon"
+                alt="Structra Icon"
                 width={32}
                 height={32}
                 className="w-6 h-6 sm:w-8 sm:h-8 mb-2 sm:mb-0 sm:mr-3"
               />
-              <h3 className="text-xl sm:text-2xl font-bold text-orange-400 leading-none">BuildReady</h3>
+              <h3 className="text-xl sm:text-2xl font-bold text-orange-400 leading-none">Structra</h3>
             </div>
             <p className="text-sm sm:text-base text-gray-400 mb-4 max-w-md mx-auto md:mx-0">
               The premier platform connecting homeowners with verified contractors for 
@@ -45,7 +45,7 @@ export function Footer() {
         </div>
         
         <div className="pt-6 sm:pt-8 border-t border-gray-800 text-center text-gray-400">
-          <p className="text-xs sm:text-sm">&copy; 2024 <span className="text-orange-400">BuildReady</span>. All rights reserved. | Professional Construction Partnership Platform</p>
+          <p className="text-xs sm:text-sm">&copy; 2024 <span className="text-orange-400">Structra</span>. All rights reserved. | Professional Construction Partnership Platform</p>
         </div>
       </div>
     </footer>

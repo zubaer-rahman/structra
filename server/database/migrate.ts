@@ -113,7 +113,7 @@ async function createMigration(name: string) {
 
 function showHelp() {
   console.log(`
-🚀 BuildReady Database Migration CLI
+🚀 Structra Database Migration CLI
 
 Usage: pnpm db:migrate [command] [options]
 
@@ -140,7 +140,7 @@ Note: Old migrations related to users, contractor profiles, proposals, and proje
 }
 
 async function main() {
-  console.log("🏗️  BuildReady Database Migration Tool");
+  console.log("🏗️  Structra Database Migration Tool");
   console.log("=====================================\n");
 
   switch (command) {

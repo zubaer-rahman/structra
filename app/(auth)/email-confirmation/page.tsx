@@ -41,7 +41,7 @@ export default function EmailConfirmationPage() {
           
           <div className="space-y-3 mb-4">
             <p className="text-sm text-gray-600">
-              Thank you for joining BuildReady! We&apos;ve sent a confirmation email to:
+              Thank you for joining Structra! We&apos;ve sent a confirmation email to:
             </p>
             
             {email && (

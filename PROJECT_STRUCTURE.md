@@ -1,9 +1,9 @@
-# 📁 BuildReady Project Structure
+# 📁 Structra Project Structure
 
 ## 🏗️ **Root Directory (Clean & Organized)**
 
 ```
-buildready/
+structra/
 ├── 📁 app/                          # Next.js 15 App Router
 ├── 📁 components/                   # Reusable UI components
 ├── 📁 contexts/                     # React contexts

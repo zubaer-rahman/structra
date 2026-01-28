@@ -18,7 +18,7 @@ export default function TermsPage() {
             Terms and Conditions
           </h1>
           <p className="mt-3 text-gray-600 text-lg">
-            Please read these terms carefully before using BuildReady
+            Please read these terms carefully before using Structra
           </p>
         </div>
 
@@ -47,7 +47,7 @@ export default function TermsPage() {
             <section>
               <h3 className="text-xl font-semibold text-gray-800 mb-3">1. Acceptance of Terms</h3>
               <p className="text-gray-600 leading-relaxed">
-                By accessing and using BuildReady, you accept and agree to be bound by the terms and provision of this agreement. 
+                By accessing and using Structra, you accept and agree to be bound by the terms and provision of this agreement. 
                 If you do not agree to abide by the above, please do not use this service.
               </p>
             </section>
@@ -55,7 +55,7 @@ export default function TermsPage() {
             <section>
               <h3 className="text-xl font-semibold text-gray-800 mb-3">2. Description of Service</h3>
               <p className="text-gray-600 leading-relaxed">
-                BuildReady is a platform that connects homeowners with contractors for construction and renovation projects. 
+                Structra is a platform that connects homeowners with contractors for construction and renovation projects. 
                 We provide tools for project management, communication, and payment processing.
               </p>
             </section>
@@ -72,7 +72,7 @@ export default function TermsPage() {
             <section>
               <h3 className="text-xl font-semibold text-gray-800 mb-3">4. User Responsibilities</h3>
               <div className="text-gray-600 leading-relaxed">
-                <p className="mb-2">As a user of BuildReady, you agree to:</p>
+                <p className="mb-2">As a user of Structra, you agree to:</p>
                 <ul className="list-disc list-inside space-y-1 ml-4">
                   <li>Provide accurate and truthful information</li>
                   <li>Maintain the confidentiality of your account</li>
@@ -86,7 +86,7 @@ export default function TermsPage() {
             <section>
               <h3 className="text-xl font-semibold text-gray-800 mb-3">5. Payment Terms</h3>
               <p className="text-gray-600 leading-relaxed">
-                Payment processing is handled through secure third-party providers. BuildReady may charge service fees 
+                Payment processing is handled through secure third-party providers. Structra may charge service fees 
                 for certain transactions. All fees will be clearly disclosed before any transaction is completed.
               </p>
             </section>
@@ -102,7 +102,7 @@ export default function TermsPage() {
             <section>
               <h3 className="text-xl font-semibold text-gray-800 mb-3">7. Limitation of Liability</h3>
               <p className="text-gray-600 leading-relaxed">
-                BuildReady shall not be liable for any indirect, incidental, special, consequential, or punitive damages, 
+                Structra shall not be liable for any indirect, incidental, special, consequential, or punitive damages, 
                 including without limitation, loss of profits, data, use, goodwill, or other intangible losses.
               </p>
             </section>

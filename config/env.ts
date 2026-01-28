@@ -96,9 +96,9 @@ export const config = {
   // App
   app: {
     url: env.NEXT_PUBLIC_APP_URL,
-    name: 'BuildReady',
+    name: 'Structra',
     version: '1.0.0',
-    description: 'Where Build-Ready Projects Meet Ready Builders',
+    description: 'Modern Construction Management & Networking',
   },
   
   // Stripe

@@ -12,7 +12,7 @@ export function ImageShowcase() {
             Transform Your Vision Into Reality
           </h2>
           <p className="text-lg sm:text-xl text-gray-600 max-w-3xl sm:max-w-4xl mx-auto px-4">
-            Discover how BuildReady connects homeowners with skilled contractors to bring construction dreams to life
+            Discover how Structra connects homeowners with skilled contractors to bring construction dreams to life
           </p>
         </div>
 

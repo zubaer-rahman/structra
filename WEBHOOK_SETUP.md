@@ -15,7 +15,7 @@ Development Environment:
 Stripe CLI → localhost:3000/api/webhooks/stripe
 
 Production Environment:
-Stripe Dashboard → https://buildready-two.vercel.app/api/webhooks/stripe
+Stripe Dashboard → https://structra-two.vercel.app/api/webhooks/stripe
 ```
 
 ## 🔧 Setup Instructions
@@ -46,8 +46,8 @@ npm run dev
 
 2. **Add New Endpoint:**
    - Click **"Add endpoint"**
-   - **Endpoint URL:** `https://buildready-two.vercel.app/api/webhooks/stripe`
-   - **Description:** "BuildReady Production Webhooks"
+   - **Endpoint URL:** `https://structra-two.vercel.app/api/webhooks/stripe`
+   - **Description:** "Structra Production Webhooks"
 
 3. **Select Events:**
    Add these events (same as development):
@@ -68,7 +68,7 @@ npm run dev
 #### Step 2: Configure Vercel Environment Variables
 
 1. **Go to Vercel Dashboard:**
-   - Navigate to your BuildReady project
+   - Navigate to your Structra project
    - Go to **Settings** → **Environment Variables**
 
 2. **Add Production Webhook Secret:**

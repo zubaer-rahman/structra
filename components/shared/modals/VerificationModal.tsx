@@ -52,7 +52,7 @@ export function VerificationModal({ isOpen, onClose, onSuccess, user, returnUrl,
       'Verified WorkSafeBC compliance',
       'Insurance disclosure verification'
     ],
-    description: 'Become a verified contractor and prove to homeowners that you BuildReady with verified GST/HST registration and WorkSafeBC compliance, and insurance disclosure.',
+    description: 'Become a verified contractor and prove to homeowners that you Structra with verified GST/HST registration and WorkSafeBC compliance, and insurance disclosure.',
     requirements: [
       'GST/HST registration',
       'WorksafeBC registration',

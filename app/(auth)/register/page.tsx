@@ -138,7 +138,7 @@ export default function RegisterPage() {
               <span className="block text-orange-600">Home Improvement</span>
             </>
           }
-          description="Connect with qualified contractors, manage your projects, and transform your home with confidence. Join thousands of homeowners and contractors who trust BuildReady."
+          description="Connect with qualified contractors, manage your projects, and transform your home with confidence. Join thousands of homeowners and contractors who trust Structra."
           maxWidth="2xl"
         />
 

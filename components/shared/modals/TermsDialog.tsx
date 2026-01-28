@@ -32,14 +32,14 @@ export function TermsDialog({ children }: TermsDialogProps) {
             <section>
               <h3 className="font-semibold text-base mb-3">1. Acceptance of Terms</h3>
               <p>
-                By accessing and using BuildReady (&quot;the Service&quot;), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.
+                By accessing and using Structra (&quot;the Service&quot;), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.
               </p>
             </section>
 
             <section>
               <h3 className="font-semibold text-base mb-3">2. Description of Service</h3>
               <p>
-                BuildReady is a platform that connects homeowners with qualified contractors for construction and home improvement projects. We facilitate project management, communication, and payment processing between users.
+                Structra is a platform that connects homeowners with qualified contractors for construction and home improvement projects. We facilitate project management, communication, and payment processing between users.
               </p>
             </section>
 
@@ -60,14 +60,14 @@ export function TermsDialog({ children }: TermsDialogProps) {
             <section>
               <h3 className="font-semibold text-base mb-3">5. Project Management</h3>
               <p>
-                BuildReady facilitates connections between users but is not responsible for the quality of work performed by contractors. All project agreements are between the homeowner and contractor directly. We provide tools for project management but do not guarantee project outcomes.
+                Structra facilitates connections between users but is not responsible for the quality of work performed by contractors. All project agreements are between the homeowner and contractor directly. We provide tools for project management but do not guarantee project outcomes.
               </p>
             </section>
 
             <section>
               <h3 className="font-semibold text-base mb-3">6. Payment Processing</h3>
               <p>
-                We may facilitate payment processing for projects, but all payment disputes must be resolved between the parties involved. BuildReady is not responsible for payment issues or disputes between users.
+                We may facilitate payment processing for projects, but all payment disputes must be resolved between the parties involved. Structra is not responsible for payment issues or disputes between users.
               </p>
             </section>
 
@@ -81,7 +81,7 @@ export function TermsDialog({ children }: TermsDialogProps) {
             <section>
               <h3 className="font-semibold text-base mb-3">8. Content and Intellectual Property</h3>
               <p>
-                The Service and its original content, features, and functionality are and will remain the exclusive property of BuildReady and its licensors. The Service is protected by copyright, trademark, and other laws.
+                The Service and its original content, features, and functionality are and will remain the exclusive property of Structra and its licensors. The Service is protected by copyright, trademark, and other laws.
               </p>
             </section>
 
@@ -102,14 +102,14 @@ export function TermsDialog({ children }: TermsDialogProps) {
             <section>
               <h3 className="font-semibold text-base mb-3">11. Disclaimer of Warranties</h3>
               <p>
-                The information on this Service is provided on an &quot;as is&quot; basis. To the fullest extent permitted by law, BuildReady excludes all representations, warranties, conditions and terms relating to our Service and the use of this Service.
+                The information on this Service is provided on an &quot;as is&quot; basis. To the fullest extent permitted by law, Structra excludes all representations, warranties, conditions and terms relating to our Service and the use of this Service.
               </p>
             </section>
 
             <section>
               <h3 className="font-semibold text-base mb-3">12. Limitation of Liability</h3>
               <p>
-                In no event shall BuildReady, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your use of the Service.
+                In no event shall Structra, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your use of the Service.
               </p>
             </section>
 
@@ -130,7 +130,7 @@ export function TermsDialog({ children }: TermsDialogProps) {
             <section>
               <h3 className="font-semibold text-base mb-3">15. Contact Information</h3>
               <p>
-                If you have any questions about these Terms of Service, please contact us at support@buildready.ca or through our contact form on the website.
+                If you have any questions about these Terms of Service, please contact us at support@structra.ca or through our contact form on the website.
               </p>
             </section>
 
