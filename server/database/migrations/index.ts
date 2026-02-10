@@ -18,7 +18,19 @@ import { migration_035_add_address_to_contractor_profiles } from "./035_add_addr
 import { migration_036_add_government_id_to_users } from "./036_add_government_id_to_users";
 import { migration_037_add_government_id_verified_to_users } from "./037_add_government_id_verified_to_users";
 import { migration_038_add_title_awarded_to_projects } from "./038_add_title_awarded_to_projects";
+import { migration_039_add_before_after_photos } from "./039_add_before_after_photos";
+import { migration_040_add_site_amenities } from "./040_add_site_amenities";
 import { migration_041_add_admin_verification_fields } from "./041_add_admin_verification_fields";
+import { migration_042_add_insurance_certificate } from "./042_add_insurance_certificate";
+import { migration_044_add_file_upload_columns } from "./044_add_file_upload_columns";
+import { migration_045_add_company_logo_image } from "./045_add_company_logo_image";
+import { migration_046_add_slug_fields } from "./046_add_slug_fields";
+import { migration_047_create_signatures_table } from "./047_create_signatures_table";
+import { migration_048_add_homeowner_contract_reviewed_column } from "./048_add_homeowner_contract_reviewed_column";
+import { migration_049_fix_signature_audit_trigger } from "./049_fix_signature_audit_trigger";
+import { migration_050_remove_pid_unique_constraint } from "./050_remove_pid_unique_constraint";
+import { migration_051_add_review_consent_fields } from "./051_add_review_consent_fields";
+import { migration_052_add_contract_review_timestamps } from "./052_add_contract_review_timestamps";
 import { migrationRegistry } from "../migrations";
 
 migrationRegistry.register(migration_000_create_migration_status_table);
@@ -41,7 +53,19 @@ migrationRegistry.register(migration_035_add_address_to_contractor_profiles);
 migrationRegistry.register(migration_036_add_government_id_to_users);
 migrationRegistry.register(migration_037_add_government_id_verified_to_users);
 migrationRegistry.register(migration_038_add_title_awarded_to_projects);
+migrationRegistry.register(migration_039_add_before_after_photos);
+migrationRegistry.register(migration_040_add_site_amenities);
 migrationRegistry.register(migration_041_add_admin_verification_fields);
+migrationRegistry.register(migration_042_add_insurance_certificate);
+migrationRegistry.register(migration_044_add_file_upload_columns);
+migrationRegistry.register(migration_045_add_company_logo_image);
+migrationRegistry.register(migration_046_add_slug_fields);
+migrationRegistry.register(migration_047_create_signatures_table);
+migrationRegistry.register(migration_048_add_homeowner_contract_reviewed_column);
+migrationRegistry.register(migration_049_fix_signature_audit_trigger);
+migrationRegistry.register(migration_050_remove_pid_unique_constraint);
+migrationRegistry.register(migration_051_add_review_consent_fields);
+migrationRegistry.register(migration_052_add_contract_review_timestamps);
 
 export { migrationRegistry } from "../migrations";
 

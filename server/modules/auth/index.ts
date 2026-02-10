@@ -62,8 +62,14 @@ export const authRouter = router({
 
       if (data.user) {
         try {
+          // Use service role client for database operations to bypass RLS during registration
+          const supabaseAdmin = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.SUPABASE_SERVICE_ROLE_KEY!
+          )
+
           // Insert user data into the users table with essential fields only
-          const { error: insertError } = await supabase
+          const { error: insertError } = await supabaseAdmin
             .from('users')
             .insert({
               id: data.user.id,
@@ -95,7 +101,7 @@ export const authRouter = router({
             );
             
             // Get existing slugs to ensure uniqueness
-            const { data: existingProfiles } = await supabase
+            const { data: existingProfiles } = await supabaseAdmin
               .from('contractor_profiles')
               .select('slug')
               .not('slug', 'is', null);
@@ -103,7 +109,7 @@ export const authRouter = router({
             const existingSlugs = existingProfiles?.map(p => p.slug) || [];
             const uniqueSlug = generateUniqueSlug(baseSlug, existingSlugs);
 
-            const { error: profileError } = await supabase
+            const { error: profileError } = await supabaseAdmin
               .from('contractor_profiles')
               .insert({
                 user_id: data.user.id,
@@ -117,14 +123,14 @@ export const authRouter = router({
               // Don't throw error here as the user was created successfully
             } else {
               // Update the user's contractor_profile field with the new profile ID
-              const { data: profileData } = await supabase
+              const { data: profileData } = await supabaseAdmin
                 .from('contractor_profiles')
                 .select('id')
                 .eq('user_id', data.user.id)
                 .single()
 
               if (profileData?.id) {
-                await supabase
+                await supabaseAdmin
                   .from('users')
                   .update({ contractor_profile: profileData.id })
                   .eq('id', data.user.id)
