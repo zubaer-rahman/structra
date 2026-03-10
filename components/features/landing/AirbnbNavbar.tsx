@@ -18,7 +18,7 @@ export function AirbnbNavbar() {
           <Link href="/" className="cursor-pointer">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">B</span>
+                <span className="text-white font-bold text-lg">S</span>
               </div>
               <span className="text-orange-500 font-bold text-xl">Structra</span>
             </div>

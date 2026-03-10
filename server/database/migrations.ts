@@ -160,7 +160,7 @@ export class SupabaseDatabaseClient implements DatabaseClient {
 
   constructor() {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
     if (!supabaseUrl || !supabaseKey) {
       console.warn(
@@ -312,6 +312,12 @@ import { migration_041_add_admin_verification_fields } from './migrations/041_ad
 import { migration_042_add_insurance_certificate } from './migrations/042_add_insurance_certificate';
 import { migration_047_create_signatures_table } from './migrations/047_create_signatures_table';
 import { migration_049_fix_signature_audit_trigger } from './migrations/049_fix_signature_audit_trigger';
+import { migration_052_add_contract_review_timestamps } from './migrations/052_add_contract_review_timestamps';
+import { migration_053_setup_signatures_rls } from './migrations/053_setup_signatures_rls';
+import { migration_054_fix_signature_audit_rls } from './migrations/054_fix_signature_audit_rls';
+import { migration_055_setup_admin_rls } from './migrations/055_setup_admin_rls';
+import { migration_056_setup_projects_rls } from './migrations/056_setup_projects_rls';
+import { migration_057_add_user_self_rls } from './migrations/057_add_user_self_rls';
 
 
 migrationRegistry.register(migration_000_create_migration_status_table);
@@ -339,4 +345,10 @@ migrationRegistry.register(migration_041_add_admin_verification_fields);
 migrationRegistry.register(migration_042_add_insurance_certificate);
 migrationRegistry.register(migration_047_create_signatures_table);
 migrationRegistry.register(migration_049_fix_signature_audit_trigger);
+migrationRegistry.register(migration_052_add_contract_review_timestamps);
+migrationRegistry.register(migration_053_setup_signatures_rls);
+migrationRegistry.register(migration_054_fix_signature_audit_rls);
+migrationRegistry.register(migration_055_setup_admin_rls);
+migrationRegistry.register(migration_056_setup_projects_rls);
+migrationRegistry.register(migration_057_add_user_self_rls);
 

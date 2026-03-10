@@ -14,7 +14,11 @@ const nextConfig: NextConfig = {
         hostname: 'puawlwruyauyucxoueqp.supabase.co',
         pathname: '/storage/v1/object/public/**',
       },
-     
+      {
+        protocol: 'https',
+        hostname: 'wjbscxtajimzahcilzoo.supabase.co',
+        pathname: '/storage/v1/object/public/**',
+      },
     ],
     unoptimized: false,
     dangerouslyAllowSVG: true,
