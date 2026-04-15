@@ -18,12 +18,15 @@ import {
   Wrench,
   CheckCircle,
   Star,
-  Eye
+  Eye,
+  Tag
 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import LoadingSpinner from '@/components/shared/loading-spinner'
 import { Project } from '@/server/database/interfaces'
+import { Navbar } from '@/components/shared'
+import { motion } from 'framer-motion'
 
 interface ProjectWithCreator {
   id: string
@@ -286,25 +289,31 @@ export default function PublicProjectViewPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <LoadingSpinner size="lg" text="Loading project details..." />
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] pt-16">
+          <LoadingSpinner size="lg" text="Loading project details..." />
+        </div>
       </div>
     )
   }
 
   if (error || !project) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-red-600 text-xl mb-4">
-            {error || 'Project not found'}
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] pt-16 px-4">
+          <div className="text-center">
+            <div className="text-red-600 text-xl mb-4">
+              {error || 'Project not found'}
+            </div>
+            <Link href="/">
+              <Button variant="outline">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Home
+              </Button>
+            </Link>
           </div>
-          <Link href="/">
-            <Button variant="outline">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Home
-            </Button>
-          </Link>
         </div>
       </div>
     )
@@ -327,303 +336,217 @@ export default function PublicProjectViewPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
-      <div className="border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
+      <Navbar />
+
+      <main className="pt-24 pb-20">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Glassmorphic Back Button */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-8"
+          >
             <Link href="/">
-              <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Home
-              </Button>
+              <motion.button
+                whileHover={{ x: -4, backgroundColor: "rgba(255, 247, 237, 0.8)" }}
+                whileTap={{ scale: 0.95 }}
+                className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-white/60 backdrop-blur-md border border-orange-100 shadow-sm text-orange-600 hover:text-orange-700 font-bold text-sm cursor-pointer transition-all duration-300"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back</span>
+              </motion.button>
             </Link>
-            <div className="flex items-center space-x-4">
-              <Link href="/login">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-sm font-medium"
-                >
-                  Sign In
-                </Button>
-              </Link>
-              <Link href="/register">
-                <Button
-                  size="sm"
-                  className="text-sm font-medium bg-orange-500 hover:bg-orange-600"
-                >
-                  Get Started
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
+          </motion.div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Project Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            {project.project_title}
-          </h1>
-          
-          {/* Contractor Information */}
-          {project.contractor && (
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
-                <Image
-                  src={project.contractor.profile_photo || project.contractor.contractor_profile?.logo || "/assets/avatar.png"}
-                  alt={project.contractor.contractor_profile?.business_name || project.contractor.full_name || "Contractor"}
-                  width={40}
-                  height={40}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = "/assets/avatar.png";
-                  }}
-                />
+          {/* Hero Section */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-12 text-center"
+          >
+            <h1 className="text-4xl font-bold text-gray-900 mb-4 tracking-tight">
+              {project.project_title}
+            </h1>
+            
+            {/* Contractor Section */}
+            {project.contractor && (
+              <div className="flex items-center justify-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-200">
+                  <Image
+                    src={project.contractor.profile_photo || project.contractor.contractor_profile?.logo || "/assets/avatar.png"}
+                    alt="Contractor" width={40} height={40} className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="text-left">
+                  <p className="text-lg font-semibold text-blue-600 leading-tight">
+                    {project.contractor.contractor_profile?.business_name || project.contractor.full_name}
+                  </p>
+                  <p className="text-xs text-gray-500 font-medium">Verified Contractor</p>
+                </div>
               </div>
-              <div className="text-left">
-                <p className="text-lg font-semibold text-blue-600">
-                  {project.contractor.contractor_profile?.business_name || project.contractor.full_name}
-                </p>
-                <p className="text-sm text-gray-500">Contractor</p>
+            )}
+
+            <div className="flex flex-wrap justify-center items-center gap-4 text-gray-600 text-sm">
+              <div className="flex items-center">
+                <MapPin className="w-4 h-4 mr-1.5 text-gray-400" />
+                <span>{project.location?.city}, {project.location?.province}</span>
+              </div>
+              <div className="flex items-center">
+                <Calendar className="w-4 h-4 mr-1.5 text-gray-400" />
+                <span>Completed {formatDate(project.end_date)}</span>
+              </div>
+              <div className="flex items-center">
+                <Tag className="w-4 h-4 mr-1.5 text-gray-400" />
+                <span>{project.project_type}</span>
+              </div>
+              <div className="flex items-center text-green-600 font-semibold">
+                <CheckCircle className="w-4 h-4 mr-1.5" />
+                <span>{formatCurrency(project.budget)}</span>
               </div>
             </div>
-          )}
-          
-          <p className="text-xl text-gray-600 mb-6">
-            {formatCurrency(project.budget)} • {project.category}
-          </p>
+          </motion.div>
 
-          {/* Status Badge */}
-          <div className="flex flex-wrap justify-center gap-3 mb-8">
-            <span className="px-3 py-1 text-sm border border-gray-300 rounded-full text-gray-700">
-              ✓ Completed
-            </span>
-            <span className="px-3 py-1 text-sm border border-gray-300 rounded-full text-gray-700">
-              {project.project_type}
-            </span>
-          </div>
-
-          {/* Project Meta */}
-          <div className="space-y-2 text-sm text-gray-600">
-            <div className="flex items-center justify-center gap-2">
-              <MapPin className="h-4 w-4" />
-              <span>{project.location?.city}, {project.location?.province}</span>
-            </div>
-            <div className="flex items-center justify-center gap-2">
-              <Calendar className="h-4 w-4" />
-              <span>Completed {formatDate(project.end_date)}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Content Sections */}
-        <div className="space-y-12">
-          {/* Project Description */}
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Project Description</h2>
-            <p className="text-gray-700 leading-relaxed text-lg">{project.statement_of_work}</p>
-          </div>
-
-          {/* Project Photos */}
-          {((project.project_photos && project.project_photos.length > 0) || project.after_photo) && (
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Project Photos</h2>
-              
-              {/* Before and After Comparison */}
-              {project.project_photos && project.project_photos.length > 0 && project.after_photo ? (
-                <div className="space-y-4">
+          <div className="space-y-16">
+            {/* Project Photos */}
+            {((project.project_photos && project.project_photos.length > 0) || project.after_photo) && (
+              <section className="space-y-6">
+                <h2 className="text-2xl font-bold text-gray-900">Project Photos</h2>
+                {project.project_photos && project.project_photos.length > 0 && project.after_photo ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Before Photo */}
                     <div className="space-y-2">
-                      <h4 className="text-sm font-medium text-gray-700 text-center">Before</h4>
-                      <div className="relative h-64 rounded-lg overflow-hidden border-2 border-gray-200">
+                      <h4 className="text-sm font-medium text-gray-500 text-center uppercase tracking-wider">Before</h4>
+                      <div className="aspect-[4/3] relative rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
                         <Image
-                          src={typeof project.project_photos[0] === 'string' 
-                            ? project.project_photos[0] 
-                            : project.project_photos[0]?.url || "/images/placeholder-image.png"}
-                          alt={`${project.project_title || "Project"} - Before`}
-                          fill
-                          className="object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.src = "/images/placeholder-image.png";
-                          }}
+                          src={typeof project.project_photos[0] === 'string' ? project.project_photos[0] : project.project_photos[0]?.url || "/images/placeholder-image.png"}
+                          alt="Before" fill className="object-cover"
                         />
                       </div>
                     </div>
-                    
-                    {/* After Photo */}
                     <div className="space-y-2">
-                      <h4 className="text-sm font-medium text-gray-700 text-center">After</h4>
-                      <div className="relative h-64 rounded-lg overflow-hidden border-2 border-green-200">
+                      <h4 className="text-sm font-medium text-gray-500 text-center uppercase tracking-wider">After</h4>
+                      <div className="aspect-[4/3] relative rounded-2xl overflow-hidden border border-green-100 shadow-md">
                         <Image
-                          src={typeof project.after_photo === 'string' 
-                            ? project.after_photo 
-                            : project.after_photo?.url || "/images/placeholder-image.png"}
-                          alt={`${project.project_title || "Project"} - After`}
-                          fill
-                          className="object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.src = "/images/placeholder-image.png";
-                          }}
+                          src={typeof project.after_photo === 'string' ? project.after_photo : project.after_photo?.url || "/images/placeholder-image.png"}
+                          alt="After" fill className="object-cover"
                         />
                       </div>
                     </div>
                   </div>
-                </div>
-              ) : (
-                /* Fallback to regular photo grid if no before/after available */
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {project.project_photos
-                    ?.filter(photo => {
-                      // Handle both string URLs and objects with url property
-                      if (typeof photo === 'string') {
-                        return photo.trim() !== '';
-                      }
-                      if (photo && typeof photo === 'object' && photo.url) {
-                        return photo.url.trim() !== '';
-                      }
-                      return false;
-                    })
-                    .map((photo, index) => {
-                      // Extract URL from photo (could be string or object)
-                      const photoUrl = typeof photo === 'string' ? photo : photo.url;
-                      return (
-                        <div key={index} className="relative h-64 border border-gray-200 overflow-hidden">
-                          <Image
-                            src={photoUrl || "/images/placeholder-image.png"}
-                            alt={`Project photo ${index + 1}`}
-                            fill
-                            className="object-cover"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.src = "/images/placeholder-image.png";
-                            }}
-                          />
+                ) : (
+                  <div className="grid grid-cols-2 gap-6">
+                    {project.project_photos?.map((photo, i) => (
+                      <div key={i} className="aspect-video relative rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
+                        <Image
+                          src={typeof photo === 'string' ? photo : photo.url || "/images/placeholder-image.png"}
+                          alt={`Photo ${i + 1}`} fill className="object-cover"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </section>
+            )}
+
+            {/* Description */}
+            <section className="space-y-4">
+              <h2 className="text-2xl font-bold text-gray-900">Project Description</h2>
+              <p className="text-gray-700 leading-relaxed text-lg whitespace-pre-line">
+                {project.statement_of_work}
+              </p>
+            </section>
+
+            {/* Site Amenities */}
+            {project.site_amenities && Object.values(project.site_amenities).some(a => a.length > 0) && (
+              <section className="space-y-6">
+                <h2 className="text-2xl font-bold text-gray-900">Site Amenities</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+                  {Object.entries(project.site_amenities).map(([category, amenities]) => {
+                    if (!amenities || amenities.length === 0) return null;
+                    return (
+                      <div key={category} className="space-y-3">
+                        <h4 className="text-sm font-bold text-gray-400 uppercase tracking-widest">{category.replace(/_/g, ' ')}</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {amenities.map((amenity, index) => (
+                            <span key={index} className="px-3 py-1.5 bg-gray-50 text-gray-700 text-sm font-medium rounded-lg border border-gray-100">
+                              {amenity.replace(/_/g, ' ')}
+                            </span>
+                          ))}
                         </div>
-                      );
-                    })}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Site Amenities */}
-          {project.site_amenities && (
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Site Amenities</h2>
-              <div className="space-y-4">
-                {Object.entries(project.site_amenities).map(([category, amenities]) => {
-                  if (!amenities || amenities.length === 0) return null;
-                  return (
-                    <div key={category}>
-                      <h4 className="font-medium text-gray-900 capitalize mb-2">
-                        {category.replace(/_/g, ' ')}
-                      </h4>
-                      <div className="flex flex-wrap gap-2">
-                        {amenities.map((amenity, index) => (
-                          <span key={index} className="px-3 py-1 text-sm border border-gray-300 rounded text-gray-700">
-                            {amenity.replace(/_/g, ' ')}
-                          </span>
-                        ))}
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
+                    );
+                  })}
+                </div>
+              </section>
+            )}
 
-          {/* Project Details */}
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Project Details</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Type:</span>
-                  <span className="font-medium">{project.project_type}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Category:</span>
-                  <span className="font-medium">{project.category}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Permit Required:</span>
-                  <span className="font-medium">
-                    {project.permit_required ? 'Yes' : 'No'}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Created:</span>
-                  <span className="font-medium">
-                    {formatDate(project.created_at)}
-                  </span>
-                </div>
-                {/* Contractor Information */}
-                {project.contractor && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Contractor:</span>
-                    <span className="font-medium text-blue-600">
-                      {project.contractor.contractor_profile?.business_name || project.contractor.full_name}
-                    </span>
+            {/* Project Details */}
+            <section className="space-y-6">
+              <h2 className="text-2xl font-bold text-gray-900">Project Details</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-6 px-8 bg-gray-50 rounded-3xl border border-gray-100">
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center py-1">
+                    <span className="text-gray-500 font-medium">Type</span>
+                    <span className="text-gray-900 font-bold">{project.project_type}</span>
                   </div>
-                )}
-              </div>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Start Date:</span>
-                  <span className="font-medium">{formatDate(project.start_date)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">End Date:</span>
-                  <span className="font-medium">{formatDate(project.end_date)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Budget:</span>
-                  <span className="font-medium">{formatCurrency(project.budget)}</span>
-                </div>
-                {/* Contractor Trade Categories */}
-                {project.contractor?.contractor_profile?.trade_category && project.contractor.contractor_profile.trade_category.length > 0 && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Specialties:</span>
-                    <span className="font-medium text-right">
-                      {project.contractor.contractor_profile.trade_category.slice(0, 2).join(", ")}
-                      {project.contractor.contractor_profile.trade_category.length > 2 && "..."}
-                    </span>
+                  <div className="flex justify-between items-center py-1">
+                    <span className="text-gray-500 font-medium">Category</span>
+                    <span className="text-gray-900 font-bold">{project.category}</span>
                   </div>
-                )}
+                  <div className="flex justify-between items-center py-1">
+                    <span className="text-gray-500 font-medium">Permit Required</span>
+                    <span className="text-gray-900 font-bold">{project.permit_required ? 'Yes' : 'No'}</span>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center py-1">
+                    <span className="text-gray-500 font-medium">Start Date</span>
+                    <span className="text-gray-900 font-bold">{formatDate(project.start_date)}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-1">
+                    <span className="text-gray-500 font-medium">End Date</span>
+                    <span className="text-gray-900 font-bold">{formatDate(project.end_date)}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-1">
+                    <span className="text-gray-500 font-medium">Budget</span>
+                    <span className="text-gray-900 font-bold text-blue-600">{formatCurrency(project.budget)}</span>
+                  </div>
+                </div>
               </div>
+            </section>
+
+            {/* 360 Tours - Restored as requested */}
+            <section className="space-y-6">
+              <h2 className="text-2xl font-bold text-gray-900">360 Tours</h2>
+              <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-2xl p-10 text-center">
+                <div className="max-w-md mx-auto">
+                  <div className="w-16 h-16 mx-auto mb-4 bg-gray-200 rounded-full flex items-center justify-center">
+                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">360° Virtual Tours</h3>
+                  <p className="text-gray-600 mb-6">
+                    Immersive 360° virtual tours coming soon! Experience this project through interactive panoramic views and virtual walkthroughs.
+                  </p>
+                  <div className="inline-flex items-center px-4 py-2 bg-orange-100 text-orange-800 rounded-full text-sm font-medium">
+                    <span className="w-2 h-2 bg-orange-400 rounded-full mr-2 animate-pulse"></span>
+                    Coming Soon
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Bottom CTA */}
+            <div className="text-center pt-8">
+              <Button className="h-14 px-10 bg-orange-600 hover:bg-orange-700 text-white rounded-xl font-bold shadow-lg shadow-orange-100 transition-all hover:scale-105">
+                Inquire Similar Project
+              </Button>
             </div>
           </div>
-
-          {/* 360 Tours */}
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">360 Tours</h2>
-            <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-              <div className="max-w-md mx-auto">
-                <div className="w-16 h-16 mx-auto mb-4 bg-gray-200 rounded-full flex items-center justify-center">
-                  <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">360° Virtual Tours</h3>
-                <p className="text-gray-600 mb-4">
-                  Immersive 360° virtual tours coming soon! Experience this project through interactive panoramic views and virtual walkthroughs.
-                </p>
-                <div className="inline-flex items-center px-4 py-2 bg-orange-100 text-orange-800 rounded-full text-sm font-medium">
-                  <span className="w-2 h-2 bg-orange-400 rounded-full mr-2 animate-pulse"></span>
-                  Coming Soon
-                </div>
-              </div>
-            </div>
-          </div>
-
         </div>
-      </div>
+      </main>
     </div>
   )
 }

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Wrench, Map, List, ChevronLeft, ChevronRight } from "lucide-react";
+import { motion } from "framer-motion";
 import { User, ContractorProfile } from "@/server/database/interfaces";
 import LoadingSpinner from "@/components/shared/loading-spinner";
 import GoogleMapView from "./GoogleMapView";
@@ -253,19 +254,18 @@ export default function ExploreContractors({
       return "Invalid Date";
     }
   };
-
   if (!isClient) {
     return (
       <div className="flex items-center justify-center h-64">
-        <LoadingSpinner />
+        <LoadingSpinner variant="dark" />
       </div>
     );
   }
-
+ 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <LoadingSpinner />
+        <LoadingSpinner variant="dark" />
       </div>
     );
   }
@@ -287,131 +287,72 @@ export default function ExploreContractors({
   }
 
   return (
-    <section className="py-8 sm:py-12 bg-gradient-to-b from-white to-orange-50">
-      <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ${className}`}>
+    <section className="py-40 bg-[#0A0A0A] border-y border-white/5">
+      <div className={`max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 ${className}`}>
         {/* Header */}
-        <div className="text-center mb-8">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4 px-2">
-            Explore Contractors Near You
+        <div className="flex flex-col items-center text-center mb-16">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center gap-2 px-3 py-1 mb-6 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500"
+          >
+            <Wrench className="w-3.5 h-3.5" />
+            <span className="text-[10px] font-black uppercase tracking-[0.2em]">Verified Talent</span>
+          </motion.div>
+          
+          <h2 className="text-4xl sm:text-5xl font-black text-white mb-6 tracking-tighter">
+            Elite Artisan <span className="text-orange-500">Network</span>
           </h2>
-          <p className="text-lg sm:text-xl text-gray-600 max-w-3xl sm:max-w-4xl mx-auto px-4">
-            Discover verified contractors in your area. Click on any contractor to see their profile and services.
+          <p className="text-lg text-gray-400 max-w-2xl mx-auto font-medium">
+            Connect with the industry&apos;s most respected master contractors. Each member is rigorously verified for architectural excellence.
           </p>
         </div>
 
-        {/* View Toggle - COMMENTED OUT */}
-        {/* <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
-          <h2 className="text-xl sm:text-2xl font-bold">Explore Contractors</h2>
-          <div className="flex items-center gap-2 p-1 bg-gray-100 rounded-lg w-full sm:w-auto">
-            <Button
-              variant={viewMode === "map" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => setViewMode("map")}
-              className="flex items-center gap-2 flex-1 sm:flex-none"
-            >
-              <Map className="h-4 w-4" />
-              <span className="hidden xs:inline">Map View</span>
-              <span className="xs:hidden">Map</span>
-            </Button>
-            <Button
-              variant={viewMode === "list" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => setViewMode("list")}
-              className="flex items-center gap-2 flex-1 sm:flex-none"
-            >
-              <List className="h-4 w-4" />
-              <span className="hidden xs:inline">List View</span>
-              <span className="xs:hidden">List</span>
-            </Button>
+        <div className="flex flex-col sm:flex-row items-center justify-between mb-10 gap-6">
+          <div className="flex items-center gap-4">
+            <h3 className="text-xl font-bold text-white tracking-tight">Active Master Builders</h3>
+            <span className="px-2 py-0.5 bg-orange-600 text-white text-[10px] font-bold rounded-md">Verified</span>
           </div>
-        </div> */}
-
-        {/* Section Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl sm:text-2xl font-bold">Explore Contractors</h2>
         </div>
 
-        {viewMode === "map" ? (
-          <GoogleMapView
-            contractors={contractors}
-            selectedContractor={selectedContractor}
-            mapCenter={mapCenter}
-            isClient={isClient}
-            onContractorClick={handleContractorClick}
-            formatDate={formatDate}
-            onSearch={handleSearch}
-            searchQuery={searchQuery}
-          />
-        ) : contractors.length === 0 ? (
-          <div className="flex items-center justify-center h-64">
-            <div className="text-center">
-              <Wrench className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <p className="text-xl text-gray-500 mb-2">
-                No contractors nearby
-              </p>
-              <p className="text-gray-400">
-                Check back later for new contractors
-              </p>
-            </div>
-          </div>
-        ) : (
-          <>
-            {/* List View (Carousel) - COMMENTED OUT */}
-            {/* <div className="relative overflow-hidden">
-              <div 
-                className="flex transition-transform duration-300 ease-in-out"
-                style={{ transform: `translateX(-${currentIndex * (100 / cardsToShow)}%)` }}
-              >
-                {contractors.map((contractor, index) => (
-                  <div 
-                    key={contractor.id} 
-                    className="flex-shrink-0 px-2" 
-                    style={{ width: `calc(100% / ${cardsToShow})` }}
-                  >
-                    <ContractorCard
-                      contractor={contractor}
-                      selectedContractor={selectedContractor}
-                      formatDate={formatDate}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex items-center justify-center mt-6 space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={prevSlide}
-                className="w-8 h-8 p-0 rounded-full"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={nextSlide}
-                className="w-8 h-8 p-0 rounded-full"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </Button>
-            </div> */}
-            
-            {/* Fallback message when no contractors */}
-            <div className="flex items-center justify-center h-64">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="rounded-[2.5rem] overflow-hidden border border-white/5 shadow-2xl bg-white/5 backdrop-blur-3xl min-h-[600px]"
+        >
+          {viewMode === "map" ? (
+            <GoogleMapView
+              contractors={contractors}
+              selectedContractor={selectedContractor}
+              mapCenter={mapCenter}
+              isClient={isClient}
+              onContractorClick={handleContractorClick}
+              formatDate={formatDate}
+              onSearch={handleSearch}
+              searchQuery={searchQuery}
+            />
+          ) : contractors.length === 0 ? (
+            <div className="flex items-center justify-center h-[600px]">
               <div className="text-center">
-                <Wrench className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                <p className="text-xl text-gray-500 mb-2">
-                  No contractors nearby
+                <Wrench className="h-20 w-20 text-gray-700 mx-auto mb-6" />
+                <p className="text-2xl font-bold text-white mb-2 tracking-tight">
+                  No verified artisans in this locale
                 </p>
-                <p className="text-gray-400">
-                  Check back later for new contractors
+                <p className="text-gray-500 font-medium max-w-sm mx-auto">
+                  Our network of master builders is expanding. Check back shortly for premium matches.
                 </p>
               </div>
             </div>
-          </>
-        )}
-        {/* } */}
+          ) : (
+            <ListView
+              contractors={contractors}
+              selectedContractor={selectedContractor}
+              formatDate={formatDate}
+            />
+          )}
+        </motion.div>
       </div>
     </section>
   );

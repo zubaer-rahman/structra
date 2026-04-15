@@ -1,176 +1,204 @@
+"use client";
+
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Home, Users, Award } from "lucide-react";
+import { ArrowRight, Home, Award, ShieldCheck, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
 
 export function ImageShowcase() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState(0);
+
+  const showcases = [
+    {
+      image: "/images/landing/landing1.png",
+      title: "Visionary Architecture",
+      description: "From bold concepts to structural masterpieces, connect with Canada's elite architectural minds.",
+      icon: <Home className="w-5 h-5" />,
+      tag: "Design Phase",
+      buttonText: "Explore Architecture"
+    },
+    {
+      image: "/images/landing/landing2.png",
+      title: "Master Craftsmanship",
+      description: "Experience the precision of verified master builders dedicated to unparalleled quality and detail.",
+      icon: <Award className="w-5 h-5" />,
+      tag: "Build Phase",
+      buttonText: "Find Master Builders"
+    },
+    {
+      image: "/images/landing/landing3.png",
+      title: "Elite Project Delivery",
+      description: "Sophisticated project management ensures your timeline and budget are met with absolute certainty.",
+      icon: <ShieldCheck className="w-5 h-5" />,
+      tag: "Completion",
+      buttonText: "Start Managing"
+    }
+  ];
+
+  const nextSlide = () => {
+    setDirection(1);
+    setCurrentIndex((prev) => (prev + 1) % showcases.length);
+  };
+
+  const prevSlide = () => {
+    setDirection(-1);
+    setCurrentIndex((prev) => (prev - 1 + showcases.length) % showcases.length);
+  };
+
+  useEffect(() => {
+    const timer = setInterval(nextSlide, 8000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const variants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? 1000 : -1000,
+      opacity: 0
+    }),
+    center: {
+      zIndex: 1,
+      x: 0,
+      opacity: 1
+    },
+    exit: (direction: number) => ({
+      zIndex: 0,
+      x: direction < 0 ? 1000 : -1000,
+      opacity: 0
+    })
+  };
+
   return (
-    <section className="py-16 sm:py-20 bg-gradient-to-b from-white to-orange-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12 sm:mb-16">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4 px-2">
-            Transform Your Vision Into Reality
+    <section className="py-40 bg-[#0A0A0A]">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-6 tracking-tighter">
+            The Lifecycle of <span className="text-orange-500">Excellence</span>
           </h2>
-          <p className="text-lg sm:text-xl text-gray-600 max-w-3xl sm:max-w-4xl mx-auto px-4">
-            Discover how Structra connects homeowners with skilled contractors to bring construction dreams to life
+          <p className="text-lg sm:text-xl text-gray-400 max-w-3xl mx-auto font-medium">
+            Structra orchestrates every stage of your construction journey with the precision of a high-performance firm.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="space-y-8">
-          {/* Image 1 - Dream Projects */}
-          <div className="relative group overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500">
-            <div className="relative h-96 sm:h-[500px] lg:h-[600px] flex">
-              <div className="flex-1">
-                <Image
-                  src="/images/landing/landing1.png"
-                  alt="Beautiful home construction project"
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-              </div>
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-black/20 to-black/70" />
-              
-              {/* Motivational Text - Right Side (Mobile Only) */}
-              <div className="absolute right-[31px] top-1/2 transform -translate-y-1/2 sm:hidden">
-                <div className="text-white font-black text-xl leading-tight tracking-wider drop-shadow-2xl">
-                  <span className="block bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">DREAM</span>
-                  <span className="block text-white">HOME</span>
+        <div className="relative h-[500px] sm:h-[600px] lg:h-[700px] w-full overflow-hidden rounded-[2.5rem] border border-white/5 shadow-2xl group">
+          <AnimatePresence initial={false} custom={direction}>
+            <motion.div
+              key={currentIndex}
+              custom={direction}
+              variants={variants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{
+                x: { type: "spring", stiffness: 300, damping: 30 },
+                opacity: { duration: 0.5 }
+              }}
+              className="absolute inset-0"
+            >
+              <div className="relative h-full w-full flex">
+                <div className="absolute inset-0">
+                  <Image
+                    src={showcases[currentIndex].image}
+                    alt={showcases[currentIndex].title}
+                    fill
+                    className="object-cover"
+                    priority
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent lg:from-black/70 lg:via-transparent lg:to-transparent" />
                 </div>
-              </div>
-              
-              {/* Text Overlay - Right Side */}
-              <div className="absolute right-0 top-0 bottom-0 w-full sm:w-1/2 lg:w-2/5 p-6 sm:p-8 text-white flex flex-col justify-end sm:justify-center items-end sm:items-start">
-                <div className="hidden sm:flex items-center mb-3">
-                  <Home className="w-6 h-6 mr-2 text-orange-400" />
-                  <span className="text-sm font-medium text-orange-400 uppercase tracking-wide">Dream Projects</span>
-                </div>
-                <h3 className="hidden sm:block text-xl sm:text-2xl lg:text-3xl font-bold mb-3 leading-tight">
-                  Turn Your Vision Into Your Dream Home
-                </h3>
-                <p className="hidden sm:block text-sm sm:text-base text-gray-200 mb-4 leading-relaxed">
-                  From concept to completion, connect with verified contractors who understand your vision and deliver exceptional results.
-                </p>
-                <Link href="/register">
-                  <Button 
-                    size="sm" 
-                    className="bg-orange-600 hover:bg-orange-700 text-white border-0 group/btn w-fit"
+                
+                <div className="relative z-10 w-full lg:w-1/2 p-8 sm:p-16 flex flex-col justify-center items-start">
+                  <motion.div 
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className="inline-flex items-center gap-2 px-3 py-1 mb-6 rounded-full bg-white/10 backdrop-blur-xl border border-white/10 text-orange-400"
                   >
-                    Start Building
-                    <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          {/* Image 2 - Expert Contractors */}
-          {/* 
-          <div className="relative group overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500">
-            <div className="relative h-96 sm:h-[500px] lg:h-[600px] flex">
-              <div className="flex-1">
-                <Image
-                  src="/images/landing/landing2.png"
-                  alt="Professional contractors at work"
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                  style={{ objectPosition: 'center calc(30% + 100px)' }}
-                />
-              </div>
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-black/20 to-black/70" />
-              
-              {/* Motivational Text - Right Side (Mobile Only) */}
-              {/* 
-              <div className="absolute right-[41px] top-1/2 transform -translate-y-1/2 sm:hidden">
-                <div className="text-white font-black text-xl leading-tight tracking-wider drop-shadow-2xl">
-                  <span className="block text-white">EXPERT</span>
-                  <span className="block text-white">TEAM</span>
-                </div>
-              </div>
-              */}
-              
-              {/* Text Overlay - Right Side */}
-              {/* 
-              <div className="absolute right-0 top-0 bottom-0 w-full sm:w-1/2 lg:w-2/5 p-6 sm:p-8 text-white flex flex-col justify-end sm:justify-center items-end sm:items-start">
-                <div className="hidden sm:flex items-center mb-3">
-                  <Users className="w-6 h-6 mr-2 text-blue-400" />
-                  <span className="text-sm font-medium text-white uppercase tracking-wide">Expert Network</span>
-                </div>
-                <h3 className="hidden sm:block text-xl sm:text-2xl lg:text-3xl font-bold mb-3 leading-tight">
-                  Work With Verified Professionals
-                </h3>
-                <p className="hidden sm:block text-sm sm:text-base text-gray-200 mb-4 leading-relaxed">
-                  Access a curated network of licensed, insured, and highly-rated contractors ready to bring expertise to your project.
-                </p>
-                <Link href="/register">
-                  <Button 
-                    size="sm" 
-                    variant="outline"
-                    className="border-white text-white hover:bg-white hover:text-gray-900 group/btn w-fit bg-black/20 sm:bg-transparent"
+                    {showcases[currentIndex].icon}
+                    <span className="text-[10px] font-black uppercase tracking-widest">{showcases[currentIndex].tag}</span>
+                  </motion.div>
+                  
+                  <motion.h3 
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.4 }}
+                    className="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-6 tracking-tighter leading-[0.9]"
                   >
-                    Browse Projects
-                    <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
-                  </Button>
-                </Link>
+                    {showcases[currentIndex].title}
+                  </motion.h3>
+                  
+                  <motion.p 
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.5 }}
+                    className="text-lg text-gray-300 mb-10 max-w-md font-medium leading-relaxed"
+                  >
+                    {showcases[currentIndex].description}
+                  </motion.p>
+                  
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6 }}
+                  >
+                    <Link href="/register">
+                      <Button 
+                        size="lg" 
+                        className="h-16 px-10 bg-white text-black hover:bg-orange-500 hover:text-white transition-all duration-300 rounded-2xl font-bold group/btn shadow-2xl"
+                      >
+                        {showcases[currentIndex].buttonText}
+                        <ArrowRight className="w-5 h-5 ml-2 group-hover/btn:translate-x-1 transition-transform" />
+                      </Button>
+                    </Link>
+                  </motion.div>
+                </div>
               </div>
-            </div>
-          </div>
-          */}
+            </motion.div>
+          </AnimatePresence>
 
-          {/* Image 3 - Quality Results */}
-          {/* 
-          <div className="relative group overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500">
-            <div className="relative h-96 sm:h-[500px] lg:h-[600px] flex">
-              <div className="flex-1">
-                <Image
-                  src="/images/landing/landing3.png"
-                  alt="Completed quality construction project"
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-              </div>
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-black/20 to-black/70" />
-              
-              {/* Motivational Text - Right Side (Mobile Only) */}
-              {/* 
-              <div className="absolute right-[31px] top-1/2 transform -translate-y-1/2 sm:hidden">
-                <div className="text-white font-black text-xl leading-tight tracking-wider drop-shadow-2xl">
-                  <span className="block bg-gradient-to-r from-green-400 to-green-600 bg-clip-text text-transparent">QUALITY</span>
-                  <span className="block text-white">WORK</span>
-                </div>
-              </div>
-              */}
-              
-              {/* Text Overlay - Right Side */}
-              {/* 
-              <div className="absolute right-[30px] sm:right-[90px] top-0 bottom-0 w-full sm:w-1/2 lg:w-2/5 p-6 sm:p-8 text-white flex flex-col justify-end sm:justify-center items-end sm:items-start">
-                <div className="hidden sm:flex items-center mb-3">
-                  <Award className="w-6 h-6 mr-2 text-green-400" />
-                  <span className="text-sm font-medium text-green-400 uppercase tracking-wide">Quality Results</span>
-                </div>
-                <h3 className="hidden sm:block text-xl sm:text-2xl lg:text-3xl font-bold mb-3 leading-tight">
-                  Exceptional Results, Every Time
-                </h3>
-                <p className="hidden sm:block text-sm sm:text-base text-gray-200 mb-4 leading-relaxed">
-                  Experience the satisfaction of projects completed on time, within budget, and exceeding expectations.
-                </p>
-                <div className="text-right sm:text-left">
-                  <Link href="/register">
-                    <Button 
-                      size="sm" 
-                      className="bg-green-600 hover:bg-green-700 text-white border-0 group/btn w-fit"
-                    >
-                      Get Started
-                      <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            </div>
+          {/* Navigation Controls */}
+          <div className="absolute bottom-12 right-12 flex items-center gap-4 z-20">
+            <button
+              onClick={prevSlide}
+              className="w-14 h-14 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white hover:bg-white/10 transition-all cursor-pointer group"
+            >
+              <ChevronLeft className="w-6 h-6 group-hover:-translate-x-0.5 transition-transform" />
+            </button>
+            <button
+              onClick={nextSlide}
+              className="w-14 h-14 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white hover:bg-white/10 transition-all cursor-pointer group"
+            >
+              <ChevronRight className="w-6 h-6 group-hover:translate-x-0.5 transition-transform" />
+            </button>
           </div>
-          */}
+
+          {/* Progress Indicators */}
+          <div className="absolute top-12 right-12 flex flex-col gap-3 z-20">
+            {showcases.map((_, index) => (
+              <div 
+                key={index}
+                className="relative h-12 w-1 bg-white/10 rounded-full overflow-hidden"
+              >
+                {index === currentIndex && (
+                  <motion.div 
+                    layoutId="progress"
+                    className="absolute top-0 left-0 w-full bg-orange-500"
+                    initial={{ height: 0 }}
+                    animate={{ height: "100%" }}
+                    transition={{ duration: 8, ease: "linear" }}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
         </div>
-
-
       </div>
     </section>
   );

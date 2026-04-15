@@ -41,7 +41,7 @@ export function UserMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className="cursor-pointer transition-all duration-200 hover:scale-105 rounded-full">
+        <div className="group cursor-pointer transition-all duration-300 p-0.5 rounded-full border-2 border-gray-100 hover:border-orange-200 hover:bg-orange-50/50 shadow-sm hover:shadow-md">
           <RoleBasedAvatar
             role={user?.user_role}
             isVerified={false}
@@ -49,6 +49,7 @@ export function UserMenu() {
             name={user?.user_metadata?.full_name || user?.email}
             showVerificationBadge={false}
             profilePhoto={user?.profile_photo}
+            className="group-hover:scale-95 transition-transform duration-300"
           />
         </div>
       </DropdownMenuTrigger>

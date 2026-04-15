@@ -6,6 +6,8 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Search, MapPin, Star, Shield, Wrench } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { cn } from '@/lib/utils'
 import { User, ContractorProfile } from '@/server/database/interfaces'
 import Image from 'next/image'
 import { useGoogleMaps } from '@/hooks/useGoogleMaps'
@@ -82,6 +84,87 @@ export default function GoogleMapView({
     }
 
     try {
+      const darkMapStyle = [
+        { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
+        { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
+        { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
+        {
+          featureType: "administrative.locality",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#d59563" }],
+        },
+        {
+          featureType: "poi",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#d59563" }],
+        },
+        {
+          featureType: "poi.park",
+          elementType: "geometry",
+          stylers: [{ color: "#263c3f" }],
+        },
+        {
+          featureType: "poi.park",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#6b9a76" }],
+        },
+        {
+          featureType: "road",
+          elementType: "geometry",
+          stylers: [{ color: "#38414e" }],
+        },
+        {
+          featureType: "road",
+          elementType: "geometry.stroke",
+          stylers: [{ color: "#212a37" }],
+        },
+        {
+          featureType: "road",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#9ca5b3" }],
+        },
+        {
+          featureType: "road.highway",
+          elementType: "geometry",
+          stylers: [{ color: "#746855" }],
+        },
+        {
+          featureType: "road.highway",
+          elementType: "geometry.stroke",
+          stylers: [{ color: "#1f2835" }],
+        },
+        {
+          featureType: "road.highway",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#f3d19c" }],
+        },
+        {
+          featureType: "transit",
+          elementType: "geometry",
+          stylers: [{ color: "#2f3948" }],
+        },
+        {
+          featureType: "transit.station",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#d59563" }],
+        },
+        {
+          featureType: "water",
+          elementType: "geometry",
+          stylers: [{ color: "#17263c" }],
+        },
+        {
+          featureType: "water",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#515c6d" }],
+        },
+        {
+          featureType: "water",
+          elementType: "labels.text.stroke",
+          stylers: [{ color: "#17263c" }],
+        },
+      ];
+
       const mapOptions = {
         center: {
           lat: mapCenter[0],
@@ -91,9 +174,10 @@ export default function GoogleMapView({
         mapTypeId: window.google.maps.MapTypeId.ROADMAP,
         disableDefaultUI: false,
         zoomControl: true,
-        streetViewControl: true,
+        streetViewControl: false,
         fullscreenControl: true,
-        mapTypeControl: false
+        mapTypeControl: false,
+        styles: darkMapStyle
       }
 
       // Create map
@@ -369,143 +453,142 @@ export default function GoogleMapView({
   }
 
   return (
-    <div className="flex flex-col lg:grid lg:grid-cols-3 gap-4 lg:gap-6 min-h-[500px]">
+    <div className="flex flex-col lg:grid lg:grid-cols-4 gap-0 min-h-[600px] bg-black/20">
       {/* Contractor List Sidebar */}
-      <div className="lg:col-span-1 overflow-hidden order-2 lg:order-1">
-        <Card className="h-full">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-sm">
-              <Wrench className="h-4 w-4" />
-              Available Contractors
-            </CardTitle>
-            {/* Search Box */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input
-                type="text"
-                placeholder="Search by location or name..."
-                value={searchQuery}
-                onChange={(e) => onSearch(e.target.value)}
-                className="pl-10"
-              />
+      <div className="lg:col-span-1 overflow-hidden order-2 lg:order-1 border-r border-white/5 flex flex-col h-full">
+        <div className="p-6 border-b border-white/5 space-y-6">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-orange-600 flex items-center justify-center">
+               <Wrench className="h-4 w-4 text-white" />
             </div>
-          </CardHeader>
-          <CardContent className="p-0">
-            <div className="max-h-[400px] lg:max-h-[600px] overflow-y-auto">
-              {contractors.length === 0 ? (
-                <div className="p-6 text-center text-gray-500">
-                  <Wrench className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                  <p>
-                    {searchQuery.trim() 
-                      ? `No contractors found for "${searchQuery}"`
-                      : "No contractors nearby"
-                    }
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-2 p-4">
-                  {contractors
-                    .filter((contractor) => getContractorProfile(contractor))
-                    .map((contractor, index) => {
-                      const profile = getContractorProfile(contractor)!
+            <h3 className="text-sm font-black text-white uppercase tracking-widest">Master Talent</h3>
+          </div>
+          
+          {/* Search Box */}
+          <div className="relative group">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 group-focus-within:text-orange-500 transition-colors" />
+            <Input
+              type="text"
+              placeholder="Search Master Builders..."
+              value={searchQuery}
+              onChange={(e) => onSearch(e.target.value)}
+              className="h-12 pl-12 bg-white/5 border-white/10 text-white placeholder:text-gray-600 rounded-xl focus:ring-orange-500 focus:border-orange-500 transition-all font-medium"
+            />
+          </div>
+        </div>
 
-                      return (
-                      <div
-                        key={contractor.id || `contractor-${index}`}
-                        onClick={() => onContractorClick(contractor)}
-                        className={`p-4 rounded-lg border cursor-pointer transition-all hover:shadow-md ${
-                          selectedContractor?.id === contractor.id
-                            ? 'border-blue-500 bg-blue-50'
-                            : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                      >
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-2">
-                            <Image
-                              src={contractor.profile_photo || "/assets/avatar.png"}
-                              alt={`${contractor.first_name} ${contractor.last_name}`}
-                              width={32}
-                              height={32}
-                              className="rounded-full object-cover"
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.src = "/assets/avatar.png";
-                              }}
-                            />
-                            <div className="flex-1 min-w-0">
-                              <h3 className="font-semibold text-sm line-clamp-1">
-                                {profile.business_name || `${contractor.first_name} ${contractor.last_name}`}
-                              </h3>
-                              <p className="text-xs text-gray-600 truncate">
-                                {contractor.first_name} {contractor.last_name}
-                              </p>
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-center gap-2 text-xs text-gray-600">
-                            <MapPin className="h-3 w-3" />
-                            <span className="truncate">
-                              {profile.address?.city && profile.address?.province
-                                ? `${profile.address.city}, ${profile.address.province}`
-                                : profile.address?.address || 'Location available'
-                              }
-                            </span>
-                          </div>
-
-
-                          {profile.trade_category && profile.trade_category.length > 0 && (
-                            <div className="flex flex-wrap gap-1">
-                              {profile.trade_category.slice(0, 2).map((trade, index) => (
-                                <Badge key={`trade-${contractor.id}-${index}-${trade}`} variant="secondary" className="text-xs">
-                                  {trade}
-                                </Badge>
-                              ))}
-                              {profile.trade_category.length > 2 && (
-                                <Badge variant="outline" className="text-xs">
-                                  +{profile.trade_category.length - 2}
-                                </Badge>
-                              )}
-                            </div>
-                          )}
-
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-3 bg-black/10">
+          {contractors.length === 0 ? (
+            <div className="py-12 text-center">
+              <Wrench className="h-10 w-10 mx-auto mb-4 text-gray-700" />
+              <p className="text-sm text-gray-500 font-medium">
+                {searchQuery.trim() 
+                  ? `No talent found for "${searchQuery}"`
+                  : "Scanning for artisans..."
+                }
+              </p>
+            </div>
+          ) : (
+            contractors
+              .filter((contractor) => getContractorProfile(contractor))
+              .map((contractor, index) => {
+                const profile = getContractorProfile(contractor)!
+                return (
+                  <motion.div
+                    key={contractor.id || `contractor-${index}`}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    onClick={() => onContractorClick(contractor)}
+                    className={cn(
+                      "p-5 rounded-2xl border cursor-pointer transition-all duration-300 group relative overflow-hidden",
+                      selectedContractor?.id === contractor.id
+                        ? 'border-orange-500/50 bg-orange-500/5 shadow-[0_0_20px_rgba(234,88,12,0.1)]'
+                        : 'border-white/5 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/10'
+                    )}
+                  >
+                    <div className="relative z-10 space-y-3">
+                      <div className="flex items-center gap-3">
+                        <div className="relative w-10 h-10 flex-shrink-0">
+                          <Image
+                            src={contractor.profile_photo || "/assets/avatar.png"}
+                            alt={`${contractor.first_name} ${contractor.last_name}`}
+                            fill
+                            className="rounded-full object-cover border border-white/10"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.src = "/assets/avatar.png";
+                            }}
+                          />
                           {profile.is_admin_verified && (
-                            <div className="flex items-center gap-1 text-xs text-green-600">
-                              <Shield className="h-3 w-3" />
-                              <span>Verified</span>
+                            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-orange-600 rounded-full flex items-center justify-center border border-[#0A0A0A]">
+                              <Shield className="w-2.5 h-2.5 text-white" />
                             </div>
                           )}
                         </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-bold text-sm text-white line-clamp-1 group-hover:text-orange-500 transition-colors">
+                            {profile.business_name || `${contractor.first_name} ${contractor.last_name}`}
+                          </h3>
+                          <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest truncate">
+                            {contractor.first_name} {contractor.last_name}
+                          </p>
+                        </div>
                       </div>
-                    )
-                  })}
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+                      
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                          <MapPin className="h-3 w-3 text-orange-500" />
+                          <span className="truncate">
+                            {profile.address?.city && profile.address?.province
+                              ? `${profile.address.city}, ${profile.address.province}`
+                              : profile.address?.address || 'Verified Locale'
+                            }
+                          </span>
+                        </div>
+
+                        {contractor.average_rating && contractor.rating_count && contractor.rating_count > 0 && (
+                          <div className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                            <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
+                            <span className="text-white">{contractor.average_rating.toFixed(1)} <span className="text-gray-600">({contractor.rating_count})</span></span>
+                          </div>
+                        )}
+                      </div>
+
+                      {profile.trade_category && profile.trade_category.length > 0 && (
+                        <div className="flex flex-wrap gap-1 pt-1">
+                          {profile.trade_category.slice(0, 1).map((trade, index) => (
+                            <Badge key={index} variant="outline" className="bg-white/5 border-white/10 text-[9px] font-black uppercase text-gray-400 px-2 py-0">
+                              {trade}
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                )
+              })
+          )}
+        </div>
       </div>
 
       {/* Google Map */}
-      <div className="lg:col-span-2 order-1 lg:order-2">
-        <Card className="h-full">
-          <CardContent className="p-0 h-full">
-            <div className="h-full rounded-lg overflow-hidden">
-              <div 
-                ref={mapRef} 
-                className="w-full h-full"
-                style={{ minHeight: '500px' }}
-              />
-              {!isLoaded && (
-                <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg">
-                  <div className="text-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto mb-2"></div>
-                    <p className="text-sm text-gray-600">Loading map...</p>
-                  </div>
-                </div>
-              )}
+      <div className="lg:col-span-3 order-1 lg:order-2 h-full">
+        <div className="h-full relative overflow-hidden">
+          <div 
+            ref={mapRef} 
+            className="w-full h-full relative z-10"
+            style={{ minHeight: '600px' }}
+          />
+          {!isLoaded && (
+            <div className="absolute inset-0 flex items-center justify-center bg-[#0A0A0A] z-20">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-orange-500 mx-auto mb-4"></div>
+                <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">Initializing Network...</p>
+              </div>
             </div>
-          </CardContent>
-        </Card>
+          )}
+        </div>
       </div>
     </div>
   )

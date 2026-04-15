@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Building2, Star, MapPin, Calendar, DollarSign } from "lucide-react";
+import { motion } from "framer-motion";
 import { createClient } from "@/lib/supabase";
 import { Project } from "@/server/database/interfaces";
 import LoadingSpinner from "@/components/shared/loading-spinner";
@@ -88,58 +89,75 @@ export default function FeaturedProjects({
       day: "numeric",
     });
   };
-
   if (!isClient) {
     return (
       <div className="flex items-center justify-center h-64">
-        <LoadingSpinner />
+        <LoadingSpinner variant="dark" />
       </div>
     );
   }
-
+ 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <LoadingSpinner />
+        <LoadingSpinner variant="dark" />
       </div>
     );
   }
 
   return (
-    <section className={`py-16 sm:py-20 bg-gradient-to-b from-orange-50 to-white ${className}`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className={`py-40 bg-[#0A0A0A] ${className}`}>
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4 px-2">
-            Featured Projects
+        <div className="flex flex-col items-center text-center mb-20">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center gap-2 px-3 py-1 mb-6 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500"
+          >
+            <Star className="w-3.5 h-3.5" />
+            <span className="text-[10px] font-black uppercase tracking-[0.2em]">Curated Portfolio</span>
+          </motion.div>
+          
+          <h2 className="text-4xl sm:text-5xl font-black text-white mb-6 tracking-tighter">
+            Featured <span className="text-orange-500">Showcases</span>
           </h2>
-          <p className="text-lg sm:text-xl text-gray-600 max-w-3xl sm:max-w-4xl mx-auto px-4">
-            Showcasing completed projects that demonstrate the platform&apos;s capabilities and featured contractor work.
+          <p className="text-lg text-gray-400 max-w-2xl mx-auto font-medium">
+            A selection of architectural landmarks and high-precision builds managed through the Structra ecosystem.
           </p>
         </div>
 
         {featuredProjects.length === 0 ? (
-          <div className="flex items-center justify-center h-64">
+          <div className="flex items-center justify-center h-96 rounded-[2.5rem] border border-white/5 bg-white/5 backdrop-blur-3xl">
             <div className="text-center">
-              <Building2 className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <p className="text-xl text-gray-500 mb-2">
-                No featured projects available
+              <Building2 className="h-20 w-20 text-gray-700 mx-auto mb-6" />
+              <p className="text-2xl font-bold text-white mb-2 tracking-tight">
+                Refining our latest showcases
               </p>
-              <p className="text-gray-400">
-                Check back later for featured project showcases
+              <p className="text-gray-500 font-medium max-w-sm mx-auto">
+                Premium projects are currently being onboarded. Review our live grid for active opportunities.
               </p>
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
-            {featuredProjects.map((project) => (
-              <div key={project.id} onClick={() => handleProjectClick(project)} className="h-full">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
+            {featuredProjects.map((project, index) => (
+              <motion.div 
+                key={project.id} 
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                onClick={() => handleProjectClick(project)} 
+                className="h-full cursor-pointer"
+              >
                 <FeaturedProjectCard
                   project={project}
                   formatBudget={formatBudget}
                   formatDate={formatDate}
                 />
-              </div>
+              </motion.div>
             ))}
           </div>
         )}

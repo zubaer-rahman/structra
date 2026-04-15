@@ -9,6 +9,8 @@ interface CounterProps {
   suffix?: string;
 }
 
+import { motion } from 'framer-motion';
+
 function AnimatedCounter({ end, duration, suffix = '' }: CounterProps) {
   const [count, setCount] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
@@ -59,69 +61,47 @@ function AnimatedCounter({ end, duration, suffix = '' }: CounterProps) {
   }, [isVisible, end, duration]);
 
   return (
-    <div ref={ref} className="text-3xl sm:text-4xl md:text-5xl font-bold text-orange-600 mb-2">
+    <div ref={ref} className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-2 tracking-tighter">
       {count}{suffix}
     </div>
   );
 }
 
 export function Metrics() {
+  const stats = [
+    { label: "Active Projects", value: 500, suffix: "+", icon: <TrendingUp className="w-6 h-6" />, desc: "Global infrastructure initiatives" },
+    { label: "Verified Artisans", value: 200, suffix: "+", icon: <Award className="w-6 h-6" />, desc: "Certified master builders" },
+    { label: "Success Rate", value: 95, suffix: "%", icon: <CheckCircle className="w-6 h-6" />, desc: "Project excellence index" },
+    { label: "Elite Clients", value: 1000, suffix: "+", icon: <Users className="w-6 h-6" />, desc: "Premium service delivery" },
+  ];
+
   return (
-    <section className="py-12 sm:py-16 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-10 sm:mb-12">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4 px-2">
-            Platform Excellence in Numbers
-          </h2>
-          <p className="text-lg sm:text-xl text-gray-600 max-w-2xl sm:max-w-3xl mx-auto px-4">
-            Trusted by industry professionals and homeowners across the construction sector
-          </p>
-        </div>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-          <div className="text-center p-4 sm:p-6">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300">
-              <Users className="w-8 h-8 sm:w-10 sm:h-10 text-gray-600" />
-            </div>
-            <AnimatedCounter end={500} duration={2.5} suffix="+" />
-            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">Active Projects</h3>
-            <p className="text-xs sm:text-sm text-gray-600 px-2">
-              Ongoing construction projects across the platform
-            </p>
-          </div>
-          
-          <div className="text-center p-4 sm:p-6">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300">
-              <CheckCircle className="w-8 h-8 sm:w-10 sm:h-10 text-gray-600" />
-            </div>
-            <AnimatedCounter end={200} duration={2.5} suffix="+" />
-            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">Verified Contractors</h3>
-            <p className="text-xs sm:text-sm text-gray-600 px-2">
-              Pre-screened professionals with proven track records
-            </p>
-          </div>
-          
-          <div className="text-center p-4 sm:p-6">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300">
-              <Award className="w-8 h-8 sm:w-10 sm:h-10 text-gray-600" />
-            </div>
-            <AnimatedCounter end={95} duration={2.5} suffix="%" />
-            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">Success Rate</h3>
-            <p className="text-xs sm:text-sm text-gray-600 px-2">
-              Project completion rate with client satisfaction
-            </p>
-          </div>
-          
-          <div className="text-center p-4 sm:p-6">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300">
-              <TrendingUp className="w-8 h-8 sm:w-10 sm:h-10 text-gray-600" />
-            </div>
-            <AnimatedCounter end={1000} duration={2.5} suffix="+" />
-            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">Happy Clients</h3>
-            <p className="text-xs sm:text-sm text-gray-600 px-2">
-              Satisfied homeowners and contractors served
-            </p>
-          </div>
+    <section className="py-40 bg-[#0A0A0A] border-b border-white/5 relative overflow-hidden">
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-orange-500/50 to-transparent" />
+      
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
+          {stats.map((stat, index) => (
+            <motion.div 
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              viewport={{ once: true }}
+              className="text-center lg:text-left"
+            >
+              <div className="inline-flex items-center gap-3 text-orange-500 mb-6 font-black uppercase tracking-[0.2em] text-[10px]">
+                <div className="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center">
+                  {stat.icon}
+                </div>
+                {stat.label}
+              </div>
+              <AnimatedCounter end={stat.value} duration={2} suffix={stat.suffix} />
+              <p className="text-sm text-gray-500 font-medium uppercase tracking-widest mt-4">
+                {stat.desc}
+              </p>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>

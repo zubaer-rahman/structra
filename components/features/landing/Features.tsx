@@ -26,20 +26,29 @@ const itemVariants = {
 
 export function Features() {
   return (
-    <section className="py-16 sm:py-20 bg-gradient-to-b from-white to-orange-50 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-40 bg-[#0A0A0A] border-y border-white/5 relative overflow-hidden">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12 sm:mb-16"
+          className="text-center mb-20"
         >
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4 px-2">
-            The Structra Trust Ecosystem
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center gap-2 px-3 py-1 mb-6 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500"
+          >
+            <Shield className="w-3.5 h-3.5" />
+            <span className="text-[10px] font-black uppercase tracking-[0.2em]">The Ecosystem</span>
+          </motion.div>
+          
+          <h2 className="text-4xl sm:text-5xl font-black text-white mb-6 tracking-tighter">
+            Architectural <span className="text-orange-500">Integrity</span>
           </h2>
-          <p className="text-lg sm:text-xl text-gray-600 max-w-3xl sm:max-w-4xl mx-auto px-4">
-            A premium infrastructure where architectural visions meet engineering mastery. We bridge the gap between complex requirements and flawless execution through intelligent collaboration tools.
+          <p className="text-lg text-gray-400 max-w-3xl mx-auto font-medium leading-relaxed">
+            A premium infrastructure where visionary designs meet engineering mastery. We bridge the gap through intelligent collaboration.
           </p>
         </motion.div>
 
@@ -48,49 +57,51 @@ export function Features() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
           {[
             {
               icon: FileText,
               title: "Precision Briefing Engine",
-              description: "Define your project with unprecedented clarity. Our structured briefing system ensures every requirement, budget detail, and timeline expectation is perfectly communicated to the right professionals."
+              description: "Define your project with unprecedented clarity. Our structured system ensures every requirement is perfectly communicated."
             },
             {
               icon: CheckCircle,
               title: "Elite Artisan Network",
-              description: "Access a curated circle of pre-vetted master contractors. Each member is rigorously verified for insurance, licensing, and a proven history of high-end project delivery."
+              description: "Access a curated circle of pre-vetted master contractors. Rigorously verified for high-end project delivery."
             },
             {
               icon: MessageSquare,
-              title: "Collaboration Command Center",
-              description: "Maintain absolute control with centralized communication. Integrated milestone tracking, document sharing, and change management keep all stakeholders aligned and informed."
+              title: "Command Center",
+              description: "Maintain absolute control with centralized communication. Integrated milestone tracking and document sharing."
             },
             {
               icon: TrendingUp,
-              title: "Performance Intelligence",
-              description: "Make data-driven decisions with comparative analytics. Benchmarking tools provide deep insights into proposal costs, technical feasibility, and historical contractor performance."
+              title: "Performance Intel",
+              description: "Make data-driven decisions with comparative analytics. Benchmarking tools provide deep insights into technical feasibility."
             },
             {
               icon: Shield,
-              title: "Sovereign Data Security",
-              description: "Your project data is protected by enterprise-grade encryption and strict privacy protocols. We ensure that sensitive contract details and architectural plans remain secure and confidential."
+              title: "Sovereign Security",
+              description: "Your project data is protected by enterprise-grade encryption. Architectural plans remain strictly confidential."
             },
             {
               icon: Award,
-              title: "Trust Assurance Protocol",
-              description: "Our multi-layered reputation system uses real-world delivery metrics, client satisfaction scores, and verified completion rates to build a foundation of absolute trust."
+              title: "Reputation Protocol",
+              description: "Our reputation system uses real-world delivery metrics and verified completion rates to build absolute trust."
             }
           ].map((feature, index) => (
             <motion.div key={index} variants={itemVariants}>
-              <Card className="h-full border-0 bg-white/60 backdrop-blur-lg shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 group overflow-hidden relative">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-orange-100/50 rounded-bl-full -mr-12 -mt-12 transition-all duration-500 group-hover:scale-150" />
-                <CardHeader className="p-4 sm:p-6 relative z-10">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-orange-500 rounded-xl flex items-center justify-center mb-3 sm:mb-4 shadow-lg shadow-orange-200 group-hover:rotate-12 transition-transform duration-300">
-                    <feature.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+              <Card className="h-full border border-white/5 bg-white/[0.03] backdrop-blur-3xl shadow-2xl hover:bg-white/[0.08] transition-all duration-500 hover:-translate-y-2 group overflow-hidden relative rounded-[2rem]">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-bl-full -mr-16 -mt-16 transition-all duration-500 group-hover:scale-150" />
+                <CardHeader className="p-8 relative z-10">
+                  <div className="w-14 h-14 bg-gradient-to-br from-orange-500 to-orange-700 rounded-2xl flex items-center justify-center mb-6 shadow-[0_0_40px_rgba(234,88,12,0.3)] group-hover:rotate-12 transition-transform duration-500">
+                    <feature.icon className="w-7 h-7 text-white" />
                   </div>
-                  <CardTitle className="text-base sm:text-lg text-gray-900 group-hover:text-orange-600 transition-colors duration-300">{feature.title}</CardTitle>
-                  <CardDescription className="text-gray-600 text-sm leading-relaxed">
+                  <CardTitle className="text-sm font-black text-white mb-4 tracking-tighter uppercase italic group-hover:text-orange-500 transition-colors duration-300">
+                    {feature.title}
+                  </CardTitle>
+                  <CardDescription className="text-gray-500 text-[13px] leading-relaxed font-bold uppercase tracking-wider">
                     {feature.description}
                   </CardDescription>
                 </CardHeader>

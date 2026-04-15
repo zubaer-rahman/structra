@@ -3,48 +3,58 @@ import Image from "next/image";
 
 export function Footer() {
   return (
-    <footer className="bg-gray-900 text-white py-12 sm:py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 sm:gap-8 mb-6 sm:mb-8">
-          <div className="md:col-span-2 text-center md:text-left">
-            <div className="flex flex-col sm:flex-row items-center md:items-end mb-4 sm:mb-4 justify-center md:justify-start">
+    <footer className="bg-[#050505] text-white py-24 border-t border-white/5">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 sm:gap-16 mb-16">
+          <div className="md:col-span-2">
+            <div className="flex items-center gap-3 mb-8">
               <Image
                 src="/images/brand/favicon_structra.png"
                 alt="Structra Icon"
-                width={32}
-                height={32}
-                className="w-6 h-6 sm:w-8 sm:h-8 mb-2 sm:mb-0 sm:mr-3"
+                width={40}
+                height={40}
+                className="w-10 h-10"
               />
-              <h3 className="text-xl sm:text-2xl font-bold text-orange-400 leading-none">Structra</h3>
+              <h3 className="text-3xl font-black text-white tracking-tighter">Structra</h3>
             </div>
-            <p className="text-sm sm:text-base text-gray-400 mb-4 max-w-md mx-auto md:mx-0">
+            <p className="text-lg text-gray-500 mb-8 max-w-md font-medium leading-relaxed">
               The definitive ecosystem for high-fidelity construction partnerships. Bridging visionary project owners with elite master contractors.
             </p>
           </div>
           
-          <div className="text-center md:text-left">
-            <h4 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-white">Platform Solutions</h4>
-            <ul className="space-y-1.5 sm:space-y-2">
-              <li><Link href="/projects" className="text-sm sm:text-base text-gray-400 hover:text-gray-200 transition-colors">Project Management</Link></li>
-              <li><Link href="/contractors" className="text-sm sm:text-base text-gray-400 hover:text-gray-200 transition-colors">Contractor Network</Link></li>
-              <li><Link href="/proposals" className="text-sm sm:text-base text-gray-400 hover:text-gray-200 transition-colors">Proposal System</Link></li>
-              <li><Link href="/analytics" className="text-sm sm:text-base text-gray-400 hover:text-gray-200 transition-colors">Project Analytics</Link></li>
+          <div>
+            <h4 className="text-sm font-black mb-6 text-white uppercase tracking-[0.2em]">Platform</h4>
+            <ul className="space-y-4">
+              <li><Link href="/projects" className="text-base text-gray-500 hover:text-orange-500 transition-colors font-medium">Project Management</Link></li>
+              <li><Link href="/contractors" className="text-base text-gray-500 hover:text-orange-500 transition-colors font-medium">Contractor Network</Link></li>
+              <li><Link href="/proposals" className="text-base text-gray-500 hover:text-orange-500 transition-colors font-medium">Proposal System</Link></li>
+              <li><Link href="/analytics" className="text-base text-gray-500 hover:text-orange-500 transition-colors font-medium">Project Analytics</Link></li>
             </ul>
           </div>
           
-          <div className="text-center md:text-left">
-            <h4 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-white">Professional Access</h4>
-            <ul className="space-y-1.5 sm:space-y-2">
-              <li><Link href="/login" className="text-sm sm:text-base text-gray-400 hover:text-gray-200 transition-colors">Sign In</Link></li>
-              <li><Link href="/register" className="text-sm sm:text-base text-gray-400 hover:text-gray-200 transition-colors">Create Account</Link></li>
-              <li><Link href="/contact" className="text-sm sm:text-base text-gray-400 hover:text-gray-200 transition-colors">Contact Support</Link></li>
-              <li><Link href="/enterprise" className="text-sm sm:text-base text-gray-400 hover:text-gray-200 transition-colors">Enterprise Solutions</Link></li>
+          <div>
+            <h4 className="text-sm font-black mb-6 text-white uppercase tracking-[0.2em]">Professional</h4>
+            <ul className="space-y-4">
+              <li><Link href="/login" className="text-base text-gray-500 hover:text-orange-500 transition-colors font-medium">Sign In</Link></li>
+              <li><Link href="/register" className="text-base text-gray-500 hover:text-orange-500 transition-colors font-medium">Create Account</Link></li>
+              <li><Link href="/contact" className="text-base text-gray-500 hover:text-orange-500 transition-colors font-medium">Contact Support</Link></li>
+              <li><Link href="/enterprise" className="text-base text-gray-500 hover:text-orange-500 transition-colors font-medium">Enterprise Solutions</Link></li>
             </ul>
           </div>
         </div>
         
-        <div className="pt-6 sm:pt-8 border-t border-gray-800 text-center text-gray-400">
-          <p className="text-xs sm:text-sm">&copy; 2024 <span className="text-orange-400">Structra</span>. All rights reserved. | The Standard for High-Fidelity Construction Partnerships</p>
+        <div className="pt-12 border-t border-white/5 text-gray-600 flex flex-col md:flex-row justify-between items-center gap-6">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] leading-none">
+            &copy; 2025 <span className="text-orange-600">Structra</span>. The Standard for High-Fidelity Construction.
+          </p>
+          <div className="flex gap-8 items-center">
+             <div className="flex items-center gap-2 mr-4">
+                <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                <span className="text-[9px] font-black uppercase tracking-widest text-gray-700">Network Stable</span>
+             </div>
+             <Link href="/privacy" className="text-[10px] font-black uppercase tracking-[0.2em] hover:text-white transition-colors">Privacy</Link>
+             <Link href="/terms" className="text-[10px] font-black uppercase tracking-[0.2em] hover:text-white transition-colors">Terms</Link>
+          </div>
         </div>
       </div>
     </footer>
