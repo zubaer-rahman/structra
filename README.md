@@ -1,212 +1,242 @@
-# Structra - Contractor & Homeowner Platform
+<h1 align="center">
+  <br />
+  <img src="public/images/brand/structra_logo.png" alt="Structra" width="200" />
+  <br />
+  Structra
+  <br />
+</h1>
 
-A modern web platform that connects homeowners with trusted contractors for construction projects. Built with Next.js 15, TypeScript, Tailwind CSS, and Supabase.
+<h4 align="center">A full-stack marketplace connecting homeowners with verified contractors — built for transparency, trust, and speed.</h4>
 
-## 🚀 Features
+<p align="center">
+  <a href="https://structra-two.vercel.app" target="_blank">
+    <img src="https://img.shields.io/badge/Live%20Demo-structra.vercel.app-6366f1?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" />
+  </a>
+  &nbsp;
+  <img src="https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js" />
+  &nbsp;
+  <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
+  &nbsp;
+  <img src="https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" />
+</p>
 
-### Core Functionality
-- **Role-based Authentication**: Separate experiences for homeowners and contractors
-- **Project Management**: Homeowners can create and manage construction projects
-- **Proposal System**: Contractors can submit proposals for available projects
-- **Review System**: Bidirectional reviews between users after project completion
-- **Real-time Messaging**: Built-in communication system between parties
-- **Dashboard Analytics**: Comprehensive overview of projects and activities
+<p align="center">
+  <img src="https://img.shields.io/badge/Stripe-Payments-635BFF?style=for-the-badge&logo=stripe&logoColor=white" />
+  &nbsp;
+  <img src="https://img.shields.io/badge/tRPC-Type--safe%20API-2596BE?style=for-the-badge&logo=trpc&logoColor=white" />
+  &nbsp;
+  <img src="https://img.shields.io/badge/Deployed-Vercel-000000?style=for-the-badge&logo=vercel" />
+</p>
 
-### User Roles
+---
 
-#### Homeowners
-- Create detailed project requests with budgets and requirements
-- Review and accept/reject contractor proposals
-- Communicate with contractors through messaging
-- Rate and review contractors after project completion
-- Track project progress and status
+## What is Structra?
 
-#### Contractors
-- Browse available projects in their area
-- Submit detailed proposals with pricing and timelines
-- Communicate with homeowners
-- Build reputation through reviews and ratings
-- Manage their proposal portfolio
+Structra is a **production-grade SaaS marketplace** that bridges the gap between property owners and construction professionals. Homeowners post projects with a one-time publishing fee; verified contractors discover, bid, and win work — all within a secured, role-gated platform.
 
-## 🛠️ Tech Stack
+The platform handles the entire project lifecycle: **authentication → project creation → payment → proposal bidding → contract signing → reviews** — without a single manual handoff.
 
-- **Frontend**: Next.js 14 with App Router
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **Backend**: Supabase (Database, Auth, Real-time)
-- **UI Components**: Custom components with Radix UI primitives
-- **Icons**: Lucide React
-- **State Management**: React Context + Supabase real-time subscriptions
+---
 
-## 📋 Prerequisites
+## Key Features
 
-- Node.js 18+ 
-- npm or yarn
-- Supabase account
+| Area | Capability |
+|---|---|
+| **Auth** | Role-based signup (Homeowner / Contractor / Admin) with Supabase JWT + auto profile creation |
+| **Projects** | Multi-step project creation with file uploads, budget ranges, and draft/publish states |
+| **Payments** | Stripe Checkout for $29 project publishing fee; webhook-driven activation |
+| **Proposals** | Full proposal lifecycle — submit, compare, accept/reject, with messaging |
+| **Contracts** | Digital signature capture with SHA-256 hash verification and audit trail |
+| **Reviews** | Bidirectional 5-star review system with photo-use consent flow |
+| **Admin** | Contractor document verification queue, featured content management, platform analytics |
+| **Security** | Row-Level Security (RLS) on every table, role-gated middleware, encrypted file storage |
 
-## 🚀 Getting Started
+---
 
-### 1. Clone the Repository
+## Tech Stack
+
+```
+Frontend          Next.js 15 (App Router) · React 19 · TypeScript 5
+Styling           Tailwind CSS v4 · Radix UI · Framer Motion
+API Layer         tRPC v11 · TanStack Query v5
+Backend           Supabase (PostgreSQL + Auth + Storage + Realtime)
+Payments          Stripe (Checkout Sessions + Webhooks)
+PDF Generation    @react-pdf/renderer
+Forms             React Hook Form + Zod v4
+Deployment        Vercel (Edge + Serverless Functions)
+```
+
+---
+
+## Architecture Overview
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    Next.js 15 App                        │
+│  ┌──────────────┐  ┌──────────────┐  ┌───────────────┐  │
+│  │  App Router  │  │  tRPC Layer  │  │  Middleware    │  │
+│  │  (RSC + CSR) │  │  (Type-safe) │  │  (Auth Guard) │  │
+│  └──────┬───────┘  └──────┬───────┘  └───────┬───────┘  │
+│         └─────────────────┴──────────────────┘           │
+│                           │                              │
+│              ┌────────────▼────────────┐                 │
+│              │       Supabase           │                 │
+│              │  PostgreSQL + RLS        │                 │
+│              │  Auth (JWT)              │                 │
+│              │  Storage (S3-compatible) │                 │
+│              │  Realtime (WebSockets)   │                 │
+│              └─────────────────────────┘                 │
+│                                                           │
+│              ┌─────────────────────────┐                 │
+│              │         Stripe           │                 │
+│              │  Checkout Sessions       │                 │
+│              │  Webhook Handler         │                 │
+│              └─────────────────────────┘                 │
+└─────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Database Schema (Core Tables)
+
+```
+users              → profiles, roles, ratings, verification status
+projects           → homeowner projects with status, visibility, slug
+proposals          → contractor bids linked to projects
+contracts          → generated agreements tied to accepted proposals
+signatures         → digital signature data with SHA-256 hash + audit log
+reviews            → bidirectional ratings and written feedback
+messages           → project-scoped real-time messaging
+migrations         → versioned, sequential schema migrations (057 migrations run)
+```
+
+All tables are protected by **Supabase Row-Level Security (RLS)** policies — users can only read and write records they own or are permitted to access.
+
+---
+
+## Project Structure
+
+```
+structra/
+├── app/                     # Next.js 15 App Router (pages + API routes)
+│   ├── (auth)/              # Login, signup, role selection
+│   ├── (dashboard)/         # Homeowner, Contractor, Admin dashboards
+│   └── api/                 # tRPC handler + Stripe webhook endpoint
+├── components/
+│   ├── features/            # Feature-specific components (landing, proposals…)
+│   ├── shared/              # Navbar, UserMenu, LoadingSpinner
+│   └── ui/                  # Radix-based design system (Button, Card, Dialog…)
+├── server/
+│   ├── api/routers/         # tRPC routers: auth, projects, proposals, users…
+│   └── database/
+│       ├── migrations/      # 057 sequential TypeScript migrations
+│       └── schemas/         # Table schema definitions
+├── lib/                     # Supabase client, env config, PDF utils
+├── hooks/                   # Custom React hooks
+├── contexts/                # Auth context, global state
+├── types/                   # Shared TypeScript interfaces
+└── utils/                   # Zod validators, constants, helpers
+```
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- [pnpm](https://pnpm.io) (recommended) or npm
+- A [Supabase](https://supabase.com) project
+- A [Stripe](https://stripe.com) account (test mode is fine)
+
+### 1. Clone & Install
 
 ```bash
-git clone git@github.com:zubaer-rahman/structra.git
+git clone https://github.com/zubaer-rahman/structra.git
 cd structra
+pnpm install
 ```
 
-### 2. Install Dependencies
+### 2. Configure Environment
 
 ```bash
-npm install
+cp env.example .env.local
 ```
 
-### 3. Set Up Supabase
-
-1. Create a new project at [supabase.com](https://supabase.com)
-2. Go to Settings > API to get your project URL and anon key
-3. Create a `.env.local` file in the root directory:
+Fill in your `.env.local`:
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+
+# Stripe
+STRIPE_SECRET_KEY=
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+STRIPE_WEBHOOK_SECRET=
+
+# App
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
-### 4. Set Up Database
-
-1. Go to your Supabase project dashboard
-2. Navigate to SQL Editor
-3. Copy and paste the contents of `supabase-schema.sql`
-4. Execute the SQL to create all tables, policies, and sample data
-
-### 5. Run the Development Server
+### 3. Run Database Migrations
 
 ```bash
-npm run dev
+pnpm db:migrate
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view the application.
-
-## 📁 Project Structure
-
-```
-src/
-├── app/                    # Next.js App Router pages
-│   ├── (auth)/            # Authentication pages
-│   ├── (dashboard)/       # Dashboard pages
-│   ├── globals.css        # Global styles
-│   ├── layout.tsx         # Root layout
-│   └── page.tsx           # Landing page
-├── components/            # Reusable UI components
-│   └── ui/               # Base UI components
-├── contexts/             # React contexts
-├── lib/                  # Utility functions and configurations
-└── types/                # TypeScript type definitions
-```
-
-## 🔐 Authentication Flow
-
-1. **Sign Up**: Users choose their role (homeowner/contractor) during registration
-2. **Profile Creation**: User profile is automatically created in the database
-3. **Role-based Access**: Different navigation and features based on user role
-4. **Session Management**: Automatic session handling with Supabase Auth
-
-## 🗄️ Database Schema
-
-### Core Tables
-- **users**: User profiles with roles and ratings
-- **projects**: Construction projects created by homeowners
-- **proposals**: Contractor bids on projects
-- **reviews**: User reviews and ratings
-- **messages**: Communication between users
-
-### Security Features
-- Row Level Security (RLS) policies
-- Role-based access control
-- Automatic user rating updates
-- Project status management
-
-## 🎨 UI/UX Features
-
-- **Responsive Design**: Mobile-first approach
-- **Modern Interface**: Clean, professional design
-- **Real-time Updates**: Live notifications and updates
-- **Accessibility**: WCAG compliant components
-- **Loading States**: Smooth user experience
-
-## 🔧 Development
-
-### Available Scripts
+### 4. Start the Dev Server
 
 ```bash
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run start        # Start production server
-npm run lint         # Run ESLint
+pnpm dev
 ```
 
-### Code Style
+Open [http://localhost:3000](http://localhost:3000).
 
-- TypeScript for type safety
-- ESLint for code quality
-- Prettier for code formatting
-- Tailwind CSS for styling
+---
 
-## 🚀 Deployment
+## Available Scripts
 
-### Vercel (Recommended)
+| Command | Description |
+|---|---|
+| `pnpm dev` | Start development server |
+| `pnpm build` | Production build |
+| `pnpm lint` | Run ESLint |
+| `pnpm type-check` | TypeScript strict check |
+| `pnpm db:migrate` | Run pending migrations |
+| `pnpm db:rollback` | Rollback last migration |
+| `pnpm db:status` | View migration status |
 
-1. Push your code to GitHub
-2. Connect your repository to Vercel
-3. Add environment variables in Vercel dashboard
-4. Deploy automatically on push
+---
 
-### Other Platforms
+## Deployment
 
-The app can be deployed to any platform that supports Next.js:
-- Netlify
-- Railway
-- DigitalOcean App Platform
-- AWS Amplify
+The app is deployed on **Vercel** with environment variables configured per-environment (dev/prod). Stripe webhooks are registered separately in the Stripe Dashboard for production — see [`docs/WEBHOOK_SETUP.md`](docs/WEBHOOK_SETUP.md) for the full guide.
 
-## 🔒 Security Considerations
+---
 
-- Row Level Security (RLS) on all database tables
-- Input validation and sanitization
-- CSRF protection
-- Secure authentication with Supabase
-- Environment variable protection
+## Documentation
 
-## 📈 Future Enhancements
+| File | Contents |
+|---|---|
+| [`docs/WEBHOOK_SETUP.md`](docs/WEBHOOK_SETUP.md) | Stripe webhook configuration (dev + prod) |
+| [`docs/SIGNATURE_SYSTEM.md`](docs/SIGNATURE_SYSTEM.md) | Digital signature architecture |
+| [`docs/ADMIN_SETUP.md`](docs/ADMIN_SETUP.md) | Creating and managing admin accounts |
+| [`docs/OPTION_SETS.md`](docs/OPTION_SETS.md) | Project category and option configuration |
 
-- **Payment Integration**: Escrow system for secure payments
-- **File Upload**: Project photos and documents
-- **Advanced Search**: Location-based project matching
-- **Mobile App**: React Native companion app
-- **Analytics Dashboard**: Advanced reporting and insights
-- **Notification System**: Email and push notifications
-- **Dispute Resolution**: Built-in conflict resolution system
+---
 
-## 🤝 Contributing
+## Security Highlights
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+- **RLS everywhere** — no table is left unprotected; every query is scoped to the authenticated user's role
+- **Stripe webhook signature verification** — all incoming events are validated with `stripe.webhooks.constructEvent`
+- **Environment variable validation** — `@t3-oss/env-nextjs` enforces type-safe env access at build time
+- **SHA-256 signature hashing** — digital signatures are hashed server-side before storage
+- **No secrets in client code** — all sensitive operations go through tRPC server procedures
 
-## 📄 License
+---
 
-This project is licensed under the MIT License.
+## License
 
-## 🆘 Support
-
-For support and questions:
-- Create an issue in the repository
-- Check the Supabase documentation
-- Review the Next.js documentation
-
-## 🙏 Acknowledgments
-
-- Supabase for the backend infrastructure
-- Next.js team for the amazing framework
-- Tailwind CSS for the utility-first styling
-- Radix UI for accessible components
+MIT © [Zubaer Rahman](https://github.com/zubaer-rahman)
