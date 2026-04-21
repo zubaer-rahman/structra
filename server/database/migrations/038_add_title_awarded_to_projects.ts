@@ -8,15 +8,15 @@ export const migration_038_add_title_awarded_to_projects: Migration = {
   up: async (db) => {
     await db.execute(`
       ALTER TABLE projects 
-      ADD COLUMN title_awarded BOOLEAN DEFAULT FALSE,
-      ADD COLUMN project_certificate JSONB;
+      ADD COLUMN IF NOT EXISTS title_awarded BOOLEAN DEFAULT FALSE,
+      ADD COLUMN IF NOT EXISTS certificate_of_title TEXT;
     `);
   },
   down: async (db) => {
     await db.execute(`
       ALTER TABLE projects 
-      DROP COLUMN title_awarded,
-      DROP COLUMN project_certificate;
+      DROP COLUMN IF EXISTS title_awarded,
+      DROP COLUMN IF EXISTS certificate_of_title;
     `);
   }
 };
