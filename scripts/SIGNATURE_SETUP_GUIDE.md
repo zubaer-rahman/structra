@@ -12,7 +12,7 @@ This guide will help you set up the digital signature system in your database.
 
 ### Step 1: Run the Migration
 1. Open your database editor
-2. Connect to your BuildReady database
+2. Connect to your Structra database
 3. Open the file `scripts/signature_migration.sql`
 4. Execute the entire script
 
@@ -147,4 +147,4 @@ If you encounter any issues:
 3. Ensure all prerequisites are met
 4. Try the rollback and re-migration process
 
-The signature system is now ready to use in your BuildReady application!
+The signature system is now ready to use in your Structra application!

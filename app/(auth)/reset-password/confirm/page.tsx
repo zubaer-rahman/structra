@@ -122,7 +122,7 @@ function ResetPasswordConfirmContent() {
               <span className="block text-orange-600">Password</span>
             </>
           }
-          description="Enter a strong password to secure your BuildReady account."
+          description="Enter a strong password to secure your Structra account."
           maxWidth="md"
         />
 

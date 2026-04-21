@@ -1,12 +1,12 @@
-# BuildReady Platform - Client Documentation
+# Structra Platform - Client Documentation
 
-## 🏗️ **What is BuildReady?**
+## 🏗️ **What is Structra?**
 
-BuildReady is a comprehensive online platform that connects homeowners with qualified contractors for construction and renovation projects. Think of it as a "LinkedIn for construction" where homeowners can post their projects and contractors can bid on them.
+Structra is a comprehensive online platform that connects homeowners with qualified contractors for construction and renovation projects. Think of it as a "LinkedIn for construction" where homeowners can post their projects and contractors can bid on them.
 
 ---
 
-## 🎯 **Who Can Use BuildReady?**
+## 🎯 **Who Can Use Structra?**
 
 ### **Homeowners**
 - People who need construction work done on their property
@@ -248,10 +248,10 @@ BuildReady is a comprehensive online platform that connects homeowners with qual
 ## 🎯 **Success Stories**
 
 ### **Homeowner Success:**
-*"I needed a kitchen renovation and didn't know where to start. BuildReady helped me find three qualified contractors, compare their proposals, and choose the best one. The project was completed on time and within budget!"*
+*"I needed a kitchen renovation and didn't know where to start. Structra helped me find three qualified contractors, compare their proposals, and choose the best one. The project was completed on time and within budget!"*
 
 ### **Contractor Success:**
-*"Since joining BuildReady, my business has grown by 40%. I'm getting quality leads from homeowners who are serious about their projects. The platform makes it easy to showcase my work and build my reputation."*
+*"Since joining Structra, my business has grown by 40%. I'm getting quality leads from homeowners who are serious about their projects. The platform makes it easy to showcase my work and build my reputation."*
 
 ---
 
@@ -259,7 +259,7 @@ BuildReady is a comprehensive online platform that connects homeowners with qual
 
 ### **Ready to Begin?**
 
-1. **Visit the Platform** - Go to your BuildReady website
+1. **Visit the Platform** - Go to your Structra website
 2. **Sign Up** - Create your account
 3. **Complete Profile** - Add your information and preferences
 4. **Start Exploring** - Browse projects or contractors
@@ -310,4 +310,4 @@ BuildReady is a comprehensive online platform that connects homeowners with qual
 
 ---
 
-*This documentation provides a comprehensive overview of the BuildReady platform from a user perspective. For technical implementation details or specific feature questions, please contact the development team.*
+*This documentation provides a comprehensive overview of the Structra platform from a user perspective. For technical implementation details or specific feature questions, please contact the development team.*

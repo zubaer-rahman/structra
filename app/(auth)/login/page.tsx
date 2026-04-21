@@ -102,7 +102,7 @@ export default function LoginPage() {
               if (!hasShownToastRef.current) {
                 const tempUserRole = userRole || USER_ROLES.HOMEOWNER;
                 toast.success(
-                  `Welcome to BuildReady! Your ${tempUserRole} account has been successfully verified.`,
+                  `Welcome to Structra! Your ${tempUserRole} account has been successfully verified.`,
                   {
                     duration: 4000,
                     position: 'top-center',
@@ -301,7 +301,7 @@ export default function LoginPage() {
           title={
             <>
               Welcome Back to
-              <span className="block text-orange-600">BuildReady</span>
+              <span className="block text-orange-600">Structra</span>
             </>
           }
           description="Sign in to access your projects, manage contracts, and continue building your home improvement journey."

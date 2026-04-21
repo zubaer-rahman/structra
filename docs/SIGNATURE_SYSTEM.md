@@ -1,6 +1,6 @@
 # Digital Signature System
 
-A comprehensive DocuSign-like digital signature solution built for the BuildReady construction management platform.
+A comprehensive DocuSign-like digital signature solution built for the Structra construction management platform.
 
 ## 🚀 Features
 
@@ -367,4 +367,4 @@ For questions or issues with the signature system:
 
 ## 📄 License
 
-This signature system is part of the BuildReady platform and follows the same licensing terms.
+This signature system is part of the Structra platform and follows the same licensing terms.

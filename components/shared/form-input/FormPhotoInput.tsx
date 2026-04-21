@@ -63,7 +63,7 @@ export function FormPhotoInput({
     try {
       const uploadResult = await supabaseStorageService.uploadFile(file, {
         fileType: 'photos',
-        bucket: 'buildready-files'
+        bucket: 'structra-files'
       });
 
       return {

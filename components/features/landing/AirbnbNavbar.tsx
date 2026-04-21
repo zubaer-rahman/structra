@@ -20,7 +20,7 @@ export function AirbnbNavbar() {
               <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">B</span>
               </div>
-              <span className="text-orange-500 font-bold text-xl">BuildReady</span>
+              <span className="text-orange-500 font-bold text-xl">Structra</span>
             </div>
           </Link>
         </div>

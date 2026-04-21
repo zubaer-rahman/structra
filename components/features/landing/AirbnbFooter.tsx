@@ -14,7 +14,7 @@ export function AirbnbFooter() {
             <Link href="/" className="cursor-pointer">
               <Image
                 src="/images/brand/logo.png"
-                alt="BuildReady Logo"
+                alt="Structra Logo"
                 width={120}
                 height={100}
                 className="w-full h-auto"

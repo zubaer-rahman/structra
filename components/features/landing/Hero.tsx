@@ -15,13 +15,13 @@ export function Hero() {
          <div className="flex flex-col sm:flex-row items-center justify-center mb-6 sm:mb-8">
           <Image
             src="/images/brand/app-icon-original.png"
-            alt="BuildReady Icon"
+            alt="Structra Icon"
             width={200}
             height={200}
             className="w-24 h-24 sm:w-32 sm:h-32 drop-shadow-xl mb-4 sm:mb-0"
           />
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-orange-500 drop-shadow-sm sm:ml-3">
-            BuildReady
+            Structra
           </h1>
         </div>
 

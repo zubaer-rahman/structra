@@ -121,7 +121,7 @@ export function ProfileCompletionWarning({ className = "" }: ProfileCompletionWa
           </div>
           <div className="flex-1">
             <p className="text-sm text-orange-800 font-medium">
-              Complete your profile to get the most out of BuildReady
+              Complete your profile to get the most out of Structra
             </p>
             <p className="text-xs text-orange-700 mt-1">
               Add missing information to improve your experience and visibility

@@ -58,7 +58,7 @@ export function GovernmentIdUpload({
     try {
       const uploadResult = await supabaseStorageService.uploadFile(file, {
         fileType: 'documents',
-        bucket: 'buildready-files'
+        bucket: 'structra-files'
       })
 
       return {

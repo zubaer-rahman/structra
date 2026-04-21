@@ -149,7 +149,7 @@ export default function ContractorVerificationDetailPage() {
     const filePath = `documents/${fileName}`
 
     const { error: uploadError } = await supabase.storage
-      .from('buildready-files')
+      .from('structra-files')
       .upload(filePath, file)
 
     if (uploadError) {
@@ -159,7 +159,7 @@ export default function ContractorVerificationDetailPage() {
 
     // Get the public URL
     const { data: { publicUrl } } = supabase.storage
-      .from('buildready-files')
+      .from('structra-files')
       .getPublicUrl(filePath)
 
     // Create file reference

@@ -29,7 +29,7 @@ export interface UploadOptions {
 
 class SupabaseStorageService {
   private supabase = createClient()
-  private defaultBucket = 'buildready-files'
+  private defaultBucket = 'structra-files'
 
   /**
    * Check if the service is properly configured
