@@ -208,42 +208,19 @@ export class SupabaseDatabaseClient implements DatabaseClient {
       const { error } = await this.supabase.rpc("exec_sql", { sql });
 
       if (error) {
-        if (error.message.includes('function "exec_sql" does not exist')) {
-          console.log(
-            "⚠️  SQL execution function not available. Please run this SQL manually in Supabase SQL Editor:"
-          );
-          console.log("");
-          console.log("```sql");
-          console.log(sql);
-          console.log("```");
-          console.log("");
-          console.log(
-            "💡 To enable automatic migrations, create this function in Supabase:"
-          );
-          console.log("");
-          console.log("```sql");
-          console.log("CREATE OR REPLACE FUNCTION exec_sql(sql text)");
-          console.log("RETURNS void AS $$");
-          console.log("BEGIN");
-          console.log("  EXECUTE sql;");
-          console.log("END;");
-          console.log("$$ LANGUAGE plpgsql SECURITY DEFINER;");
-          console.log("```");
-          console.log("");
-          return;
-        }
         throw new Error(`SQL execution failed: ${error.message}`);
       }
 
       console.log("✅ SQL executed successfully");
     } catch (error) {
       console.error("❌ SQL execution failed:", error);
-      console.log("⚠️  Please run this SQL manually in Supabase SQL Editor:");
+      console.log("⚠️  Please run this SQL manually in Supabase SQL Editor if needed, but the migration will stop now.");
       console.log("");
       console.log("```sql");
       console.log(sql);
       console.log("```");
       console.log("");
+      throw error; // Re-throw to stop the migration loop
     }
   }
 
