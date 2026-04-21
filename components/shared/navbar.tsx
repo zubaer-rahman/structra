@@ -63,8 +63,8 @@ export default function Navbar({
               className="cursor-pointer"
             >
               <Image
-                src="/images/brand/logo.png"
-                alt="Logo"
+                src="/images/brand/structra_logo.png"
+                alt="Structra Logo"
                 width={120}
                 height={100}
                 className="h-8 w-auto sm:h-10 lg:h-12"

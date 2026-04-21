@@ -13,7 +13,7 @@ export function AirbnbFooter() {
           <div className="flex flex-col items-center space-y-2">
             <Link href="/" className="cursor-pointer">
               <Image
-                src="/images/brand/logo.png"
+                src="/images/brand/structra_logo.png"
                 alt="Structra Logo"
                 width={120}
                 height={100}

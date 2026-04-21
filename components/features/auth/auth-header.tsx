@@ -19,8 +19,8 @@ export function AuthHeader() {
       {/* Logo */}
       <Link href="/" className="cursor-pointer">
         <Image
-          src="/images/brand/logo.png"
-          alt="Logo"
+          src="/images/brand/structra_logo.png"
+          alt="Structra Logo"
           width={120}
           height={120}
           className="w-[120px] h-[40px]"
