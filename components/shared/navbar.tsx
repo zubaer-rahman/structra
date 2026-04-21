@@ -38,7 +38,7 @@ export default function Navbar({
 
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 h-16 px-2 sm:px-4 w-full flex items-center">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-md border-b border-gray-200/50 h-16 px-2 sm:px-4 w-full flex items-center transition-all duration-300">
       <div
         className={cn(
           "flex items-center justify-between w-full",
@@ -63,8 +63,8 @@ export default function Navbar({
               className="cursor-pointer"
             >
               <Image
-                src="/images/brand/logo.png"
-                alt="Logo"
+                src="/images/brand/structra_logo.png"
+                alt="Structra Logo"
                 width={120}
                 height={100}
                 className="h-8 w-auto sm:h-10 lg:h-12"

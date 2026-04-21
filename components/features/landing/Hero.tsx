@@ -1,42 +1,77 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { motion } from "framer-motion";
 
 export function Hero() {
   const { user } = useAuth();
   
   return (
-    <section className="py-12 sm:py-16 bg-gradient-to-b from-orange-50 to-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-         <div className="flex flex-col sm:flex-row items-center justify-center mb-6 sm:mb-8">
-          <Image
-            src="/images/brand/app-icon-original.png"
-            alt="Structra Icon"
-            width={200}
-            height={200}
-            className="w-24 h-24 sm:w-32 sm:h-32 drop-shadow-xl mb-4 sm:mb-0"
-          />
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-orange-500 drop-shadow-sm sm:ml-3">
-            Structra
-          </h1>
+    <section className="relative pt-20 pb-16 sm:pt-24 sm:pb-20 lg:pt-32 lg:pb-28 overflow-hidden bg-gradient-to-b from-orange-50 to-white">
+      {/* Decorative Background Elements */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 opacity-30">
+        <motion.div 
+          animate={{ 
+            scale: [1, 1.1, 1],
+            opacity: [0.3, 0.5, 0.3] 
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-0 left-1/4 w-64 h-64 bg-orange-200 rounded-full blur-3xl" 
+        />
+        <motion.div 
+          animate={{ 
+            scale: [1, 1.2, 1],
+            opacity: [0.2, 0.4, 0.2] 
+          }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          className="absolute bottom-0 right-1/4 w-96 h-96 bg-orange-100 rounded-full blur-3xl" 
+        />
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+        {/* Glassmorphic Trust Badge / Eyebrow */}
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="inline-flex items-center px-4 py-1.5 mb-8 rounded-full bg-white/40 backdrop-blur-md border border-white/20 shadow-lg"
+        >
+          <span className="text-xs sm:text-sm font-bold text-orange-800 tracking-wide uppercase">
+            The Definitive Construction Network
+          </span>
+        </motion.div>
+
+        <div className="mb-10 sm:mb-12">
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-gray-900 mb-6 leading-[1.1] tracking-tight"
+          >
+            Elevate Your Construction <br className="hidden sm:block" /> 
+            <span className="bg-gradient-to-r from-orange-600 to-orange-500 bg-clip-text text-transparent">
+              Experience
+            </span> with Precision
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="text-lg sm:text-xl md:text-2xl text-gray-600 max-w-2xl sm:max-w-3xl mx-auto leading-relaxed px-4 font-medium"
+          >
+            Connecting visionary homeowners with elite, verified professionals. Streamline your project lifecycle from initial concept to final walkthrough.
+          </motion.p>
         </div>
 
-         <div className="mb-6 sm:mb-8">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 sm:mb-4 leading-tight px-2">
-            Where <span className="text-orange-600">Build-Ready Projects</span>{" "}
-            Meet <span className="text-orange-600">Ready Builders</span>
-          </h2>
-          <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-xl sm:max-w-2xl mx-auto leading-relaxed px-4">
-            Easily share better project information to more contractors with less effort 
-            and get stronger results and a contract in hand
-          </p>
-        </div>
-
-         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4">
+         <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.6 }}
+          className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4"
+        >
           <Link href="/register" className="w-full sm:w-auto">
             <Button
               size="lg"
@@ -58,7 +93,7 @@ export function Hero() {
               </Button>
             </Link>
           )}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

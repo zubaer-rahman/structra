@@ -444,8 +444,12 @@ export default function CreateProjectForm({
       const projectTitle = encodeURIComponent(data.project_title);
       window.location.href = `/homeowner/projects/published?title=${projectTitle}&id=${project.id}`;
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to create project after payment:', error);
+      if (error?.message) console.error('Error message:', error.message);
+      if (error?.details) console.error('Error details:', error.details);
+      if (error?.hint) console.error('Error hint:', error.hint);
+      if (error?.code) console.error('Error code:', error.code);
       toast.error("Payment was successful but failed to create project. Please contact support.");
     } finally {
       setLoading(false);
