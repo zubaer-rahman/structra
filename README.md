@@ -1,6 +1,6 @@
-# BuildLink - Contractor & Homeowner Platform
+# Structra - Contractor & Homeowner Platform
 
-A modern web platform that connects homeowners with trusted contractors for construction projects. Built with Next.js 14, TypeScript, Tailwind CSS, and Supabase.
+A modern web platform that connects homeowners with trusted contractors for construction projects. Built with Next.js 15, TypeScript, Tailwind CSS, and Supabase.
 
 ## 🚀 Features
 
@@ -49,8 +49,8 @@ A modern web platform that connects homeowners with trusted contractors for cons
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
-cd prototype_buildready
+git clone git@github.com:zubaer-rahman/structra.git
+cd structra
 ```
 
 ### 2. Install Dependencies
