@@ -131,7 +131,7 @@ export async function POST(request: NextRequest) {
     // Get client IP and user agent
     const ipAddress = request.headers.get('x-forwarded-for') || 
                      request.headers.get('x-real-ip') || 
-                     'unknown'
+                     null
     const userAgent = request.headers.get('user-agent') || 'unknown'
 
     const { data: signature, error: insertError } = await supabase

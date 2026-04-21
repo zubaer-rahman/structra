@@ -31,6 +31,11 @@ import { migration_049_fix_signature_audit_trigger } from "./049_fix_signature_a
 import { migration_050_remove_pid_unique_constraint } from "./050_remove_pid_unique_constraint";
 import { migration_051_add_review_consent_fields } from "./051_add_review_consent_fields";
 import { migration_052_add_contract_review_timestamps } from "./052_add_contract_review_timestamps";
+import { migration_053_setup_signatures_rls } from "./053_setup_signatures_rls";
+import { migration_054_fix_signature_audit_rls } from "./054_fix_signature_audit_rls";
+import { migration_055_setup_admin_rls } from "./055_setup_admin_rls";
+import { migration_056_setup_projects_rls } from "./056_setup_projects_rls";
+import { migration_057_add_user_self_rls } from "./057_add_user_self_rls";
 import { migrationRegistry } from "../migrations";
 
 migrationRegistry.register(migration_000_create_migration_status_table);
@@ -66,6 +71,11 @@ migrationRegistry.register(migration_049_fix_signature_audit_trigger);
 migrationRegistry.register(migration_050_remove_pid_unique_constraint);
 migrationRegistry.register(migration_051_add_review_consent_fields);
 migrationRegistry.register(migration_052_add_contract_review_timestamps);
+migrationRegistry.register(migration_053_setup_signatures_rls);
+migrationRegistry.register(migration_054_fix_signature_audit_rls);
+migrationRegistry.register(migration_055_setup_admin_rls);
+migrationRegistry.register(migration_056_setup_projects_rls);
+migrationRegistry.register(migration_057_add_user_self_rls);
 
 export { migrationRegistry } from "../migrations";
 

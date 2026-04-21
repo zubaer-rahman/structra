@@ -12,6 +12,7 @@ import {
 import { Project } from "@/server/database/interfaces";
 import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
+import { cn } from "@/lib/utils";
 import { trpc } from "@/utils/trpc";
 
 interface LandingProjectCardProps {
@@ -20,6 +21,9 @@ interface LandingProjectCardProps {
   formatBudget: (budget: number) => string;
   formatDate: (dateString: string) => string;
 }
+
+import { motion } from "framer-motion";
+import { PROJECT_STATUSES } from "@/utils/constants";
 
 export default function LandingProjectCard({
   project,
@@ -44,143 +48,132 @@ export default function LandingProjectCard({
   // For unauthenticated users, they don't have access
   // For authenticated users, check their actual access
   const hasAccess = user?.id ? (projectAccess?.hasAccess || false) : false;
-  const isAuthenticated = !!user?.id;
 
   return (
-    <Card 
-      className="group overflow-hidden transition-all duration-300 cursor-pointer border border-gray-200 shadow-sm hover:shadow-lg bg-white hover:border-gray-300"
-      onClick={() => window.open(`/recent-project-preview/${project.slug || project.id}`, '_blank')}
+    <motion.div
+      whileHover={{ y: -8 }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
+      className="h-full"
     >
-      {/* Project Image */}
-      <div className="relative h-52 overflow-hidden">
-        <Image
-          src={
-            project?.project_photos?.[0]?.url || "/images/placeholder-image.png"
-          }
-          alt={project.project_title || "Project image"}
-          width={500}
-          height={500}
-          className={`object-cover transition-transform duration-300 group-hover:scale-105 w-full h-full ${
-            !hasAccess ? 'blur-sm' : ''
-          }`}
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.src = "/images/placeholder-image.png";
-          }}
-        />
+      <Card 
+        className="group overflow-hidden h-full transition-all duration-500 cursor-pointer border border-gray-200/50 shadow-md hover:shadow-2xl bg-white/60 backdrop-blur-md hover:border-orange-500/30 relative"
+        onClick={() => window.open(`/recent-project-preview/${project.slug || project.id}`, '_blank')}
+      >
+        {/* Subtle decorative background gradient */}
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 to-orange-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-        {/* Category Badge */}
-        <div className="absolute top-3 left-3">
-          {project.category && project.category.length > 0 && (
-            <Badge className="bg-gradient-to-r from-orange-400 to-orange-500 text-white border-0 text-xs font-medium px-3 py-1 rounded-full">
-              {project.category[0]}
-            </Badge>
+        {/* Project Image */}
+        <div className="relative h-48 overflow-hidden">
+          <Image
+            src={
+              project?.project_photos?.[0]?.url || "/images/placeholder-image.png"
+            }
+            alt={project.project_title || "Project image"}
+            width={500}
+            height={500}
+            className={`object-cover transition-transform duration-700 group-hover:scale-110 w-full h-full ${
+              !hasAccess ? 'blur-md grayscale' : ''
+            }`}
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.src = "/images/placeholder-image.png";
+            }}
+          />
+
+          {/* Category Badge - Glassmorphic */}
+          <div className="absolute top-3 left-3">
+            {project.category && project.category.length > 0 && (
+              <div className="bg-orange-500/80 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1 rounded-lg shadow-lg border border-white/20 uppercase tracking-wider">
+                {project.category[0]}
+              </div>
+            )}
+          </div>
+
+          {/* Access Lock Overlay - Redesigned */}
+          {!hasAccess && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/10 backdrop-blur-[2px]">
+              <div className="bg-white/80 backdrop-blur-md rounded-2xl p-4 shadow-2xl border border-white/20 transform group-hover:scale-110 transition-transform duration-300">
+                <Lock className="h-8 w-8 text-orange-600" />
+              </div>
+            </div>
           )}
         </div>
 
-        {/* Access Lock Overlay */}
-        {!hasAccess && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="bg-white bg-opacity-80 rounded-full p-3 shadow-lg">
-              <Lock className="h-6 w-6 text-gray-600" />
+        <CardContent className="p-4 sm:p-5">
+          {/* Homeowner Profile */}
+          {project.homeowner && (
+            <div className="flex items-center gap-2.5 mb-4">
+              <div className="relative flex-shrink-0">
+                <Image
+                  src={project.homeowner.profile_photo || "/assets/avatar.png"}
+                  alt={project.homeowner.full_name || "Homeowner"}
+                  width={32}
+                  height={32}
+                  className="rounded-full object-cover ring-2 ring-orange-50"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = "/assets/avatar.png";
+                  }}
+                />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-bold text-gray-900 truncate">
+                  {project.homeowner.full_name}
+                </p>
+                <p className="text-[10px] text-gray-400 uppercase font-bold tracking-tight">Project Owner</p>
+              </div>
             </div>
-          </div>
-        )}
- 
-      </div>
+          )}
 
-      <CardContent className="p-3">
-        {/* Homeowner Profile */}
-        {project.homeowner && (
-          <div className="flex items-center gap-2 mb-3">
-            <div className="relative">
-              <Image
-                src={project.homeowner.profile_photo || "/assets/avatar.png"}
-                alt={project.homeowner.full_name || "Homeowner profile picture"}
-                width={32}
-                height={32}
-                className="rounded-full object-cover"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = "/assets/avatar.png";
-                }}
-              />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">
-                {project.homeowner.full_name}
-              </p>
-              <p className="text-xs text-gray-500">Project Owner</p>
-            </div>
-          </div>
-        )}
+          {/* Project Title */}
+          <h4 className="font-bold text-lg text-gray-900 mb-2 line-clamp-1 group-hover:text-orange-600 transition-colors duration-300 tracking-tight">
+            {project.project_title}
+          </h4>
 
-        {/* Project Title */}
-        <h4 className="font-semibold text-base text-gray-900 mb-1 line-clamp-1 group-hover:text-gray-700 transition-colors duration-200">
-          {project.project_title}
-        </h4>
-
-        {/* Budget - Large and Prominent */}
-        <div className="mb-2">
-          <p className="text-xl font-bold text-gray-900">{formatBudget(project.budget)}</p>
-          <p className="text-xs text-gray-500">Project Budget</p>
-        </div>
-
-        {/* Key Details Row */}
-        <div className="flex items-center gap-2 mb-2 text-xs text-gray-600">
-          <span className="flex items-center gap-1">
-            <Building2 className="h-3 w-3 text-gray-400" />
-            {project.project_type || 'Construction'}
-          </span>
-          <span className="text-gray-300">|</span>
-          <span className="flex items-center gap-1">
-            <Calendar className="h-3 w-3 text-gray-400" />
-            {project.start_date ? formatDate(String(project.start_date)) : 'TBD'}
-          </span>
-          <span className="text-gray-300">|</span>
-          <span className="text-green-600 font-medium">
-            {project.status}
-          </span>
-        </div>
-
-        {/* Location */}
-        {project.location?.city && project.location?.province && (
-          <div className="flex items-center gap-1 text-gray-600 mb-2">
-            <MapPin className="h-3 w-3 text-gray-400" />
-            <span className="text-xs">
-              {project.location.city}, {project.location.province}
+          {/* Budget - More Professional Layout */}
+          <div className="flex items-baseline gap-2 mb-4">
+            <span className="text-2xl font-extrabold text-gray-900 tabular-nums">
+              {formatBudget(project.budget)}
             </span>
+            <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Est. Budget</span>
           </div>
-        )}
 
-        {/* Categories */}
-        {project.category && project.category.length > 1 && (
-          <div className="flex flex-wrap gap-1 mb-2">
-            {project.category.slice(1, 3).map((cat, index) => (
-              <Badge
-                key={`category-${project.id}-${index}-${cat}`}
-                variant="outline"
-                className="text-xs text-gray-600 border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors"
-              >
-                {cat}
-              </Badge>
-            ))}
-            {project.category.length > 3 && (
-              <Badge
-                variant="outline"
-                className="text-xs text-gray-600 border-gray-200 bg-gray-50"
-              >
-                +{project.category.length - 3}
-              </Badge>
-            )}
+          {/* Key Details Grid */}
+          <div className="grid grid-cols-2 gap-y-3 gap-x-2 mb-4">
+            <div className="flex items-center gap-1.5">
+              <div className="p-1.5 bg-gray-50 rounded-md">
+                <Building2 className="h-3.5 w-3.5 text-orange-600" />
+              </div>
+              <span className="text-xs font-semibold text-gray-700 truncate">
+                {project.project_type || 'Construction'}
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="p-1.5 bg-gray-50 rounded-md">
+                <MapPin className="h-3.5 w-3.5 text-orange-600" />
+              </div>
+              <span className="text-xs font-semibold text-gray-700 truncate">
+                {project.location?.city || 'Remote'}
+              </span>
+            </div>
           </div>
-        )}
 
-        {/* Posted Date */}
-        <p className="text-xs text-gray-400">
-          Posted {project.created_at ? formatDate(String(project.created_at)) : 'Recently'}
-        </p>
-      </CardContent>
-    </Card>
+          <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+            <div className="flex items-center gap-1.5">
+              <Calendar className="h-3.5 w-3.5 text-gray-400" />
+              <span className="text-[10px] font-bold text-gray-400 uppercase">
+                {project.start_date ? formatDate(String(project.start_date)) : 'TBD'}
+              </span>
+            </div>
+            <div className={cn(
+              "px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest border",
+              project.status === PROJECT_STATUSES.OPEN_FOR_PROPOSALS ? "bg-green-50 text-green-700 border-green-200" : "bg-gray-50 text-gray-600 border-gray-200"
+            )}>
+              {project.status}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 }
