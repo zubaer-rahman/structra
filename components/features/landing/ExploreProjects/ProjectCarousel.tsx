@@ -30,11 +30,11 @@ export default function ProjectCarousel({
       {/* Carousel Container */}
       <div className="relative mt-14">
         {/* Navigation Buttons - Top Right */}
-        <div className="absolute -top-12 right-0 z-10 flex gap-2">
+        <div className="absolute -top-12 right-0 z-10 flex gap-3">
           <Button
             variant="outline"
             size="icon"
-            className="h-10 w-10 rounded-full bg-white shadow-lg border-gray-200 hover:bg-gray-50 swiper-button-prev-custom"
+            className="h-10 w-10 rounded-full bg-white/5 border-white/10 text-white hover:bg-white/10 transition-all swiper-button-prev-custom"
           >
             <ChevronLeft className="h-5 w-5" />
           </Button>
@@ -42,7 +42,7 @@ export default function ProjectCarousel({
           <Button
             variant="outline"
             size="icon"
-            className="h-10 w-10 rounded-full bg-white shadow-lg border-gray-200 hover:bg-gray-50 swiper-button-next-custom"
+            className="h-10 w-10 rounded-full bg-white/5 border-white/10 text-white hover:bg-white/10 transition-all swiper-button-next-custom"
           >
             <ChevronRight className="h-5 w-5" />
           </Button>

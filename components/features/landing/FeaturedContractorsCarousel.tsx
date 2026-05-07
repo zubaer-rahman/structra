@@ -147,7 +147,7 @@ export function FeaturedContractorsCarousel() {
   if (!isClient) {
     return (
       <div className="flex items-center justify-center h-64">
-        <LoadingSpinner />
+        <LoadingSpinner variant="dark" />
       </div>
     );
   }
@@ -155,144 +155,131 @@ export function FeaturedContractorsCarousel() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <LoadingSpinner />
+        <LoadingSpinner variant="dark" />
       </div>
     );
   }
 
   return (
-    <section className="pt-2 pb-6 bg-white">
-      <div className="w-full px-4 sm:px-6 lg:px-8">
+    <section className="py-24 bg-[#0A0A0A]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="text-lg font-bold text-gray-900">
-              Featured Contractors
-            </h2>
+        <div className="flex items-center justify-between mb-12">
+          <div className="flex items-center gap-4">
+             <div className="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center">
+                <Award className="w-5 h-5 text-orange-500" />
+             </div>
+             <div>
+                <h2 className="text-2xl font-black text-white tracking-tighter uppercase italic">
+                  Featured <span className="text-orange-500">Master Builders</span>
+                </h2>
+                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em]">Institutional Grade Performance</p>
+             </div>
           </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
             {featuredContractors.length > 7 && (
-              <>
+              <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
-                  size="sm"
+                  size="icon"
                   onClick={prevSlide}
-                  className="w-8 h-8 p-0 rounded-full"
+                  className="w-10 h-10 rounded-full bg-white/5 border-white/10 text-white hover:bg-white/10 transition-all"
                 >
-                  <ChevronLeft className="w-4 h-4" />
+                  <ChevronLeft className="w-5 h-5" />
                 </Button>
                 <Button
                   variant="outline"
-                  size="sm"
+                  size="icon"
                   onClick={nextSlide}
-                  className="w-8 h-8 p-0 rounded-full"
+                  className="w-10 h-10 rounded-full bg-white/5 border-white/10 text-white hover:bg-white/10 transition-all"
                 >
-                  <ChevronRight className="w-4 h-4" />
+                  <ChevronRight className="w-5 h-5" />
                 </Button>
-              </>
+              </div>
             )}
             <Link href="/register?role=homeowner">
               <Button
                 variant="outline"
-                size="sm"
-                className="text-sm font-medium"
+                className="bg-orange-500 border-none text-white hover:bg-orange-600 font-bold uppercase text-[10px] tracking-widest h-10 px-6 rounded-full"
               >
-                View All
+                View Full Network
               </Button>
             </Link>
           </div>
         </div>
 
         {featuredContractors.length === 0 ? (
-          <div className="flex items-center justify-center h-64">
+          <div className="flex items-center justify-center h-64 bg-white/5 rounded-3xl border border-white/5">
             <div className="text-center">
-              <Wrench className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <p className="text-xl text-gray-500 mb-2">
-                No featured contractors available
-              </p>
-              <p className="text-gray-400">
-                Check back later for featured contractor showcases
+              <Wrench className="h-12 w-12 text-gray-700 mx-auto mb-4" />
+              <p className="text-sm font-bold text-gray-500 uppercase tracking-widest">
+                Scanning for Elite Talent...
               </p>
             </div>
           </div>
         ) : (
-          <>
-            {/* Contractors Carousel */}
-            <div className="relative overflow-hidden">
-              <div 
-                className="flex transition-transform duration-300 ease-in-out"
-                style={{ 
-                  transform: `translateX(-${currentIndex * (100 / cardsToShow)}%)` 
-                }}
-              >
-                {featuredContractors.map((contractor) => (
-                  <div 
-                    key={contractor.id} 
-                    className="flex-shrink-0 px-2" 
-                    style={{ 
-                      width: `calc(100% / ${cardsToShow})` 
-                    }}
-                  >
-                    {/* Clickable Container for both Image and Text */}
-                    <Link href={`/new-contractor-view/${contractor.slug || contractor.id}`} className="cursor-pointer group block">
-                      {/* Image Card */}
-                      <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 mb-3">
-                        <div className="relative aspect-square overflow-hidden">
-                          <Image
-                            src={getContractorImage(contractor)}
-                            alt={contractor.full_name || 'Contractor image'}
-                            fill
-                            className="object-cover group-hover:scale-105 transition-transform duration-300"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.src = "/images/placeholder-image.png";
-                            }}
-                          />
-                          
-                          {/* Verification Badge */}
-                          {contractor.is_verified_contractor && (
-                            <div className="absolute top-3 right-3 bg-green-500 text-white text-xs font-medium px-2 py-1 rounded-full flex items-center space-x-1">
-                              <CheckCircle className="w-3 h-3" />
-                              <span>Verified</span>
-                            </div>
-                          )}
-
-                          {/* Featured Badge */}
-                          {contractor.contractor_profile?.is_featured_contractor && (
-                            <div className="absolute top-3 left-3 bg-gray-500 text-white text-xs font-medium px-2 py-1 rounded-full flex items-center space-x-1">
-                              <Award className="w-3 h-3" />
-                              <span>Featured</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Text Content Below Image */}
-                      <div className="px-2">
-                        <h3 className="font-semibold text-gray-900 text-xs line-clamp-1 mb-1">
-                          {contractor.contractor_profile?.business_name || contractor.full_name}
-                        </h3>
-
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-1">
-                            <Star className="w-2.5 h-2.5 fill-yellow-400 text-yellow-400" />
-                            <span className="text-xs font-medium">
-                              {contractor.average_rating && contractor.average_rating > 0 ? contractor.average_rating : 'No reviews'}
-                            </span>
-                          </div>
-                          <div className="text-xs font-semibold text-gray-500">
+          <div className="relative overflow-hidden">
+            <div 
+              className="flex transition-transform duration-500 ease-[cubic-bezier(0.2,0,0,1)]"
+              style={{ 
+                transform: `translateX(-${currentIndex * (100 / cardsToShow)}%)` 
+              }}
+            >
+              {featuredContractors.map((contractor) => (
+                <div 
+                  key={contractor.id} 
+                  className="flex-shrink-0 px-3" 
+                  style={{ 
+                    width: `calc(100% / ${cardsToShow})` 
+                  }}
+                >
+                  <Link href={`/new-contractor-view/${contractor.slug || contractor.id}`} className="group block">
+                    <div className="relative aspect-[3/4] rounded-3xl overflow-hidden border border-white/10 bg-white/5 shadow-2xl transition-all duration-500 group-hover:border-orange-500/30 group-hover:-translate-y-2">
+                      <Image
+                        src={getContractorImage(contractor)}
+                        alt={contractor.full_name || 'Contractor'}
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0 opacity-60 group-hover:opacity-100"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = "/images/placeholder-image.png";
+                        }}
+                      />
+                      
+                      {/* Premium Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+                      
+                      <div className="absolute inset-x-0 bottom-0 p-6 space-y-3">
+                        <div className="flex items-center gap-2">
+                          <div className="px-2 py-0.5 rounded bg-orange-500 text-[8px] font-black uppercase text-white tracking-widest">
                             Verified
                           </div>
+                          {contractor.average_rating && contractor.average_rating > 0 && (
+                            <div className="flex items-center gap-1">
+                              <Star className="w-2.5 h-2.5 fill-yellow-500 text-yellow-500" />
+                              <span className="text-[10px] font-black text-white">{contractor.average_rating}</span>
+                            </div>
+                          )}
+                        </div>
+                        
+                        <h3 className="text-sm font-black text-white leading-tight line-clamp-2 uppercase tracking-tighter italic">
+                          {contractor.contractor_profile?.business_name || contractor.full_name}
+                        </h3>
+                        
+                        <div className="flex items-center gap-1.5 text-gray-500">
+                          <MapPin className="w-3 h-3" />
+                          <span className="text-[9px] font-bold uppercase tracking-widest truncate">
+                              {contractor.contractor_profile?.address?.city || 'Elite Division'}
+                          </span>
                         </div>
                       </div>
-                    </Link>
-                  </div>
-                ))}
-              </div>
+                    </div>
+                  </Link>
+                </div>
+              ))}
             </div>
-
-          </>
+          </div>
         )}
       </div>
     </section>

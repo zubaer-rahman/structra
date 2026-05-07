@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase";
 import { Project } from "@/server/database/interfaces";
 import LoadingSpinner from "@/components/shared/loading-spinner";
+import { Navbar } from "@/components/shared";
 
 interface ProjectWithContractor extends Omit<Project, 'homeowner'> {
   contractor?: {
@@ -199,20 +200,26 @@ export default function ProjectViewPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <LoadingSpinner />
+      <div className="min-h-screen bg-white">
+        <Navbar />
+        <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] pt-16">
+          <LoadingSpinner />
+        </div>
       </div>
     );
   }
 
   if (!project) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Project Not Found</h1>
-          <Link href="/new-landing">
-            <Button>Back to Home</Button>
-          </Link>
+      <div className="min-h-screen bg-white">
+        <Navbar />
+        <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] pt-16 px-4">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Project Not Found</h1>
+            <Link href="/new-landing">
+              <Button>Back to Home</Button>
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -223,46 +230,34 @@ export default function ProjectViewPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
-      <div className="sticky top-0 z-50 bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-4">
-              <Link href="/new-landing">
-                <Button variant="ghost" size="sm" className="flex items-center space-x-2">
-                  <ArrowLeft className="w-4 h-4" />
-                  <span>Back</span>
-                </Button>
-              </Link>
-              <div className="h-6 w-px bg-gray-300" />
-              <h1 className="text-lg font-semibold text-gray-900 truncate">
-                {project.project_title}
-              </h1>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="sm" className="flex items-center space-x-2">
-                <Share2 className="w-4 h-4" />
-                <span>Share</span>
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className={`flex items-center space-x-2 ${
-                  isFavorited ? 'text-red-500' : 'text-gray-600'
-                }`}
-                onClick={() => setIsFavorited(!isFavorited)}
-              >
-                <Heart className={`w-4 h-4 ${isFavorited ? 'fill-current' : ''}`} />
-                <span>Save</span>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Navbar backUrl="/new-landing" backText="Back" />
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-8">
+        {/* Project Header */}
+        <div className="flex items-center justify-between mb-8 pb-4 border-b border-gray-100">
+          <h1 className="text-xl font-semibold text-gray-900 truncate">
+            {project.project_title}
+          </h1>
+          
+          <div className="flex items-center space-x-2">
+            <Button variant="ghost" size="sm" className="flex items-center space-x-2 text-gray-600">
+              <Share2 className="w-4 h-4" />
+              <span className="hidden sm:inline">Share</span>
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className={`flex items-center space-x-2 ${
+                isFavorited ? 'text-red-500 hover:text-red-600' : 'text-gray-600'
+              }`}
+              onClick={() => setIsFavorited(!isFavorited)}
+            >
+              <Heart className={`w-4 h-4 ${isFavorited ? 'fill-current' : ''}`} />
+              <span className="hidden sm:inline">Save</span>
+            </Button>
+          </div>
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Project Details */}
           <div className="lg:col-span-2">

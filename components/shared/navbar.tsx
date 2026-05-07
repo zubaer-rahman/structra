@@ -7,21 +7,25 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { UserMenu } from "./UserMenu";
-import { Menu, Users, Hammer, ArrowRightLeft } from "lucide-react";
+import { Menu, Users, Hammer, ArrowRightLeft, ArrowLeft } from "lucide-react";
 import { useState } from "react";
 
 interface NavbarProps {
   onMobileMenuToggle?: () => void;
   showMobileMenuButton?: boolean;
+  backUrl?: string;
+  backText?: string;
 }
 
 export default function Navbar({
   onMobileMenuToggle,
   showMobileMenuButton = false,
+  backUrl,
+  backText = "Back",
 }: NavbarProps) {
   const { user } = useAuth();
   const pathname = usePathname();
-  const isHomePage = false;
+  const isHomePage = pathname === "/" || pathname === "/new-landing";
   const isNewLandingPage = pathname === "/new-landing";
   const isDashboardPage =
     pathname.includes("/dashboard") ||
@@ -38,14 +42,30 @@ export default function Navbar({
 
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-md border-b border-gray-200/50 h-16 px-2 sm:px-4 w-full flex items-center transition-all duration-300">
-      <div
-        className={cn(
-          "flex items-center justify-between w-full",
-          isHomePage && "max-w-7xl mx-auto"
-        )}
-      >
+    <nav className={cn(
+      "fixed top-0 left-0 right-0 z-50 h-16 w-full flex items-center transition-all duration-500",
+      isHomePage 
+        ? "bg-black/20 backdrop-blur-xl border-b border-white/5 text-white" 
+        : "bg-white/70 backdrop-blur-md border-b border-gray-200/50 text-gray-600"
+    )}>
+      <div className="flex items-center justify-between w-full px-2 sm:px-4 lg:px-8">
         <div className="flex items-center space-x-2 sm:space-x-4">
+          {backUrl && (
+            <Link href={backUrl}>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className={cn(
+                  "flex items-center px-2 sm:px-3",
+                  isHomePage ? "text-gray-300 hover:text-white hover:bg-white/5" : "text-gray-600 hover:text-gray-900"
+                )}
+              >
+                <ArrowLeft className="h-4 w-4 mr-1 sm:mr-2" />
+                <span className="hidden sm:inline">{backText}</span>
+              </Button>
+            </Link>
+          )}
+
           {showMobileMenuButton && isDashboardPage && (
             <Button
               variant="ghost"
@@ -74,20 +94,28 @@ export default function Navbar({
         </div>
 
         {/* Navigation Tabs - Only visible on new landing page, hidden on mobile */}
-        {isNewLandingPage && (
-          <div className="hidden md:flex items-center justify-center space-x-6 lg:space-x-8">
-            <div className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
-              <Users className="h-4 w-4 lg:h-5 lg:w-5 text-gray-500" />
-              <span className="hidden lg:inline">Connect</span>
-            </div>
-            <div className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
-              <Hammer className="h-4 w-4 lg:h-5 lg:w-5 text-gray-500" />
-              <span className="hidden lg:inline">Build</span>
-            </div>
-            <div className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
-              <ArrowRightLeft className="h-4 w-4 lg:h-5 lg:w-5 text-gray-500" />
-              <span className="hidden lg:inline">Transform</span>
-            </div>
+        {isHomePage && (
+          <div className="hidden md:flex items-center justify-center space-x-12">
+            {[
+              { label: "Network", id: "network", icon: <Users className="h-3.5 w-3.5" /> },
+              { label: "Infrastructure", id: "infrastructure", icon: <Hammer className="h-3.5 w-3.5" /> },
+              { label: "Exchange", id: "exchange", icon: <ArrowRightLeft className="h-3.5 w-3.5" /> },
+            ].map((item) => (
+              <button 
+                key={item.label} 
+                onClick={() => {
+                  document.getElementById(item.id)?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="flex items-center gap-2 group cursor-pointer border-none bg-transparent"
+              >
+                <div className="text-orange-500 opacity-50 group-hover:opacity-100 transition-opacity">
+                  {item.icon}
+                </div>
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 group-hover:text-white transition-colors">
+                  {item.label}
+                </span>
+              </button>
+            ))}
           </div>
         )}
 
@@ -104,36 +132,47 @@ export default function Navbar({
           {/* Regular page links */}
           {!isAuthPage && (
             <>
-              {isHomePage && user && (
+              {!isDashboardPage && user && (
                 <Link
                   href={`/${
                     user?.user_role || "homeowner"
                   }/dashboard`}
-                  className="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
                 >
-                  Dashboard
+                  <Button
+                    size="sm"
+                    className="text-xs sm:text-sm font-medium bg-orange-500/10 backdrop-blur-md border border-orange-500/20 text-orange-600 hover:bg-orange-500/20 transition-all duration-300 shadow-sm hover:shadow-orange-100 px-3 sm:px-4"
+                  >
+                    Dashboard
+                  </Button>
                 </Link>
               )}
 
               {!user && (
                 <>
+                  <div className="hidden sm:flex items-center gap-4 mr-4 border-r border-white/10 pr-6">
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                      <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">Live Network</span>
+                    </div>
+                  </div>
                   <Link href="/login">
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
-                      className="text-xs sm:text-sm font-medium px-2 sm:px-3"
+                      className={cn(
+                        "text-[10px] font-black uppercase tracking-widest px-4",
+                        isHomePage ? "text-gray-400 hover:text-white hover:bg-white/5" : ""
+                      )}
                     >
-                      <span className="hidden sm:inline">Sign In</span>
-                      <span className="sm:hidden">Sign In</span>
+                      Sign In
                     </Button>
                   </Link>
                   <Link href="/register">
                     <Button
                       size="sm"
-                      className="text-xs sm:text-sm font-medium bg-orange-500 hover:bg-orange-600 px-2 sm:px-3"
+                      className="text-[10px] font-black uppercase tracking-widest bg-orange-500 hover:bg-orange-600 px-6 rounded-full h-9 shadow-[0_0_15px_rgba(234,88,12,0.3)]"
                     >
-                      <span className="hidden sm:inline">Get Started</span>
-                      <span className="sm:hidden">Start</span>
+                      Register
                     </Button>
                   </Link>
                 </>

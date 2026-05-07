@@ -3,7 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Settings, Clock, Sparkles } from 'lucide-react'
 
-const SettingsPage = () => {
+const SettingsPage = async ({ params }: { params: Promise<{ role: string }> }) => {
+  const { role } = await params
   return (
     <div className="container mx-auto px-4 py-6 max-w-2xl">
       <div className="mb-6">

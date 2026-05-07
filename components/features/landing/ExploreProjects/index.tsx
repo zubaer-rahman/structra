@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Building2, Map, List } from "lucide-react";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase";
 import { Project } from "@/server/database/interfaces";
 import LoadingSpinner from "@/components/shared/loading-spinner";
@@ -127,6 +129,7 @@ export default function ExploreProjects({
         <LoadingSpinner
           text="Loading projects..."
           size="lg"
+          variant="dark"
           className="h-full"
         />
       </div>
@@ -134,75 +137,102 @@ export default function ExploreProjects({
   }
 
     return (
-    <section className="py-8 sm:py-12 bg-gradient-to-b from-white to-orange-50">
-      <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ${className}`}>
-        {/* View Toggle */}
-        <div className="text-center mb-8">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4 px-2">
-        Explore Projects Near You
-        </h2>
-        <p className="text-lg sm:text-xl text-gray-600 max-w-3xl sm:max-w-4xl mx-auto px-4">
-        Discover construction projects in your area. Click on any project to see its details.        </p>
-      </div>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
-          <h2 className="text-xl sm:text-2xl font-bold">Explore Projects</h2>
-          <div className="flex items-center gap-2 p-1 bg-gray-100 rounded-lg w-full sm:w-auto">
+    <section className="py-40 bg-[#0A0A0A] border-y border-white/5">
+      <div className={`max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 ${className}`}>
+        {/* View Toggle Header */}
+        <div className="flex flex-col items-center text-center mb-16">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center gap-2 px-3 py-1 mb-6 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500"
+          >
+            <Map className="w-3.5 h-3.5" />
+            <span className="text-[10px] font-black uppercase tracking-[0.2em]">Live Network</span>
+          </motion.div>
+          
+          <h2 className="text-4xl sm:text-5xl font-black text-white mb-6 tracking-tighter">
+            Live Project <span className="text-orange-500">Network</span>
+          </h2>
+          <p className="text-lg text-gray-400 max-w-2xl mx-auto font-medium">
+            Access Canada&apos;s most comprehensive directory of active, verified construction opportunities. Monitor the infrastructure landscape in real-time.
+          </p>
+        </div>
+
+        <div className="flex flex-col sm:flex-row items-center justify-between mb-10 gap-6">
+          <div className="flex items-center gap-4">
+            <h3 className="text-xl font-bold text-white tracking-tight">Active Projects</h3>
+            <span className="px-2 py-0.5 bg-orange-600 text-white text-[10px] font-bold rounded-md">Live</span>
+          </div>
+          
+          <div className="flex items-center gap-2 p-1 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl w-full sm:w-auto">
             <Button
               variant={viewMode === "map" ? "default" : "ghost"}
               size="sm"
               onClick={() => setViewMode("map")}
-              className="flex items-center gap-2 flex-1 sm:flex-none"
+              className={cn(
+                "flex items-center gap-2 flex-1 sm:flex-none h-10 px-6 rounded-xl transition-all duration-300",
+                viewMode === "map" ? "bg-orange-600 text-white shadow-lg" : "text-gray-400 hover:text-white"
+              )}
             >
               <Map className="h-4 w-4" />
-              <span className="hidden xs:inline">Map View</span>
-              <span className="xs:hidden">Map</span>
+              <span className="font-bold">Map Grid</span>
             </Button>
             <Button
               variant={viewMode === "list" ? "default" : "ghost"}
               size="sm"
               onClick={() => setViewMode("list")}
-              className="flex items-center gap-2 flex-1 sm:flex-none"
+              className={cn(
+                "flex items-center gap-2 flex-1 sm:flex-none h-10 px-6 rounded-xl transition-all duration-300",
+                viewMode === "list" ? "bg-orange-600 text-white shadow-lg" : "text-gray-400 hover:text-white"
+              )}
             >
               <List className="h-4 w-4" />
-              <span className="hidden xs:inline">List View</span>
-              <span className="xs:hidden">List</span>
+              <span className="font-bold">Data List</span>
             </Button>
           </div>
         </div>
 
-        {viewMode === "map" ? (
-          <GoogleMapView
-            projects={projects}
-            selectedProject={selectedProject}
-            mapCenter={mapCenter}
-            isClient={isClient}
-            onProjectClick={handleProjectClick}
-            formatBudget={formatBudget}
-            formatDate={formatDate}
-            onSearch={handleSearch}
-            searchQuery={searchQuery}
-            obfuscate={true}
-          />
-        ) : projects.length === 0 ? (
-          <div className="flex items-center justify-center h-64">
-            <div className="text-center">
-              <Building2 className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <p className="text-xl text-gray-500 mb-2">
-                No projects nearby
-              </p>
-              <p className="text-gray-400">
-                Check back later for new opportunities
-              </p>
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="rounded-[2.5rem] overflow-hidden border border-white/5 shadow-2xl bg-white/5 backdrop-blur-3xl min-h-[600px]"
+        >
+          {viewMode === "map" ? (
+            <GoogleMapView
+              projects={projects}
+              selectedProject={selectedProject}
+              mapCenter={mapCenter}
+              isClient={isClient}
+              onProjectClick={handleProjectClick}
+              formatBudget={formatBudget}
+              formatDate={formatDate}
+              onSearch={handleSearch}
+              searchQuery={searchQuery}
+              obfuscate={true}
+            />
+          ) : projects.length === 0 ? (
+            <div className="flex items-center justify-center h-[600px]">
+              <div className="text-center">
+                <Building2 className="h-20 w-20 text-gray-700 mx-auto mb-6" />
+                <p className="text-2xl font-bold text-white mb-2 tracking-tight">
+                  No active projects in this sector
+                </p>
+                <p className="text-gray-500 font-medium max-w-sm mx-auto">
+                  Our network expands daily. Check back shortly for premium opportunities.
+                </p>
+              </div>
             </div>
-          </div>
-        ) : (
-          <ListView
-            projects={projects}
-            selectedProject={selectedProject}
-            formatBudget={formatBudget}
-            formatDate={formatDate}
-          />
-        )}
+          ) : (
+            <ListView
+              projects={projects}
+              selectedProject={selectedProject}
+              formatBudget={formatBudget}
+              formatDate={formatDate}
+            />
+          )}
+        </motion.div>
       </div>
     </section>
   );

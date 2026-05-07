@@ -8,6 +8,8 @@ import { Input } from '@/components/ui/input'
 import { MapPin, DollarSign, Calendar, Building2, Search } from 'lucide-react'
 import { Project } from '@/server/database/interfaces'
 import Image from 'next/image'
+import { motion } from 'framer-motion'
+import { cn } from '@/lib/utils'
 import { useGoogleMaps } from '@/hooks/useGoogleMaps'
 
 // Use any for Google Maps types to avoid conflicts
@@ -306,6 +308,88 @@ export default function GoogleMapView({
     try {
       const normalizedQuery = (searchQuery || '').trim().toLowerCase()
       const isCanadaSearch = normalizedQuery === '' || normalizedQuery === 'canada'
+      
+      const darkMapStyle = [
+        { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
+        { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
+        { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
+        {
+          featureType: "administrative.locality",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#d59563" }],
+        },
+        {
+          featureType: "poi",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#d59563" }],
+        },
+        {
+          featureType: "poi.park",
+          elementType: "geometry",
+          stylers: [{ color: "#263c3f" }],
+        },
+        {
+          featureType: "poi.park",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#6b9a76" }],
+        },
+        {
+          featureType: "road",
+          elementType: "geometry",
+          stylers: [{ color: "#38414e" }],
+        },
+        {
+          featureType: "road",
+          elementType: "geometry.stroke",
+          stylers: [{ color: "#212a37" }],
+        },
+        {
+          featureType: "road",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#9ca5b3" }],
+        },
+        {
+          featureType: "road.highway",
+          elementType: "geometry",
+          stylers: [{ color: "#746855" }],
+        },
+        {
+          featureType: "road.highway",
+          elementType: "geometry.stroke",
+          stylers: [{ color: "#1f2835" }],
+        },
+        {
+          featureType: "road.highway",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#f3d19c" }],
+        },
+        {
+          featureType: "transit",
+          elementType: "geometry",
+          stylers: [{ color: "#2f3948" }],
+        },
+        {
+          featureType: "transit.station",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#d59563" }],
+        },
+        {
+          featureType: "water",
+          elementType: "geometry",
+          stylers: [{ color: "#17263c" }],
+        },
+        {
+          featureType: "water",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#515c6d" }],
+        },
+        {
+          featureType: "water",
+          elementType: "labels.text.stroke",
+          stylers: [{ color: "#17263c" }],
+        },
+      ];
+
       const mapOptions = {
         center: {
           lat: mapCenter[0],
@@ -315,9 +399,10 @@ export default function GoogleMapView({
         mapTypeId: window.google.maps.MapTypeId.ROADMAP,
         disableDefaultUI: false,
         zoomControl: true,
-        streetViewControl: true,
+        streetViewControl: false,
         fullscreenControl: true,
-        mapTypeControl: false
+        mapTypeControl: false,
+        styles: darkMapStyle
       }
 
       // Create map
@@ -438,123 +523,111 @@ export default function GoogleMapView({
   }
 
   return (
-    <div className="flex flex-col lg:grid lg:grid-cols-3 gap-4 lg:gap-6 min-h-[500px]">
+    <div className="flex flex-col lg:grid lg:grid-cols-4 gap-0 min-h-[600px] bg-black/20">
       {/* Project List Sidebar */}
-      <div className="lg:col-span-1 overflow-hidden order-2 lg:order-1">
-        <Card className="h-full">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-sm">
-              <Building2 className="h-4 w-4" />
-              Available Projects
-            </CardTitle>
-            {/* Search Box */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input
-                type="text"
-                placeholder="Search by location or project..."
-                value={searchQuery}
-                onChange={(e) => onSearch(e.target.value)}
-                className="pl-10"
-              />
+      <div className="lg:col-span-1 overflow-hidden order-2 lg:order-1 border-r border-white/5 flex flex-col h-full">
+        <div className="p-6 border-b border-white/5 space-y-6">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-orange-600 flex items-center justify-center">
+               <Building2 className="h-4 w-4 text-white" />
             </div>
-          </CardHeader>
-          <CardContent className="p-0">
-            <div className="max-h-[400px] lg:max-h-[600px] overflow-y-auto">
-              {projects.length === 0 ? (
-                <div className="p-6 text-center text-gray-500">
-                  <MapPin className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                  <p>
-                    {searchQuery.trim() 
-                      ? `No projects found for "${searchQuery}"`
-                      : "No projects in Canada"
-                    }
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-2 p-4">
-                  {projects.map((project, index) => (
-                    <div
-                      key={project.id || `project-${index}`}
-                      onClick={() => onProjectClick(project)}
-                      className={`p-4 rounded-lg border cursor-pointer transition-all hover:shadow-md ${
-                        selectedProject?.id === project.id
-                          ? 'border-blue-500 bg-blue-50'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <div className="space-y-2">
-                        <h3 className="font-semibold text-sm line-clamp-2">
-                          {project.project_title}
-                        </h3>
-                        
-                        <div className="flex items-center gap-2 text-xs text-gray-600">
-                          <MapPin className="h-3 w-3" />
-                          <span className="truncate">
-                            {project.location?.city && project.location?.province
-                              ? `${project.location.city}, ${project.location.province}`
-                              : project.location?.address || 'Location available'
-                            }
-                          </span>
-                        </div>
+            <h3 className="text-sm font-black text-white uppercase tracking-widest">Global Ops</h3>
+          </div>
+          
+          {/* Search Box */}
+          <div className="relative group">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 group-focus-within:text-orange-500 transition-colors" />
+            <Input
+              type="text"
+              placeholder="Search Global Network..."
+              value={searchQuery}
+              onChange={(e) => onSearch(e.target.value)}
+              className="h-12 pl-12 bg-white/5 border-white/10 text-white placeholder:text-gray-600 rounded-xl focus:ring-orange-500 focus:border-orange-500 transition-all font-medium"
+            />
+          </div>
+        </div>
 
-                        <div className="flex items-center gap-2 text-xs text-gray-600">
-                          <DollarSign className="h-3 w-3" />
-                          <span>{formatBudget(project.budget)}</span>
-                        </div>
-
-                        {project.category && project.category.length > 0 && (
-                          <div className="flex flex-wrap gap-1">
-                            {project.category.slice(0, 2).map((cat, index) => (
-                              <Badge key={`category-${project.id}-${index}-${cat}`} variant="secondary" className="text-xs">
-                                {cat}
-                              </Badge>
-                            ))}
-                            {project.category.length > 2 && (
-                              <Badge variant="outline" className="text-xs">
-                                +{project.category.length - 2}
-                              </Badge>
-                            )}
-                          </div>
-                        )}
-
-                        {project.start_date && (
-                          <div className="flex items-center gap-2 text-xs text-gray-500">
-                            <Calendar className="h-3 w-3" />
-                            <span>Starts {formatDate(String(project.start_date))}</span>
-                          </div>
-                        )}
-                      </div>
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-3 bg-black/10">
+          {projects.length === 0 ? (
+            <div className="py-12 text-center">
+              <MapPin className="h-10 w-10 mx-auto mb-4 text-gray-700" />
+              <p className="text-sm text-gray-500 font-medium">
+                {searchQuery.trim() 
+                  ? `No results for "${searchQuery}"`
+                  : "Scanning for projects..."
+                }
+              </p>
+            </div>
+          ) : (
+            projects.map((project, index) => (
+              <motion.div
+                key={project.id || `project-${index}`}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.05 }}
+                onClick={() => onProjectClick(project)}
+                className={cn(
+                  "p-5 rounded-2xl border cursor-pointer transition-all duration-300 group relative overflow-hidden",
+                  selectedProject?.id === project.id
+                    ? 'border-orange-500/50 bg-orange-500/5 shadow-[0_0_20px_rgba(234,88,12,0.1)]'
+                    : 'border-white/5 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/10'
+                )}
+              >
+                <div className="relative z-10 space-y-3">
+                  <h3 className="font-bold text-sm text-white line-clamp-1 group-hover:text-orange-500 transition-colors">
+                    {project.project_title}
+                  </h3>
+                  
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                      <MapPin className="h-3 w-3 text-orange-500" />
+                      <span className="truncate">
+                        {project.location?.city && project.location?.province
+                          ? `${project.location.city}, ${project.location.province}`
+                          : project.location?.address || 'Verified Locale'
+                        }
+                      </span>
                     </div>
-                  ))}
+
+                    <div className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                      <DollarSign className="h-3 w-3 text-orange-500" />
+                      <span className="text-white">{formatBudget(project.budget)}</span>
+                    </div>
+                  </div>
+
+                  {project.category && project.category.length > 0 && (
+                    <div className="flex flex-wrap gap-1 pt-1">
+                      {project.category.slice(0, 1).map((cat, index) => (
+                        <Badge key={index} variant="outline" className="bg-white/5 border-white/10 text-[9px] font-black uppercase text-gray-400 px-2 py-0">
+                          {cat}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+              </motion.div>
+            ))
+          )}
+        </div>
       </div>
 
       {/* Google Map */}
-      <div className="lg:col-span-2 order-1 lg:order-2">
-        <Card className="h-full">
-          <CardContent className="p-0 h-full">
-            <div className="h-full rounded-lg overflow-hidden relative">
-              <div 
-                ref={mapRef} 
-                className="w-full h-full relative z-10"
-                style={{ minHeight: '500px' }}
-              />
-              {!isLoaded && (
-                <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg z-20">
-                  <div className="text-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto mb-2"></div>
-                    <p className="text-sm text-gray-600">Loading map...</p>
-                  </div>
-                </div>
-              )}
+      <div className="lg:col-span-3 order-1 lg:order-2 h-full">
+        <div className="h-full relative overflow-hidden">
+          <div 
+            ref={mapRef} 
+            className="w-full h-full relative z-10"
+            style={{ minHeight: '600px' }}
+          />
+          {!isLoaded && (
+            <div className="absolute inset-0 flex items-center justify-center bg-[#0A0A0A] z-20">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-orange-500 mx-auto mb-4"></div>
+                <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">Initializing Map...</p>
+              </div>
             </div>
-          </CardContent>
-        </Card>
+          )}
+        </div>
       </div>
     </div>
   )

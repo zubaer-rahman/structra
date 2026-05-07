@@ -4,7 +4,7 @@ interface LoadingSpinnerProps {
   text?: string
   subtitle?: string
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
-  variant?: 'default' | 'warning' | 'error' | 'white'
+  variant?: 'default' | 'warning' | 'error' | 'white' | 'dark'
   className?: string
   showText?: boolean
   inline?: boolean
@@ -47,6 +47,11 @@ export default function LoadingSpinner({
       spinner: 'border-white',
       text: 'text-white',
       subtitle: 'text-gray-200'
+    },
+    dark: {
+      spinner: 'border-orange-500',
+      text: 'text-white',
+      subtitle: 'text-gray-500'
     }
   }
 
