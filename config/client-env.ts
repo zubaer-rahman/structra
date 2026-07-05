@@ -10,21 +10,8 @@ const DEFAULT_PRICING = {
   PROJECT_ACCESS_FEE: 999, // $9.99
 } as const
 
-// Get pricing from environment variables or use defaults
-const getPricingFromEnv = () => {
-  // These environment variables should be set in .env.local with NEXT_PUBLIC_ prefix
-  const contractorPrice = process.env.NEXT_PUBLIC_CONTRACTOR_VERIFICATION_ANNUAL_PRICE
-  const creationFee = process.env.NEXT_PUBLIC_PROJECT_CREATION_FEE
-  const accessFee = process.env.NEXT_PUBLIC_PROJECT_ACCESS_FEE
-  
-  return {
-    CONTRACTOR_VERIFICATION_ANNUAL_PRICE: contractorPrice ? parseInt(contractorPrice, 10) : DEFAULT_PRICING.CONTRACTOR_VERIFICATION_ANNUAL_PRICE,
-    PROJECT_CREATION_FEE: creationFee ? parseInt(creationFee, 10) : DEFAULT_PRICING.PROJECT_CREATION_FEE,
-    PROJECT_ACCESS_FEE: accessFee ? parseInt(accessFee, 10) : DEFAULT_PRICING.PROJECT_ACCESS_FEE,
-  }
-}
-
-const PRICING = getPricingFromEnv()
+// Client-safe pricing configuration (matches server defaults in config/env.ts)
+const PRICING = DEFAULT_PRICING
 
 // Client-safe pricing configuration
 export const clientConfig = {

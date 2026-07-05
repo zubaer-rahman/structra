@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: process.env.NEXT_PUBLIC_APP_TITLE || "Structra - Contractor & Homeowner Platform",
-  description: process.env.NEXT_PUBLIC_APP_DESCRIPTION || "Connect with trusted contractors and homeowners for your construction projects",
+  title: "Structra - Contractor & Homeowner Platform",
+  description: "Connect with trusted contractors and homeowners for your construction projects",
   icons: {
     icon: "/images/brand/favicon_structra.png",
   },
