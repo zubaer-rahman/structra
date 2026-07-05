@@ -1,9 +1,6 @@
 <h1 align="center">
   <br />
   <img src="public/images/brand/structra_logo.png" alt="Structra" width="200" />
-  <br />
-  Structra
-  <br />
 </h1>
 
 <h4 align="center">A full-stack marketplace connecting homeowners with verified contractors — built for transparency, trust, and speed.</h4>
