@@ -36,6 +36,7 @@ const nextConfig: NextConfig = {
     }
     return config;
   },
+  turbopack: {},
   // React 19 compatibility
   reactStrictMode: false,
 };
