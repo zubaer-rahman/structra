@@ -14,13 +14,14 @@ import { Metrics } from "./Metrics";
     
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-[#0A0A0A] selection:bg-orange-500/30">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0A0A0A] text-slate-900 dark:text-white selection:bg-orange-500/30 transition-colors duration-300">
       {/* Technical Grid Overlay */}
-      <div className="fixed inset-0 pointer-events-none z-0 opacity-20" 
-           style={{ 
-             backgroundImage: `linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)`,
-             backgroundSize: '100px 100px'
-           }} 
+      <div 
+        className="fixed inset-0 pointer-events-none z-0 opacity-10 dark:opacity-20 transition-opacity duration-300" 
+        style={{ 
+          backgroundImage: `linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px)`,
+          backgroundSize: '100px 100px'
+        }} 
       />
       
       <div className="relative z-10">

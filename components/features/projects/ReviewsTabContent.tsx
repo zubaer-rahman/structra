@@ -239,11 +239,11 @@ export default function ReviewsTabContent({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Project Reviews</h2>
-          <p className="text-gray-600 mt-1">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Project Reviews</h2>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
             Reviews and feedback exchanged between project participants
           </p>
-          <div className="mt-2 text-sm text-gray-500">
+          <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
             <span className="font-medium">Project:</span> {project.project_title} • 
             <span className="font-medium ml-1">Status:</span> {project.status}
           </div>
@@ -262,7 +262,7 @@ export default function ReviewsTabContent({
         
         {/* Show message when no valid review target */}
         {!hasUserReviewed && project.status === "Completed" && !reviewTarget && (
-          <div className="text-sm text-gray-500 italic">
+          <div className="text-sm text-gray-500 dark:text-gray-400 italic">
             Unable to determine review target. Please ensure the project has an accepted proposal.
           </div>
         )}
@@ -270,18 +270,18 @@ export default function ReviewsTabContent({
 
       {/* Review Form Modal */}
       {(showReviewForm || editingReviewId) && (
-        <Card className="border-2 border-gray-200">
+        <Card className="border-2 border-gray-200 dark:border-white/10">
           <CardHeader>
             <CardTitle className="text-lg">
               {editingReviewId ? "Edit Review" : "Write a Review"}
             </CardTitle>
-            <div className="text-sm text-gray-600 mt-2">
+            <div className="text-sm text-gray-600 dark:text-gray-400 mt-2">
               <div className="flex items-center gap-2">
-                <span className="font-medium text-gray-900">
+                <span className="font-medium text-gray-900 dark:text-white">
                   {user?.full_name || user?.email}
                 </span>
                 <span>reviewing</span>
-                <span className="font-medium text-gray-900">
+                <span className="font-medium text-gray-900 dark:text-white">
                   {reviewTarget ? 
                     (userRole === USER_ROLES.HOMEOWNER ? 
                       acceptedProposal?.contractor_profile?.full_name || 'Contractor' : 
@@ -305,7 +305,7 @@ export default function ReviewsTabContent({
                 {renderStars(newReview.rating, true, (rating) =>
                   setNewReview(prev => ({ ...prev, rating }))
                 )}
-                <span className="ml-2 text-sm text-gray-600">
+                <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">
                   {newReview.rating} out of 5 stars
                 </span>
               </div>
@@ -327,9 +327,9 @@ export default function ReviewsTabContent({
                       recommend_score: parseInt(e.target.value)
                     }))
                   }
-                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                  className="w-full h-2 bg-gray-200 dark:bg-white/10 rounded-lg appearance-none cursor-pointer"
                 />
-                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
                   <span>Not at all likely</span>
                   <span className="font-medium">{newReview.recommend_score}/10</span>
                   <span>Extremely likely</span>
@@ -339,14 +339,14 @@ export default function ReviewsTabContent({
 
             {/* Photo Consent Section - Only for Homeowners */}
             {userRole === USER_ROLES.HOMEOWNER && project.project_photos && project.project_photos.length > 0 && project.after_photo && (
-              <div className="space-y-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                <h3 className="text-sm font-semibold text-blue-900 flex items-center gap-2">
+              <div className="space-y-3 p-3 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 rounded-lg">
+                <h3 className="text-sm font-semibold text-blue-900 dark:text-blue-300 flex items-center gap-2">
                   <Camera className="h-4 w-4" />
                   Photo Usage Consent
                 </h3>
                 
                 <div className="space-y-2">
-                  <p className="text-sm text-blue-800">
+                  <p className="text-sm text-blue-800 dark:text-blue-400">
                     Do you consent to include the before/after pictures of the Area of Work in the review and on the contractor's profile?
                   </p>
                   
@@ -361,7 +361,7 @@ export default function ReviewsTabContent({
                         className="h-3 w-3 text-blue-600 focus:ring-blue-500 border-gray-300"
                         disabled={createReviewMutation.isPending}
                       />
-                      <span className="text-sm text-blue-800 font-medium">Yes</span>
+                      <span className="text-sm text-blue-800 dark:text-blue-300 font-medium">Yes</span>
                     </label>
                     
                     <label className="flex items-center space-x-2 cursor-pointer">
@@ -374,7 +374,7 @@ export default function ReviewsTabContent({
                         className="h-3 w-3 text-blue-600 focus:ring-blue-500 border-gray-300"
                         disabled={createReviewMutation.isPending}
                       />
-                      <span className="text-sm text-blue-800 font-medium">No</span>
+                      <span className="text-sm text-blue-800 dark:text-blue-300 font-medium">No</span>
                     </label>
                   </div>
                 </div>
@@ -424,25 +424,25 @@ export default function ReviewsTabContent({
 
       {/* Reviews List */}
       {reviews.length > 0 && (
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
-          <div className="flex items-center gap-2 text-sm text-gray-700">
+        <div className="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg p-4 mb-6">
+          <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
             <MessageSquare className="w-4 h-4" />
             <span className="font-medium">
               {reviews.length} review{reviews.length !== 1 ? 's' : ''} from project participants
             </span>
           </div>
-          <p className="text-xs text-gray-600 mt-1">
+          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
             Reviews are exchanged between homeowners and contractors after project completion
           </p>
         </div>
       )}
       
       {reviews.length === 0 ? (
-        <Card>
+        <Card className="border border-gray-200 dark:border-white/10">
           <CardContent className="py-12 text-center">
-            <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No reviews yet</h3>
-            <p className="text-gray-600">
+            <MessageSquare className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No reviews yet</h3>
+            <p className="text-gray-600 dark:text-gray-400">
               {project.status === "Completed" 
                 ? "Be the first to review this project!"
                 : "Reviews will be available once the project is completed."
@@ -453,12 +453,12 @@ export default function ReviewsTabContent({
       ) : (
         <div className="space-y-4">
           {reviews.map((review) => (
-            <Card key={review.id} className="border border-gray-200">
+            <Card key={review.id} className="border border-gray-200 dark:border-white/10">
               {editingReviewId === review.id ? (
                 <CardContent className="p-6">
                   <div className="text-center py-8">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto mb-4"></div>
-                    <p className="text-gray-600">Loading edit form...</p>
+                    <p className="text-gray-600 dark:text-gray-400">Loading edit form...</p>
                   </div>
                 </CardContent>
               ) : (
@@ -479,13 +479,13 @@ export default function ReviewsTabContent({
                             target.style.display = 'none';
                             const parent = target.parentElement;
                             if (parent) {
-                              parent.innerHTML = `<div class="w-full h-full bg-orange-100 rounded-full flex items-center justify-center"><span class="text-orange-600 font-medium text-sm">${review.author_user?.first_name?.[0] || "U"}</span></div>`;
+                              parent.innerHTML = `<div class="w-full h-full bg-orange-100 dark:bg-orange-950/40 rounded-full flex items-center justify-center"><span class="text-orange-600 dark:text-orange-400 font-medium text-sm">${review.author_user?.first_name?.[0] || "U"}</span></div>`;
                             }
                           }}
                         />
                       ) : (
-                        <div className="w-full h-full bg-orange-100 rounded-full flex items-center justify-center">
-                          <span className="text-orange-600 font-medium text-sm">
+                        <div className="w-full h-full bg-orange-100 dark:bg-orange-950/40 rounded-full flex items-center justify-center">
+                          <span className="text-orange-600 dark:text-orange-400 font-medium text-sm">
                             {review.author_user?.first_name?.[0] || "U"}
                           </span>
                         </div>
@@ -493,11 +493,11 @@ export default function ReviewsTabContent({
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-medium text-gray-900">
+                        <h4 className="font-medium text-gray-900 dark:text-white">
                           {review.author_user?.first_name} {review.author_user?.last_name}
                         </h4>
-                        <span className="text-sm text-gray-500">•</span>
-                        <span className="text-sm text-gray-500">
+                        <span className="text-sm text-gray-500 dark:text-gray-400">•</span>
+                        <span className="text-sm text-gray-500 dark:text-gray-400">
                           {new Date(review.created_at).toLocaleDateString()}
                         </span>
                       </div>
@@ -505,11 +505,11 @@ export default function ReviewsTabContent({
                       {/* Review Relationship Indicator */}
                       <div className="flex items-center gap-2 text-sm">
                         <div className="flex items-center gap-1">
-                          <span className="font-medium text-gray-900">
+                          <span className="font-medium text-gray-900 dark:text-white">
                             {review.author_user?.first_name} {review.author_user?.last_name}
                           </span>
-                          <span className="text-gray-500">reviewed</span>
-                          <span className="font-medium text-gray-900">
+                          <span className="text-gray-500 dark:text-gray-400">reviewed</span>
+                          <span className="font-medium text-gray-900 dark:text-white">
                             {review.recipient_user?.first_name} {review.recipient_user?.last_name}
                           </span>
                         </div>
@@ -522,12 +522,12 @@ export default function ReviewsTabContent({
                   
                   <div className="flex items-center gap-2">
                     {review.is_verified === "yes" && (
-                      <Badge variant="secondary" className="text-green-600 bg-green-100">
+                      <Badge variant="secondary" className="text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-950/40">
                         Verified
                       </Badge>
                     )}
                     {review.homeowner_consent_for_photos && (
-                      <Badge variant="outline" className="text-blue-600 bg-blue-50 border-blue-200">
+                      <Badge variant="outline" className="text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900/50">
                         <Camera className="h-3 w-3 mr-1" />
                         Photo Consent
                       </Badge>
@@ -551,19 +551,19 @@ export default function ReviewsTabContent({
 
                 <div className="space-y-4">
                   {/* Rating Section */}
-                  <div className="bg-gray-50 rounded-lg p-4">
+                  <div className="bg-gray-50 dark:bg-white/5 rounded-lg p-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium text-gray-700">Overall Rating:</span>
+                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Overall Rating:</span>
                           {renderStars(review.rating)}
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium text-gray-700">Recommendation:</span>
+                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Recommendation:</span>
                           {renderRecommendScore(review.recommend_score)}
                         </div>
                       </div>
-                      <div className="text-xs text-gray-600">
+                      <div className="text-xs text-gray-600 dark:text-gray-400">
                         {review.recommend_score >= 9 ? 'Highly Recommended' : 
                          review.recommend_score >= 7 ? 'Recommended' : 
                          review.recommend_score >= 5 ? 'Neutral' : 'Not Recommended'}
@@ -574,8 +574,8 @@ export default function ReviewsTabContent({
 
                   {/* Review Text */}
                   <div>
-                    <h5 className="text-sm font-medium text-gray-700 mb-2">Review:</h5>
-                    <p className="text-gray-700 leading-relaxed bg-white border rounded-lg p-3">
+                    <h5 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Review:</h5>
+                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed bg-white dark:bg-[#141414] border border-gray-200 dark:border-white/10 rounded-lg p-3">
                       {review.text}
                     </p>
                   </div>

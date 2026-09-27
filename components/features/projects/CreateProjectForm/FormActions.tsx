@@ -47,18 +47,18 @@ export function FormActions({
   // If showing draft button, render two buttons
   if (showDraftButton) {
     return (
-      <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-xs">
+      <div className="bg-white dark:bg-[#141414] rounded-xl border border-gray-200 dark:border-white/10 p-5 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           {/* Missing fields or validation status message */}
           <div className="text-xs flex-1">
             {!isEditMode && isPublishDisabled && (
-              <div className="flex items-start gap-2 text-amber-800 bg-amber-50/80 border border-amber-200/70 rounded-lg p-2.5">
-                <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+              <div className="flex items-start gap-2 text-amber-800 dark:text-amber-300 bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200/70 dark:border-amber-900/50 rounded-lg p-2.5">
+                <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
                 <div className="space-y-0.5">
-                  <p className="font-semibold text-amber-900">
+                  <p className="font-semibold text-amber-900 dark:text-amber-200">
                     Required to publish:
                   </p>
-                  <p className="text-amber-700">
+                  <p className="text-amber-700 dark:text-amber-400">
                     {missingFields.length > 0
                       ? missingFields.join(" • ")
                       : "Please fill in all required fields to enable publishing."}
@@ -67,9 +67,9 @@ export function FormActions({
               </div>
             )}
             {!isEditMode && !isPublishDisabled && (
-              <div className="flex items-center gap-2 text-emerald-800 bg-emerald-50/80 border border-emerald-200/70 rounded-lg p-2.5">
-                <CheckCircle className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                <span className="font-medium text-emerald-900">
+              <div className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-200/70 dark:border-emerald-900/50 rounded-lg p-2.5">
+                <CheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                <span className="font-medium text-emerald-900 dark:text-emerald-200">
                   All required fields completed. Ready to publish!
                 </span>
               </div>
@@ -98,7 +98,7 @@ export function FormActions({
                 disabled={isPublishLoading || isPublishDisabled}
                 className={`cursor-pointer transition-all duration-200 ${
                   isPublishDisabled 
-                    ? "opacity-50 cursor-not-allowed bg-gray-200 text-gray-500 hover:bg-gray-200 hover:text-gray-500 border border-gray-300 shadow-none" 
+                    ? "opacity-50 cursor-not-allowed bg-gray-200 dark:bg-white/10 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/10 hover:text-gray-500 border border-gray-300 dark:border-white/10 shadow-none" 
                     : "bg-orange-600 hover:bg-orange-700 text-white shadow-sm"
                 }`}
                 title={isPublishDisabled ? "Please fill in all required fields to enable publishing" : undefined}
@@ -114,7 +114,7 @@ export function FormActions({
 
   // Default single button mode
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-6">
+    <div className="bg-white dark:bg-[#141414] rounded-lg border border-gray-200 dark:border-white/10 p-6">
       <div className="flex justify-end space-x-4">
         <Link href={cancelUrl}>
           <Button type="button" variant="outline">

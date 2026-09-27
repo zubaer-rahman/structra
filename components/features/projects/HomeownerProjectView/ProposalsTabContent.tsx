@@ -218,16 +218,16 @@ export function ProposalsTabContent({
   }
 
   return (
-    <div className="space-y-6 bg-white">
+    <div className="space-y-6 bg-white dark:bg-transparent transition-colors">
       {/* Header with Filters and Actions */}
-      <Card className="bg-white border-gray-200">
+      <Card className="bg-white dark:bg-[#141414] border-gray-200 dark:border-white/10">
         <CardHeader>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <CardTitle className="text-xl text-black">
+              <CardTitle className="text-xl text-black dark:text-white">
                 Proposals ({proposals.length})
               </CardTitle>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                 {userRole === "homeowner"
                   ? "Review and manage contractor proposals"
                   : "Track your submitted proposals"}
@@ -240,7 +240,7 @@ export function ProposalsTabContent({
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-md text-sm bg-white text-black focus:outline-none"
+                className="px-3 py-2 border border-gray-300 dark:border-white/15 rounded-md text-sm bg-white dark:bg-[#161616] text-black dark:text-white focus:outline-none"
               >
                 <option value="all">All Status</option>
                 <option value="submitted">Submitted</option>
@@ -254,7 +254,7 @@ export function ProposalsTabContent({
                 onChange={(e) =>
                   setSortBy(e.target.value as "date" | "price")
                 }
-                className="px-3 py-2 border border-gray-300 rounded-md text-sm bg-white text-black focus:outline-none"
+                className="px-3 py-2 border border-gray-300 dark:border-white/15 rounded-md text-sm bg-white dark:bg-[#161616] text-black dark:text-white focus:outline-none"
               >
                 <option value="date">Sort by Date</option>
                 <option value="price">Sort by Price</option>
@@ -272,32 +272,32 @@ export function ProposalsTabContent({
           <Card
             key={proposal.id}
             className={cn(
-              "transition-all duration-200 hover:shadow-md bg-white border-gray-200",
+              "transition-all duration-200 hover:shadow-md bg-white dark:bg-[#141414] border-gray-200 dark:border-white/10",
               proposal.status === "accepted" &&
-                "bg-gray-50/50",
+                "bg-gray-50/50 dark:bg-white/[0.03]",
               proposal.status === "rejected" &&
-                "bg-gray-50/50",
+                "bg-gray-50/50 dark:bg-white/[0.03]",
               proposal.status === "viewed" &&
-                "bg-gray-50/50"
+                "bg-gray-50/50 dark:bg-white/[0.03]"
             )}
           >
             <CardHeader className="pb-3">
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                 <div className="space-y-2">
                   <div className="flex items-center gap-3">
-                    <h3 className="text-lg font-semibold text-black">
+                    <h3 className="text-lg font-semibold text-black dark:text-white">
                       {proposal.title}
                     </h3>
                     <Badge
-                      className="bg-gray-600 text-white px-2 py-1 text-xs"
+                      className="bg-gray-600 dark:bg-gray-700 text-white px-2 py-1 text-xs"
                     >
                       {getStatusText(proposal.status)}
                     </Badge>
                   </div>
 
-                  <div className="flex items-center gap-4 text-sm text-gray-600">
+                  <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
                     <div className="flex items-center gap-1">
-                      <UserIcon className="h-4 w-4 text-gray-600" />
+                      <UserIcon className="h-4 w-4 text-gray-600 dark:text-gray-400" />
                       <span>Contractor: {proposal.contractor_profile?.full_name || proposal.contractor}</span>
                     </div>
                     <span>•</span>
@@ -312,48 +312,48 @@ export function ProposalsTabContent({
             <CardContent className="space-y-4">
               {/* Description */}
               <div>
-                <Label className="text-sm font-medium text-gray-600">
+                <Label className="text-sm font-medium text-gray-600 dark:text-gray-400">
                   Description of Work
                 </Label>
-                <p className="mt-1 text-black leading-relaxed">
+                <p className="mt-1 text-black dark:text-gray-200 leading-relaxed">
                   {proposal.description_of_work}
                 </p>
               </div>
 
               {/* Financial and Timeline Summary */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
-                  <DollarSign className="h-5 w-5 text-gray-600" />
+                <div className="flex items-center gap-2 p-3 bg-gray-50 dark:bg-white/5 border border-transparent dark:border-white/10 rounded-lg">
+                  <DollarSign className="h-5 w-5 text-gray-600 dark:text-gray-400" />
                   <div>
-                    <Label className="text-xs font-medium text-gray-600">
+                    <Label className="text-xs font-medium text-gray-600 dark:text-gray-400">
                       Total Amount
                     </Label>
-                    <p className="text-lg font-bold text-black">
+                    <p className="text-lg font-bold text-black dark:text-white">
                       {proposal.total_amount.toLocaleString()}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
-                  <Clock className="h-5 w-5 text-gray-600" />
+                <div className="flex items-center gap-2 p-3 bg-gray-50 dark:bg-white/5 border border-transparent dark:border-white/10 rounded-lg">
+                  <Clock className="h-5 w-5 text-gray-600 dark:text-gray-400" />
                   <div>
-                    <Label className="text-xs font-medium text-gray-600">
+                    <Label className="text-xs font-medium text-gray-600 dark:text-gray-400">
                       Timeline
                     </Label>
-                    <p className="text-sm font-medium text-black">
+                    <p className="text-sm font-medium text-black dark:text-white">
                       {formatDate(proposal.proposed_start_date)} -{" "}
                       {formatDate(proposal.proposed_end_date)}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
-                  <DollarSign className="h-5 w-5 text-gray-600" />
+                <div className="flex items-center gap-2 p-3 bg-gray-50 dark:bg-white/5 border border-transparent dark:border-white/10 rounded-lg">
+                  <DollarSign className="h-5 w-5 text-gray-600 dark:text-gray-400" />
                   <div>
-                    <Label className="text-xs font-medium text-gray-600">
+                    <Label className="text-xs font-medium text-gray-600 dark:text-gray-400">
                       Deposit
                     </Label>
-                    <p className="text-sm font-medium text-black">
+                    <p className="text-sm font-medium text-black dark:text-white">
                       {proposal.deposit_amount.toLocaleString()}
                     </p>
                   </div>
@@ -363,10 +363,10 @@ export function ProposalsTabContent({
               {/* Additional Details */}
               {proposal.notes && (
                 <div>
-                  <Label className="text-sm font-medium text-gray-600">
+                  <Label className="text-sm font-medium text-gray-600 dark:text-gray-400">
                     Additional Notes
                   </Label>
-                  <p className="mt-1 text-black">{proposal.notes}</p>
+                  <p className="mt-1 text-black dark:text-gray-200">{proposal.notes}</p>
                 </div>
               )}
 
@@ -381,18 +381,18 @@ export function ProposalsTabContent({
                       {proposal.attached_files.map((file, index) => (
                         <div
                           key={index}
-                          className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg text-sm"
+                          className="flex items-center gap-2 p-2 bg-gray-50 dark:bg-white/5 border border-transparent dark:border-white/10 rounded-lg text-sm"
                         >
                           <FileTypeIcon 
                             fileType="agreement" 
                             size={16} 
-                            className="text-gray-600"
+                            className="text-gray-600 dark:text-gray-400"
                           />
-                          <span className="text-black">{file.filename}</span>
+                          <span className="text-black dark:text-white">{file.filename}</span>
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-6 w-6 p-0 text-gray-400 hover:text-gray-600"
+                            className="h-6 w-6 p-0 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
                             onClick={async () => {
                               try {
                                 const response = await fetch(file.url);
@@ -431,9 +431,9 @@ export function ProposalsTabContent({
                 <Button
                   variant="outline"
                   onClick={() => onViewProposal(proposal.id)}
-                  className="border-gray-300 text-black hover:bg-gray-100 bg-white"
+                  className="border-gray-300 dark:border-white/15 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 bg-white dark:bg-[#161616]"
                 >
-                  <Eye className="h-4 w-4 mr-2 text-gray-600" />
+                  <Eye className="h-4 w-4 mr-2 text-gray-600 dark:text-gray-400" />
                   View Details
                 </Button>
 

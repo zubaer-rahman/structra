@@ -61,7 +61,7 @@ function AnimatedCounter({ end, duration, suffix = '' }: CounterProps) {
   }, [isVisible, end, duration]);
 
   return (
-    <div ref={ref} className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-2 tracking-tighter">
+    <div ref={ref} className="text-4xl sm:text-5xl md:text-6xl font-black text-gray-900 dark:text-white mb-2 tracking-tighter">
       {count}{suffix}
     </div>
   );
@@ -76,7 +76,7 @@ export function Metrics() {
   ];
 
   return (
-    <section className="py-40 bg-[#0A0A0A] border-b border-white/5 relative overflow-hidden">
+    <section className="py-40 bg-transparent dark:bg-[#0A0A0A] border-b border-gray-200/60 dark:border-white/5 relative overflow-hidden">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-orange-500/50 to-transparent" />
       
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -97,7 +97,7 @@ export function Metrics() {
                 {stat.label}
               </div>
               <AnimatedCounter end={stat.value} duration={2} suffix={stat.suffix} />
-              <p className="text-sm text-gray-500 font-medium uppercase tracking-widest mt-4">
+              <p className="text-sm text-gray-600 dark:text-gray-400 font-medium uppercase tracking-widest mt-4">
                 {stat.desc}
               </p>
             </motion.div>

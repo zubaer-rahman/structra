@@ -261,7 +261,7 @@ export function ContractorProjectViewHeader({
         </div>
       )}
 
-      <div className="bg-white rounded-lg border border-gray-100 p-4 sm:p-6 mb-4 sm:mb-6">
+      <div className="bg-white dark:bg-[#141414] rounded-lg border border-gray-100 dark:border-white/10 p-4 sm:p-6 mb-4 sm:mb-6 transition-colors">
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
           {/* Left Section - Project Visuals */}
           <div className="lg:col-span-1">
@@ -276,21 +276,21 @@ export function ContractorProjectViewHeader({
             <div className="space-y-3 sm:space-y-4">
               {/* Project Title */}
               <div>
-                <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 leading-tight">
+                <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white leading-tight">
                   {project.project_title}
                 </h1>
               </div>
 
               {/* Project Type Badge */}
               <div>
-                <span className="bg-orange-100 text-orange-700 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium">
+                <span className="bg-orange-100 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400 border border-transparent dark:border-orange-500/20 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium">
                   {project.project_type?.toUpperCase() || 'PROJECT'}
                 </span>
               </div>
 
               {/* Project Status */}
               <div className="flex items-center gap-2">
-                <span className="text-xs sm:text-sm text-gray-600">Status:</span>
+                <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Status:</span>
                 <Badge className={`${projectStatusConfig.color} border-0`}>
                   {projectStatusConfig.label}
                 </Badge>
@@ -299,10 +299,10 @@ export function ContractorProjectViewHeader({
               {/* Budget */}
               <div className="flex items-center gap-2">
                 <div>
-                  <span className="text-xl sm:text-2xl font-bold text-green-600">
+                  <span className="text-xl sm:text-2xl font-bold text-green-600 dark:text-green-400">
                     {formatCurrency(project.budget || 0)}
                   </span>
-                  <span className="text-xs sm:text-sm text-gray-500 ml-2">
+                  <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 ml-2">
                     Budget
                   </span>
                 </div>
@@ -312,10 +312,10 @@ export function ContractorProjectViewHeader({
               {project.delay_penalty > 0 && (
                 <div className="flex items-center gap-2">
                   <div>
-                    <span className="text-lg sm:text-xl font-bold text-orange-600">
+                    <span className="text-lg sm:text-xl font-bold text-orange-600 dark:text-orange-400">
                       {formatCurrency(project.delay_penalty)}
                     </span>
-                    <span className="text-xs sm:text-sm text-gray-500 ml-2">
+                    <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 ml-2">
                       Delay Penalty/Day
                     </span>
                   </div>
@@ -325,8 +325,8 @@ export function ContractorProjectViewHeader({
               {/* Location */}
               {project.location.city || project.location.province ? (
                 <div className="flex items-center gap-2">
-                  <MapPin className="h-4 sm:w-5 sm:h-5 text-gray-500" />
-                  <span className="text-sm sm:text-base text-gray-700">
+                  <MapPin className="h-4 sm:w-5 sm:h-5 text-gray-500 dark:text-gray-400" />
+                  <span className="text-sm sm:text-base text-gray-700 dark:text-gray-300">
                     {[project.location.city, project.location.province]
                       .filter(Boolean)
                       .join(', ')}
@@ -336,9 +336,9 @@ export function ContractorProjectViewHeader({
 
               {/* Timeline */}
               <div className="flex items-center gap-2">
-                <Clock className="h-4 sm:w-5 sm:h-5 text-gray-500" />
+                <Clock className="h-4 sm:w-5 sm:h-5 text-gray-500 dark:text-gray-400" />
                 <div>
-                  <span className="text-sm sm:text-base text-gray-700">
+                  <span className="text-sm sm:text-base text-gray-700 dark:text-gray-300">
                     {project.start_date && project.end_date
                       ? `${formatDate(project.start_date)} - ${formatDate(project.end_date)}`
                       : 'Timeline not specified'
@@ -364,8 +364,8 @@ export function ContractorProjectViewHeader({
                     {isProcessingPayment ? 'Processing...' : getButtonText()}
                   </Button>
                 ) : (
-                  <div className="text-center py-3 px-4 bg-gray-50 rounded-lg border">
-                    <p className="text-sm text-gray-600">
+                  <div className="text-center py-3 px-4 bg-gray-50 dark:bg-white/5 rounded-lg border border-gray-200 dark:border-white/10">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
                       {contractorProposals && contractorProposals.length > 0 
                         ? `You have already submitted a proposal (${contractorProposals[0].status})`
                         : 'Loading proposal status...'
@@ -376,21 +376,21 @@ export function ContractorProjectViewHeader({
               </div>
 
               {/* Homeowner Information */}
-              <div className="border-t pt-4">
+              <div className="border-t border-gray-200 dark:border-white/10 pt-4">
                 <div className="flex items-center gap-2 mb-3">
-                  <UserIcon className="h-4 text-indigo-600" />
-                  <span className="text-sm font-medium text-gray-900">Posted by</span>
+                  <UserIcon className="h-4 text-indigo-600 dark:text-indigo-400" />
+                  <span className="text-sm font-medium text-gray-900 dark:text-white">Posted by</span>
                 </div>
                 
                 <div className="text-center">
-                  <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <UserIcon className="h-6  text-indigo-600" />
+                  <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-950/40 rounded-full flex items-center justify-center mx-auto mb-2">
+                    <UserIcon className="h-6 text-indigo-600 dark:text-indigo-400" />
                   </div>
-                  <h4 className="text-sm font-semibold text-gray-900">
+                  <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
                     {project.homeowner?.full_name || 'Unknown Homeowner'}
                   </h4>
                   {project.homeowner?.email && (
-                    <p className="text-xs text-gray-600">{project.homeowner.email}</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">{project.homeowner.email}</p>
                   )}
                 </div>
               </div>

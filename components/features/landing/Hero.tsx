@@ -10,9 +10,9 @@ export function Hero() {
   const { user } = useAuth();
   
   return (
-    <section className="relative pt-40 pb-32 sm:pt-48 sm:pb-40 lg:pt-56 lg:pb-56 overflow-hidden bg-[#0A0A0A]">
+    <section className="relative pt-40 pb-32 sm:pt-48 sm:pb-40 lg:pt-56 lg:pb-56 overflow-hidden bg-transparent dark:bg-[#0A0A0A]">
       {/* Premium Background Elements */}
-      <div className="absolute inset-0 -z-10 bg-[#0A0A0A]">
+      <div className="absolute inset-0 -z-10 bg-transparent dark:bg-[#0A0A0A]">
         {/* 3D Perspective Grid */}
         <div className="absolute inset-0 opacity-[0.15]" 
              style={{ 
@@ -59,10 +59,10 @@ export function Hero() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 mb-10 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl"
+          className="inline-flex items-center gap-2 px-4 py-1.5 mb-10 rounded-full bg-black/5 dark:bg-white/5 backdrop-blur-xl border border-black/10 dark:border-white/10 shadow-sm dark:shadow-2xl"
         >
           <ShieldCheck className="w-3.5 h-3.5 text-orange-500" />
-          <span className="text-[10px] sm:text-xs font-bold text-gray-300 tracking-[0.2em] uppercase">
+          <span className="text-[10px] sm:text-xs font-bold text-gray-700 dark:text-gray-300 tracking-[0.2em] uppercase">
             The Gold Standard in Construction
           </span>
         </motion.div>
@@ -72,7 +72,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white mb-8 leading-[0.95] tracking-tighter"
+            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-gray-950 dark:text-white mb-8 leading-[0.95] tracking-tighter"
           >
             Construct Your <br className="hidden sm:block" /> 
             <span className="text-transparent bg-clip-text bg-gradient-to-b from-orange-400 via-orange-500 to-orange-700">
@@ -83,7 +83,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-lg sm:text-xl md:text-2xl text-gray-400 max-w-4xl mx-auto leading-relaxed px-4 font-medium"
+            className="text-lg sm:text-xl md:text-2xl text-gray-600 dark:text-gray-400 max-w-4xl mx-auto leading-relaxed px-4 font-medium"
           >
             Structra connects visionary homeowners with Canada's most elite, verified construction professionals. Experience the next generation of project management.
           </motion.p>
@@ -111,7 +111,7 @@ export function Hero() {
             <Button
               variant="outline"
               size="lg"
-              className="w-full sm:w-auto h-16 px-10 text-base font-bold bg-white/5 border border-white/10 text-white hover:bg-white/10 backdrop-blur-lg transition-all duration-500 rounded-2xl shadow-2xl group cursor-pointer"
+              className="w-full sm:w-auto h-16 px-10 text-base font-bold bg-white/70 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 backdrop-blur-lg transition-all duration-500 rounded-2xl shadow-sm dark:shadow-2xl group cursor-pointer"
             >
               <span className="flex items-center gap-2">
                 Professional Login

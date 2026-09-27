@@ -227,7 +227,7 @@ export default function ProjectImageGallery({
         <div className="flex items-center gap-2">
           <button 
             onClick={previousImage}
-            className="p-1 rounded hover:bg-gray-100 transition-colors"
+            className="p-1 rounded hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
             aria-label="Previous image"
           >
             <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />
@@ -240,8 +240,8 @@ export default function ProjectImageGallery({
                   onClick={() => goToImage(index)}
                   className={`w-12 h-12 sm:w-16 sm:h-16 rounded border-2 overflow-hidden transition-all duration-200 ${
                     index === currentImageIndex 
-                      ? 'border-orange-500 ring-2 ring-orange-200' 
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-orange-500 ring-2 ring-orange-200 dark:ring-orange-950/60' 
+                      : 'border-gray-200 dark:border-white/15 hover:border-gray-300 dark:hover:border-white/30'
                   }`}
                 >
                   <Image
@@ -273,7 +273,7 @@ export default function ProjectImageGallery({
 
           <button 
             onClick={nextImage}
-            className="p-1 rounded hover:bg-gray-100 transition-colors"
+            className="p-1 rounded hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
             aria-label="Next image"
           >
             <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />

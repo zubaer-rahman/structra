@@ -9,13 +9,13 @@ export function CTA() {
   const { user } = useAuth();
   
   return (
-    <section className="py-12 px-4 sm:px-6 lg:px-8 bg-[#0A0A0A]">
-      <div className="max-w-[1440px] mx-auto overflow-hidden rounded-[2.5rem] border border-white/5 relative group">
+    <section className="py-12 px-4 sm:px-6 lg:px-8 bg-transparent dark:bg-[#0A0A0A]">
+      <div className="max-w-[1440px] mx-auto overflow-hidden rounded-[2.5rem] border border-gray-200 dark:border-white/5 relative group">
         {/* Banner Background with Advanced Gradients */}
-        <div className="absolute inset-0 bg-gradient-to-br from-orange-600/20 via-black to-black -z-10" />
+        <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-slate-100 to-white dark:from-orange-600/20 dark:via-black dark:to-black -z-10" />
         <div className="absolute inset-0 opacity-30" 
              style={{ 
-               backgroundImage: `radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0)`,
+               backgroundImage: `radial-gradient(circle at 2px 2px, rgba(120,120,120,0.15) 1px, transparent 0)`,
                backgroundSize: '30px 30px'
              }} 
         />
@@ -25,16 +25,16 @@ export function CTA() {
         
         <div className="relative z-10 py-16 px-8 md:px-20 flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="max-w-2xl text-center md:text-left">
-             <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500">
+             <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-600 dark:text-orange-500">
                 <span className="text-[10px] font-black uppercase tracking-[0.2em]">Final Authorization</span>
              </div>
-             <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-4 tracking-tighter leading-none italic uppercase">
+             <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-gray-900 dark:text-white mb-4 tracking-tighter leading-none italic uppercase">
               Architect Your <br className="hidden lg:block" />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-700">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-700">
                 Masterpiece
               </span>
             </h2>
-            <p className="text-lg text-gray-400 font-medium leading-relaxed">
+            <p className="text-lg text-gray-600 dark:text-gray-400 font-medium leading-relaxed">
               Join the elite circle of visionaries who redefine structural excellence.
             </p>
           </div>
@@ -53,15 +53,15 @@ export function CTA() {
         </div>
         
         {/* Bottom Metadata Bar */}
-        <div className="border-t border-white/5 py-4 px-8 md:px-20 bg-white/[0.02] backdrop-blur-3xl flex flex-wrap gap-6 items-center">
+        <div className="border-t border-gray-200 dark:border-white/5 py-4 px-8 md:px-20 bg-gray-50/80 dark:bg-white/[0.02] backdrop-blur-3xl flex flex-wrap gap-6 items-center">
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              <span className="text-[8px] font-black text-gray-500 uppercase tracking-widest">Global Ops Active</span>
+              <span className="text-[8px] font-black text-gray-600 dark:text-gray-500 uppercase tracking-widest">Global Ops Active</span>
             </div>
-            <div className="h-4 w-px bg-white/10 hidden md:block" />
-            <span className="text-[8px] font-black text-gray-500 uppercase tracking-widest">Secure Escrow Protocol</span>
-            <div className="h-4 w-px bg-white/10 hidden md:block" />
-            <span className="text-[8px] font-black text-gray-500 uppercase tracking-widest">Elite Member Network: 500+</span>
+            <div className="h-4 w-px bg-gray-300 dark:bg-white/10 hidden md:block" />
+            <span className="text-[8px] font-black text-gray-600 dark:text-gray-500 uppercase tracking-widest">Secure Escrow Protocol</span>
+            <div className="h-4 w-px bg-gray-300 dark:bg-white/10 hidden md:block" />
+            <span className="text-[8px] font-black text-gray-600 dark:text-gray-500 uppercase tracking-widest">Elite Member Network: 500+</span>
         </div>
       </div>
     </section>

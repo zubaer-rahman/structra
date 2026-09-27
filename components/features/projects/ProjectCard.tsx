@@ -20,11 +20,11 @@ export default function ProjectCard({ projects, onProjectClick, onViewProject, o
 
   const getStatusConfig = (status: string) => {
     const statusConfig = {
-      [PROJECT_STATUSES.OPEN_FOR_PROPOSALS]: { label: PROJECT_STATUSES.OPEN_FOR_PROPOSALS, variant: 'default' as const, color: 'bg-gray-100 text-gray-800' },
-      [PROJECT_STATUSES.PROPOSAL_SELECTED]: { label: PROJECT_STATUSES.PROPOSAL_SELECTED, variant: 'secondary' as const, color: 'bg-orange-100 text-orange-800' },
-      [PROJECT_STATUSES.IN_PROGRESS]: { label: PROJECT_STATUSES.IN_PROGRESS, variant: 'outline' as const, color: 'bg-orange-100 text-orange-800' },
-      [PROJECT_STATUSES.COMPLETED]: { label: PROJECT_STATUSES.COMPLETED, variant: 'outline' as const, color: 'bg-gray-900 text-white' },
-      [PROJECT_STATUSES.CANCELLED]: { label: PROJECT_STATUSES.CANCELLED, variant: 'destructive' as const, color: 'bg-gray-100 text-gray-800' },
+      [PROJECT_STATUSES.OPEN_FOR_PROPOSALS]: { label: PROJECT_STATUSES.OPEN_FOR_PROPOSALS, variant: 'default' as const, color: 'bg-gray-100 dark:bg-white/10 text-gray-800 dark:text-gray-200' },
+      [PROJECT_STATUSES.PROPOSAL_SELECTED]: { label: PROJECT_STATUSES.PROPOSAL_SELECTED, variant: 'secondary' as const, color: 'bg-orange-100 dark:bg-orange-950/40 text-orange-800 dark:text-orange-300' },
+      [PROJECT_STATUSES.IN_PROGRESS]: { label: PROJECT_STATUSES.IN_PROGRESS, variant: 'outline' as const, color: 'bg-orange-100 dark:bg-orange-950/40 text-orange-800 dark:text-orange-300' },
+      [PROJECT_STATUSES.COMPLETED]: { label: PROJECT_STATUSES.COMPLETED, variant: 'outline' as const, color: 'bg-gray-900 text-white dark:bg-white dark:text-gray-900' },
+      [PROJECT_STATUSES.CANCELLED]: { label: PROJECT_STATUSES.CANCELLED, variant: 'destructive' as const, color: 'bg-gray-100 dark:bg-white/10 text-gray-800 dark:text-gray-200' },
     }
     
     return statusConfig[status as keyof typeof statusConfig] || statusConfig[PROJECT_STATUSES.OPEN_FOR_PROPOSALS]

@@ -50,7 +50,7 @@ export function LoginForm({
           <CardTitle className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-orange-700 bg-clip-text text-transparent">
             Sign In
           </CardTitle>
-          <CardDescription className="text-base text-gray-600">
+          <CardDescription className="text-base text-gray-600 dark:text-gray-400">
             Access your account
           </CardDescription>
         </CardHeader>
@@ -58,7 +58,7 @@ export function LoginForm({
         <CardContent className="px-6 pb-6">
           <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-5">
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+              <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg text-sm">
                 {error}
               </div>
             )}
@@ -103,7 +103,7 @@ export function LoginForm({
             </Button>
 
             <div className="text-center pt-2">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 No account?{" "}
                 <Link
                   href="/register"

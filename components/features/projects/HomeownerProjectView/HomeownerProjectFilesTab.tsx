@@ -80,22 +80,22 @@ export function HomeownerProjectFilesTab({ project }: HomeownerProjectFilesTabPr
     <div className="space-y-6 sm:space-y-8">
       {/* Project Files Section */}
       <div>
-        <h3 className="text-base sm:text-lg font-semibold text-black mb-3 sm:mb-4">Project Files</h3>
+        <h3 className="text-base sm:text-lg font-semibold text-black dark:text-white mb-3 sm:mb-4">Project Files</h3>
         <div className="space-y-4">
           {normalizedFiles && normalizedFiles.length > 0 ? (
             <div className="space-y-3">
               {normalizedFiles.map((file, index) => (
-                <div key={index} className="flex items-center justify-between p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                <div key={index} className="flex items-center justify-between p-4 bg-white dark:bg-[#141414] rounded-lg border border-gray-200 dark:border-white/10 hover:shadow-md transition-shadow">
                   {/* File Info */}
                   <div className="flex items-center space-x-3 flex-1 min-w-0">
                     <div className="flex-shrink-0">
                       {getFileTypeIcon(file.filename)}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="text-sm font-medium text-gray-900 truncate" title={file.filename}>
+                      <h4 className="text-sm font-medium text-gray-900 dark:text-white truncate" title={file.filename}>
                         {file.filename}
                       </h4>
-                      <div className="flex items-center space-x-2 text-xs text-gray-500 mt-1">
+                      <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400 mt-1">
                         <span>{formatFileSize(file.size || 0)}</span>
                         {file.uploadedAt && (
                           <span>Uploaded {new Date(file.uploadedAt).toLocaleDateString()}</span>
@@ -109,7 +109,7 @@ export function HomeownerProjectFilesTab({ project }: HomeownerProjectFilesTabPr
                     <Button
                       variant="outline"
                       size="sm"
-                      className="h-8 px-3 text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                      className="h-8 px-3 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/10 border-gray-200 dark:border-white/15"
                       onClick={async () => {
                         try {
                           const response = await fetch(file.url);
@@ -141,10 +141,10 @@ export function HomeownerProjectFilesTab({ project }: HomeownerProjectFilesTabPr
               ))}
             </div>
           ) : (
-            <div className="p-8 bg-gray-50 rounded-lg text-center">
+            <div className="p-8 bg-gray-50 dark:bg-white/5 rounded-lg text-center border border-transparent dark:border-white/5">
               <FileText className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-              <h4 className="text-sm font-medium text-gray-900 mb-1">No files uploaded</h4>
-              <p className="text-xs text-gray-600">No additional files have been uploaded for this project.</p>
+              <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-1">No files uploaded</h4>
+              <p className="text-xs text-gray-600 dark:text-gray-400">No additional files have been uploaded for this project.</p>
             </div>
           )}
         </div>
@@ -152,14 +152,14 @@ export function HomeownerProjectFilesTab({ project }: HomeownerProjectFilesTabPr
 
       {/* Project Photos Section */}
       <div>
-        <h3 className="text-base sm:text-lg font-semibold text-black mb-3 sm:mb-4">Project Photos</h3>
+        <h3 className="text-base sm:text-lg font-semibold text-black dark:text-white mb-3 sm:mb-4">Project Photos</h3>
         <div className="space-y-4">
           {normalizedPhotos && normalizedPhotos.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {normalizedPhotos.map((photo, index) => (
-                <div key={index} className="group relative bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+                <div key={index} className="group relative bg-white dark:bg-[#141414] rounded-lg border border-gray-200 dark:border-white/10 overflow-hidden hover:shadow-md transition-shadow">
                   {/* Photo Preview */}
-                  <div className="aspect-video bg-gray-100 relative overflow-hidden">
+                  <div className="aspect-video bg-gray-100 dark:bg-white/5 relative overflow-hidden">
                     <Image
                       src={photo.url || "/images/placeholder-image.png"}
                       alt={photo.filename}
