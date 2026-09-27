@@ -451,26 +451,39 @@ export class ProjectService {
         // Get projects where contractor has accepted proposals
         const { data: acceptedProjects } = await this.supabase
           .from("proposals")
-          .select("project")
-          .eq("contractor", contractorId)
+          .select("project_id")
+          .eq("contractor_id", contractorId)
           .eq("status", "accepted")
 
-        // Get projects where contractor has paid access
-        const { data: paidProjects } = await this.supabase
-          .from("project_views")
-          .select("project")
-          .eq("contractor", contractorId)
-          .eq("is_active", "yes")
+        // Get projects where contractor has paid access (if project_views exists)
+        let paidProjects: any[] | null = null
+        try {
+          const { data: pvData, error: pvError } = await this.supabase
+            .from("project_views")
+            .select("project")
+            .eq("contractor", contractorId)
+            .eq("is_active", "yes")
+
+          if (!pvError && pvData) {
+            paidProjects = pvData
+          }
+        } catch {
+          // Table may not exist yet in schema
+        }
 
         // Combine both lists and exclude from available projects
         const excludedProjectIds = new Set<string>()
         
         if (acceptedProjects) {
-          acceptedProjects.forEach(p => excludedProjectIds.add(p.project))
+          acceptedProjects.forEach((p: any) => {
+            if (p.project_id) excludedProjectIds.add(p.project_id)
+          })
         }
         
         if (paidProjects) {
-          paidProjects.forEach(p => excludedProjectIds.add(p.project))
+          paidProjects.forEach((p: any) => {
+            if (p.project) excludedProjectIds.add(p.project)
+          })
         }
 
         if (excludedProjectIds.size > 0) {
@@ -490,28 +503,37 @@ export class ProjectService {
       if (contractorId && data && data.length > 0) {
         const projectIds = data.map(p => p.id)
         
-        // Get project views for this contractor
-        const { data: projectViews, error: viewsError } = await this.supabase
-          .from("project_views")
-          .select("project, is_active, expires_at, was_paid_view")
-          .eq("contractor", contractorId)
-          .in("project", projectIds)
-          .eq("is_active", "yes")
+        // Get project views for this contractor (if table exists)
+        let projectViews: any[] | null = null
+        try {
+          const { data: viewsData, error: viewsError } = await this.supabase
+            .from("project_views")
+            .select("project, is_active, expires_at, was_paid_view")
+            .eq("contractor", contractorId)
+            .in("project", projectIds)
+            .eq("is_active", "yes")
+
+          if (viewsError) {
+            if (viewsError.code !== 'PGRST205') {
+              console.warn("Project views notice:", viewsError.message || viewsError)
+            }
+          } else {
+            projectViews = viewsData
+          }
+        } catch {
+          // Table may not exist yet
+        }
 
         // Get contractor's proposals for these projects
         const { data: proposals, error: proposalsError } = await this.supabase
           .from("proposals")
-          .select("project, status, created_at")
-          .eq("contractor", contractorId)
-          .in("project", projectIds)
+          .select("project_id, status, created_at")
+          .eq("contractor_id", contractorId)
+          .in("project_id", projectIds)
           .order("created_at", { ascending: false })
 
-        if (viewsError) {
-          console.error("Error fetching project views:", viewsError)
-        }
-        
         if (proposalsError) {
-          console.error("Error fetching proposals:", proposalsError)
+          console.error("Error fetching proposals:", proposalsError.message || proposalsError)
         }
 
         // Create maps for access and proposal information
@@ -519,7 +541,7 @@ export class ProjectService {
         const proposalMap = new Map()
         
         if (projectViews) {
-          projectViews.forEach(view => {
+          projectViews.forEach((view: any) => {
             const isExpired = view.expires_at ? new Date(view.expires_at) < new Date() : false
             if (!isExpired) {
               accessMap.set(view.project, {
@@ -532,9 +554,9 @@ export class ProjectService {
         }
 
         if (proposals) {
-          proposals.forEach(proposal => {
-            if (!proposalMap.has(proposal.project)) {
-              proposalMap.set(proposal.project, {
+          proposals.forEach((proposal: any) => {
+            if (!proposalMap.has(proposal.project_id)) {
+              proposalMap.set(proposal.project_id, {
                 status: proposal.status,
                 created_at: proposal.created_at
               })
@@ -589,12 +611,9 @@ export class ProjectService {
           id,
           title,
           status,
-          subtotal_amount,
-          total_amount,
+          estimated_cost,
           created_at,
-          description_of_work,
-          proposed_start_date,
-          proposed_end_date,
+          description,
           project:projects(
             id,
             project_title,
@@ -610,7 +629,7 @@ export class ProjectService {
             )
           )
         `)
-        .eq("contractor", contractorId)
+        .eq("contractor_id", contractorId)
         .order("created_at", { ascending: false })
         .limit(20)
 
@@ -648,45 +667,58 @@ export class ProjectService {
             )
           )
         `)
-        .eq("contractor", contractorId)
+        .eq("contractor_id", contractorId)
         .eq("status", "accepted")
         .not("project.status", "is", null)
         .order("created_at", { ascending: false })
 
-      if (proposalsError) throw proposalsError
+      if (proposalsError) {
+        console.error("Error fetching accepted proposals:", proposalsError.message || proposalsError)
+      }
 
-      // Get projects where contractor has paid for access (project_views)
-      const { data: paidProjects, error: viewsError } = await this.supabase
-        .from("project_views")
-        .select(`
-          project:projects(
-            id,
-            project_title,
-            statement_of_work,
-            budget,
-            category,
-            location,
-            status,
-            created_at,
-            expiry_date,
-            start_date,
-            end_date,
-            slug,
-            homeowner:users!creator(
+      // Get projects where contractor has paid for access (project_views) if table exists
+      let paidProjects: any[] | null = null
+      try {
+        const { data: pvData, error: viewsError } = await this.supabase
+          .from("project_views")
+          .select(`
+            project:projects(
               id,
-              full_name,
-              email
-            )
-          ),
-          expires_at,
-          was_paid_view
-        `)
-        .eq("contractor", contractorId)
-        .eq("is_active", "yes")
-        .not("project.status", "is", null)
-        .order("created_at", { ascending: false })
+              project_title,
+              statement_of_work,
+              budget,
+              category,
+              location,
+              status,
+              created_at,
+              expiry_date,
+              start_date,
+              end_date,
+              slug,
+              homeowner:users!creator(
+                id,
+                full_name,
+                email
+              )
+            ),
+            expires_at,
+            was_paid_view
+          `)
+          .eq("contractor", contractorId)
+          .eq("is_active", "yes")
+          .not("project.status", "is", null)
+          .order("created_at", { ascending: false })
 
-      if (viewsError) throw viewsError
+        if (viewsError) {
+          if (viewsError.code !== 'PGRST205') {
+            console.warn("Notice fetching paid project views:", viewsError.message || viewsError)
+          }
+        } else {
+          paidProjects = pvData
+        }
+      } catch {
+        // Table may not exist yet in schema
+      }
 
       // Combine both sources and remove duplicates
       const allProjects = new Map<string, any>()
@@ -727,19 +759,19 @@ export class ProjectService {
       if (allProjectIds.length > 0) {
         const { data: allProposals, error: allProposalsError } = await this.supabase
           .from("proposals")
-          .select("project, status, created_at")
-          .eq("contractor", contractorId)
-          .in("project", allProjectIds)
+          .select("project_id, status, created_at")
+          .eq("contractor_id", contractorId)
+          .in("project_id", allProjectIds)
           .order("created_at", { ascending: false })
 
         if (allProposalsError) {
-          console.error("Error fetching all proposals:", allProposalsError)
+          console.error("Error fetching all proposals:", allProposalsError.message || allProposalsError)
         } else if (allProposals) {
           // Create a map of project to latest proposal status
           const proposalStatusMap = new Map()
-          allProposals.forEach(proposal => {
-            if (!proposalStatusMap.has(proposal.project)) {
-              proposalStatusMap.set(proposal.project, {
+          allProposals.forEach((proposal: any) => {
+            if (!proposalStatusMap.has(proposal.project_id)) {
+              proposalStatusMap.set(proposal.project_id, {
                 status: proposal.status,
                 created_at: proposal.created_at
               })

@@ -83,25 +83,26 @@ export default function ProjectViewPage() {
         return;
       }
 
-      // Get contractor data if project has a selected proposal
+      // Get contractor data if project has an accepted proposal
       const { data: proposal } = await supabase
         .from("proposals")
-        .select("contractor")
-        .eq("project", projectData.id)
-        .eq("is_selected", "yes")
-        .single();
+        .select("contractor_id")
+        .eq("project_id", projectData.id)
+        .eq("status", "accepted")
+        .limit(1)
+        .maybeSingle();
 
       let contractor = null;
-      if (proposal?.contractor) {
+      if (proposal?.contractor_id) {
         const { data: contractorData } = await supabase
           .from("users")
           .select(`
             id,
             full_name,
             profile_photo,
-            contractor_profile(*)
+            contractor_profiles(*)
           `)
-          .eq("id", proposal.contractor)
+          .eq("id", proposal.contractor_id)
           .single();
         
         contractor = contractorData;
