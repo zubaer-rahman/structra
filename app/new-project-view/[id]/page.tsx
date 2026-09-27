@@ -10,7 +10,6 @@ import {
   Calendar, 
   DollarSign,
   ChevronRight,
-  Grid3X3,
   CheckCircle,
   Building2
 } from "lucide-react";
@@ -47,7 +46,7 @@ export default function ProjectViewPage() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   // Fetch contractor reviews (reviews about the contractor across all projects)
-  const { data: contractorReviewsData = [], isLoading: contractorReviewsLoading, error: contractorReviewsError } = trpc.reviews.getByContractorPublic.useQuery({
+  const { data: contractorReviewsData = [], isLoading: contractorReviewsLoading } = trpc.reviews.getByContractorPublic.useQuery({
     contractorId: project?.contractor?.id || '',
   }, {
     enabled: !!project?.contractor?.id
@@ -58,19 +57,6 @@ export default function ProjectViewPage() {
     ...review,
     author_user: Array.isArray(review.author_user) ? review.author_user[0] : review.author_user
   }));
-
-  // Debug logging for reviews
-  useEffect(() => {
-    if (project?.id) {
-      console.log('🔍 Reviews Debug:', {
-        projectId: project.id,
-        contractorReviews,
-        contractorReviewsLoading,
-        contractorReviewsError,
-        contractorReviewsCount: contractorReviews?.length || 0
-      });
-    }
-  }, [project?.id, contractorReviews, contractorReviewsLoading, contractorReviewsError]);
 
 
   useEffect(() => {
@@ -228,6 +214,11 @@ export default function ProjectViewPage() {
                   fill
                   className="object-cover cursor-pointer hover:scale-105 transition-transform duration-300"
                   onClick={() => setCurrentImageIndex((currentImageIndex + 1) % images.length)}
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = '/images/placeholder-image.png';
+                    target.onerror = null;
+                  }}
                 />
               </div>
               
@@ -246,6 +237,11 @@ export default function ProjectViewPage() {
                       alt={`${project.project_title} ${index + 2}`}
                       fill
                       className="object-cover hover:scale-105 transition-transform duration-300"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = '/images/placeholder-image.png';
+                        target.onerror = null;
+                      }}
                     />
                   </div>
                 ))}

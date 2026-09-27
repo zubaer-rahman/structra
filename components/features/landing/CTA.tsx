@@ -44,7 +44,7 @@ export function CTA() {
             <Link href="/register" className="w-full sm:w-auto">
               <Button 
                 size="lg" 
-                className="w-full h-16 px-12 text-base font-black uppercase tracking-widest bg-orange-600 hover:bg-orange-500 text-white shadow-[0_0_50px_rgba(234,88,12,0.3)] hover:shadow-[0_0_80px_rgba(234,88,12,0.6)] transition-all duration-500 rounded-2xl border-0 group cursor-pointer italic"
+                className="w-full h-16 px-12 text-base font-black uppercase tracking-widest bg-orange-600 hover:bg-orange-500 text-white shadow-[0_0_20px_rgba(234,88,12,0.2)] hover:shadow-[0_0_40px_rgba(234,88,12,0.4)] transition-all duration-500 rounded-2xl border-0 group cursor-pointer italic"
               >
                 Register
                 <ArrowRight className="w-5 h-5 ml-3 group-hover:translate-x-2 transition-transform duration-300" />

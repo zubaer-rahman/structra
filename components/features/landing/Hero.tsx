@@ -59,7 +59,7 @@ export function Hero() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 mb-10 rounded-full bg-black/5 dark:bg-white/5 backdrop-blur-xl border border-black/10 dark:border-white/10 shadow-sm dark:shadow-2xl"
+          className="inline-flex items-center gap-2 px-4 py-1.5 mb-10 rounded-full bg-black/5 dark:bg-white/5 backdrop-blur-xl border border-black/10 dark:border-white/10 shadow-sm"
         >
           <ShieldCheck className="w-3.5 h-3.5 text-orange-500" />
           <span className="text-[10px] sm:text-xs font-bold text-gray-700 dark:text-gray-300 tracking-[0.2em] uppercase">
@@ -98,7 +98,7 @@ export function Hero() {
           <Link href="/register" className="w-full sm:w-auto">
             <Button
               size="lg"
-              className="w-full sm:w-auto h-16 px-10 text-base font-bold bg-orange-600 hover:bg-orange-500 text-white shadow-[0_0_40px_rgba(234,88,12,0.3)] hover:shadow-[0_0_60px_rgba(234,88,12,0.5)] transition-all duration-500 rounded-2xl border-0 group overflow-hidden relative cursor-pointer"
+              className="w-full sm:w-auto h-16 px-10 text-base font-bold bg-orange-600 hover:bg-orange-500 text-white shadow-[0_0_20px_rgba(234,88,12,0.2)] hover:shadow-[0_0_40px_rgba(234,88,12,0.4)] transition-all duration-500 rounded-2xl border-0 group overflow-hidden relative cursor-pointer"
             >
               <span className="relative z-10 flex items-center gap-2">
                 Begin Transformation
@@ -111,7 +111,7 @@ export function Hero() {
             <Button
               variant="outline"
               size="lg"
-              className="w-full sm:w-auto h-16 px-10 text-base font-bold bg-white/70 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 backdrop-blur-lg transition-all duration-500 rounded-2xl shadow-sm dark:shadow-2xl group cursor-pointer"
+              className="w-full sm:w-auto h-16 px-10 text-base font-bold bg-white/70 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 backdrop-blur-lg transition-all duration-500 rounded-2xl shadow-sm group cursor-pointer"
             >
               <span className="flex items-center gap-2">
                 Professional Login

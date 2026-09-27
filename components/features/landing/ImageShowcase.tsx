@@ -87,7 +87,7 @@ export function ImageShowcase() {
           </p>
         </motion.div>
 
-        <div className="relative h-[500px] sm:h-[600px] lg:h-[700px] w-full overflow-hidden rounded-[2.5rem] border border-gray-200 dark:border-white/5 shadow-2xl group">
+        <div className="relative h-[500px] sm:h-[600px] lg:h-[700px] w-full overflow-hidden rounded-[2.5rem] border border-gray-200 dark:border-white/5 shadow-sm group">
           <AnimatePresence initial={false} custom={direction}>
             <motion.div
               key={currentIndex}
@@ -151,7 +151,7 @@ export function ImageShowcase() {
                     <Link href="/register">
                       <Button 
                         size="lg" 
-                        className="h-16 px-10 bg-white text-black hover:bg-orange-500 hover:text-white transition-all duration-300 rounded-2xl font-bold group/btn shadow-2xl"
+                        className="h-16 px-10 bg-white text-black hover:bg-orange-500 hover:text-white transition-all duration-300 rounded-2xl font-bold group/btn shadow-sm"
                       >
                         {showcases[currentIndex].buttonText}
                         <ArrowRight className="w-5 h-5 ml-2 group-hover/btn:translate-x-1 transition-transform" />

@@ -320,7 +320,7 @@ export default function ExploreContractors({
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="rounded-[2.5rem] overflow-hidden border border-gray-200 dark:border-white/5 shadow-2xl bg-white dark:bg-white/5 backdrop-blur-3xl min-h-[600px]"
+          className="rounded-[2.5rem] overflow-hidden border border-gray-200 dark:border-white/5 shadow-sm bg-white dark:bg-white/5 backdrop-blur-3xl min-h-[600px]"
         >
           {viewMode === "map" ? (
             <GoogleMapView

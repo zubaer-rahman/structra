@@ -328,20 +328,20 @@ export default function ContractorProjectTable({
           
           if (hasAccess) {
             return (
-              <Badge 
-                variant="default" 
-                className="bg-green-600 text-white px-2 py-1 text-xs font-medium flex items-center gap-1 w-fit"
+              <Badge
+                variant="default"
+                className="bg-green-600 dark:bg-green-500/20 text-white dark:text-green-400 border-0 dark:border dark:border-green-500/30 px-2 py-1 text-xs font-medium flex items-center gap-1 w-fit"
               >
                 <CheckCircle className="h-3 w-3" />
                 Purchased
               </Badge>
             );
           }
-          
+
           return (
-            <Badge 
-              variant="outline" 
-              className="border-orange-300 text-orange-700 px-2 py-1 text-xs font-medium w-fit"
+            <Badge
+              variant="outline"
+              className="border-orange-300 dark:border-orange-500/40 text-orange-700 dark:text-orange-400 px-2 py-1 text-xs font-medium w-fit"
             >
               Not Purchased
             </Badge>

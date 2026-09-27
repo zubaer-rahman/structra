@@ -57,7 +57,7 @@ export function HowItWorks() {
               transition={{ duration: 0.6, delay: index * 0.2 }}
               className="text-center group"
             >
-              <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white dark:bg-white/5 backdrop-blur-3xl border border-gray-200 dark:border-white/10 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-lg dark:shadow-2xl group-hover:scale-110 group-hover:bg-orange-600 group-hover:border-orange-500 transition-all duration-700 relative">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white dark:bg-white/5 backdrop-blur-3xl border border-gray-200 dark:border-white/10 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-sm dark:shadow-xl group-hover:scale-110 group-hover:bg-orange-600 group-hover:border-orange-500 transition-all duration-700 relative">
                 <span className="text-gray-900 dark:text-white group-hover:text-white text-2xl sm:text-3xl font-black transition-colors">{index + 1}</span>
                 {/* Subtle Glow */}
                 <div className="absolute inset-0 rounded-3xl bg-orange-600/20 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />

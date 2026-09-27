@@ -156,16 +156,11 @@ export default function ProjectImageGallery({
           unoptimized
           onError={(e) => {
             const imageUrl = projectImages[currentImageIndex]?.url || placeholderImage;
-            console.error('Image failed to load:', imageUrl);
-            
-            // Track this image as failed
             setFailedImages(prev => new Set([...prev, imageUrl]));
-            
-            // Only fallback if it's not already a placeholder image
             if (!isPlaceholderImage(imageUrl)) {
               const target = e.target as HTMLImageElement;
               target.src = placeholderImage;
-              target.onerror = null; // Prevent infinite loop
+              target.onerror = null;
             }
           }}
         />
@@ -252,16 +247,11 @@ export default function ProjectImageGallery({
                     unoptimized
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      console.error('Thumbnail failed to load:', photo.url);
-                      
-                      // Track this image as failed
                       setFailedImages(prev => new Set([...prev, photo.url]));
-                      
-                      // Only fallback if it's not already a placeholder image
                       if (!isPlaceholderImage(photo.url)) {
                         const target = e.target as HTMLImageElement;
                         target.src = placeholderImage;
-                        target.onerror = null; // Prevent infinite loop
+                        target.onerror = null;
                       }
                     }}
                   />
@@ -293,22 +283,9 @@ export default function ProjectImageGallery({
       {/* Error Info - shows when images have failed to load */}
       {!isUsingPlaceholders && failedImages.size > 0 && (
         <div className="text-left">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-            <p className="text-xs text-red-700 font-medium mb-1">
-              ⚠️ {failedImages.size} Image{failedImages.size > 1 ? 's' : ''} Failed to Load
-            </p>
-            <p className="text-xs text-red-600">
-              Some project images could not be displayed. This may be due to:
-            </p>
-            <ul className="text-xs text-red-600 mt-1 ml-4 list-disc">
-              <li>Images were uploaded with temporary URLs</li>
-              <li>Network connectivity issues</li>
-              <li>Images have been moved or deleted</li>
-            </ul>
-            <p className="text-xs text-red-600 mt-2">
-              Showing placeholder images instead. Contact support if this persists.
-            </p>
-          </div>
+          <p className="text-xs text-gray-400 dark:text-gray-500">
+            {failedImages.size} image{failedImages.size > 1 ? 's' : ''} could not be displayed
+          </p>
         </div>
       )}
     </div>

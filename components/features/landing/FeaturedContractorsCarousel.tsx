@@ -235,7 +235,7 @@ export function FeaturedContractorsCarousel() {
                   }}
                 >
                   <Link href={`/new-contractor-view/${contractor.slug || contractor.id}`} className="group block">
-                    <div className="relative aspect-[3/4] rounded-3xl overflow-hidden border border-gray-200 dark:border-white/10 bg-slate-900 dark:bg-white/5 shadow-lg dark:shadow-2xl transition-all duration-500 group-hover:border-orange-500/40 group-hover:-translate-y-2">
+                    <div className="relative aspect-[3/4] rounded-3xl overflow-hidden border border-gray-200 dark:border-white/10 bg-slate-900 dark:bg-white/5 shadow-sm dark:shadow-xl transition-all duration-500 group-hover:border-orange-500/40 group-hover:-translate-y-2">
                       <Image
                         src={getContractorImage(contractor)}
                         alt={contractor.full_name || 'Contractor'}

@@ -444,8 +444,7 @@ export class ProjectService {
         `)
         .eq("status", PROJECT_STATUSES.OPEN_FOR_PROPOSALS)
         .eq("visibility_settings", "Public To Marketplace")
-        .eq("title_awarded", true)
-        .gte("expiry_date", new Date().toISOString())
+        .or(`expiry_date.is.null,expiry_date.gte.${new Date().toISOString()}`)
 
       // If contractorId is provided, exclude projects where contractor has accepted proposals OR paid access
       if (contractorId) {

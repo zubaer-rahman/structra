@@ -129,7 +129,7 @@ export default function FeaturedProjects({
         </div>
 
         {featuredProjects.length === 0 ? (
-          <div className="flex items-center justify-center h-96 rounded-[2.5rem] border border-gray-200 dark:border-white/5 bg-white dark:bg-white/5 backdrop-blur-3xl shadow-sm dark:shadow-2xl">
+          <div className="flex items-center justify-center h-96 rounded-[2.5rem] border border-gray-200 dark:border-white/5 bg-white dark:bg-white/5 backdrop-blur-3xl shadow-sm">
             <div className="text-center">
               <Building2 className="h-20 w-20 text-gray-400 dark:text-gray-700 mx-auto mb-6" />
               <p className="text-2xl font-bold text-gray-900 dark:text-white mb-2 tracking-tight">

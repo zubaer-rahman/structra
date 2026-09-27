@@ -76,11 +76,11 @@ export default function ExploreProjects({
           ]);
         }
       } else {
-        // Default: explicitly search for Canada while keeping input empty
-        const response = await fetch(`/api/search/projects?location=Canada`);
+        // Default: fetch all public Open for Proposals projects, no country restriction
+        const response = await fetch(`/api/search/projects`);
 
         if (!response.ok) {
-          console.error('Search API error (default Canada):', response.statusText);
+          console.error('Search API error:', response.statusText);
           return;
         }
 
@@ -88,7 +88,7 @@ export default function ExploreProjects({
         const projectsData = data.projects || [];
         setProjects(projectsData);
 
-        // Keep map centered on Canada for default (no specific search)
+        // Keep map centered on Canada for default view
         setMapCenter([56.1304, -106.3468]);
       }
     } catch (error) {
@@ -197,7 +197,7 @@ export default function ExploreProjects({
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="rounded-[2.5rem] overflow-hidden border border-gray-200 dark:border-white/5 shadow-2xl bg-white dark:bg-white/5 backdrop-blur-3xl min-h-[600px]"
+          className="rounded-[2.5rem] overflow-hidden border border-gray-200 dark:border-white/5 shadow-sm bg-white dark:bg-white/5 backdrop-blur-3xl min-h-[600px]"
         >
           {viewMode === "map" ? (
             <GoogleMapView

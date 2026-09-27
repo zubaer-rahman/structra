@@ -57,7 +57,7 @@ export default function LandingProjectCard({
       className="h-full"
     >
       <Card 
-        className="group overflow-hidden h-full transition-all duration-500 cursor-pointer border border-gray-200 dark:border-white/5 shadow-md dark:shadow-2xl bg-white dark:bg-white/[0.03] backdrop-blur-3xl hover:border-orange-500/40 relative"
+        className="group overflow-hidden h-full transition-all duration-500 cursor-pointer border border-gray-200 dark:border-white/5 shadow-sm bg-white dark:bg-white/[0.03] backdrop-blur-3xl hover:border-orange-500/40 relative"
         onClick={() => window.open(`/recent-project-preview/${project.slug || project.id}`, '_blank')}
       >
         {/* Subtle decorative background gradient */}
@@ -84,7 +84,7 @@ export default function LandingProjectCard({
           {/* Category Badge - Glassmorphic */}
           <div className="absolute top-3 left-3">
             {project.category && project.category.length > 0 && (
-              <div className="bg-orange-500/80 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1 rounded-lg shadow-lg border border-white/20 uppercase tracking-wider">
+              <div className="bg-orange-500/80 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1 rounded-lg shadow-sm border border-white/20 uppercase tracking-wider">
                 {project.category[0]}
               </div>
             )}
