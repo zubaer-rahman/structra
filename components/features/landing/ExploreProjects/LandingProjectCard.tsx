@@ -23,6 +23,7 @@ interface LandingProjectCardProps {
 }
 
 import { motion } from "framer-motion";
+import { normalizeFileReferences } from "@/utils/helpers";
 import { PROJECT_STATUSES } from "@/utils/constants";
 
 export default function LandingProjectCard({
@@ -66,7 +67,7 @@ export default function LandingProjectCard({
         <div className="relative h-48 overflow-hidden">
           <Image
             src={
-              project?.project_photos?.[0]?.url || "/images/placeholder-image.png"
+              normalizeFileReferences(project?.project_photos)?.[0]?.url || "/images/placeholder-image.png"
             }
             alt={project.project_title || "Project image"}
             width={500}

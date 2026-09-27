@@ -9,6 +9,8 @@ import { CreateProjectFormInputData } from "@/utils/validation/projects";
 import { supabaseStorageService } from "@/server/services/SupabaseStorageService";
 import { useFormContext } from "react-hook-form";
 import { LoadingSpinner } from "@/components/shared";
+import toast from "react-hot-toast";
+import { normalizeFileReferences } from "@/utils/helpers";
 
 // Define the file type based on the validation schema
 type FileReference = {
@@ -47,7 +49,10 @@ export function FormPhotoInput({
 
   // Get form context for field value and onChange
   const { watch, setValue, trigger } = useFormContext<CreateProjectFormInputData>();
-  const selectedPhotos = (watch(name) as FileReference[]) || [];
+  const rawPhotos = watch(name);
+  const selectedPhotos = React.useMemo(() => {
+    return normalizeFileReferences(rawPhotos, "Photo") as unknown as FileReference[];
+  }, [rawPhotos]);
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -76,28 +81,30 @@ export function FormPhotoInput({
       };
     } catch (error) {
       console.error('Upload failed for file:', file.name, error);
-      throw new Error(`Failed to upload ${file.name}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(error instanceof Error ? error.message : 'Unknown upload error');
     }
   };
 
   const handleFileChange = async (files: FileList | null) => {
-    if (!files) return;
+    if (!files || files.length === 0) return;
 
     const newFiles = Array.from(files).filter((file) => {
       // Check file type
       if (!file.type.startsWith("image/")) {
-        alert(`${file.name} is not an image file`);
+        toast.error(`${file.name} is not an image file`);
         return false;
       }
 
       // Check file size
       if (file.size > maxSize * 1024 * 1024) {
-        alert(`${file.name} is larger than ${maxSize}MB`);
+        toast.error(`${file.name} is larger than ${maxSize}MB`);
         return false;
       }
 
       return true;
     });
+
+    if (newFiles.length === 0) return;
 
     // Add files to uploading state
     setUploadingFiles(prev => new Set([...prev, ...newFiles.map(f => f.name)]));
@@ -107,10 +114,16 @@ export function FormPhotoInput({
       const uploadPromises = newFiles.map(async (file) => {
         try {
           const fileReference = await uploadFileToSupabase(file);
+          setUploadErrors(prev => {
+            const next = new Map(prev);
+            next.delete(file.name);
+            return next;
+          });
           return fileReference;
         } catch (uploadError) {
-          // Store upload error for this file
-          setUploadErrors(prev => new Map(prev).set(file.name, uploadError instanceof Error ? uploadError.message : 'Upload failed'));
+          const msg = uploadError instanceof Error ? uploadError.message : 'Upload failed';
+          setUploadErrors(prev => new Map(prev).set(file.name, msg));
+          toast.error(`Failed to upload ${file.name}: ${msg}`);
           return null;
         } finally {
           // Remove from uploading state
@@ -135,18 +148,18 @@ export function FormPhotoInput({
           shouldDirty: true,
           shouldTouch: true 
         });
-        
+        toast.success(`Successfully uploaded ${successfulUploads.length} photo${successfulUploads.length > 1 ? 's' : ''}`);
       }
-
-      // Show error message if any uploads failed
-      const failedUploads = uploadResults.filter(result => result === null);
-      if (failedUploads.length > 0) {
-        alert(`Failed to upload ${failedUploads.length} file(s). Check the error messages below.`);
-      }
-
     } catch (error) {
       console.error('Error handling file uploads:', error);
-      alert('Error uploading files. Please try again.');
+      toast.error('Error uploading files. Please try again.');
+    } finally {
+      // Ensure all files from this batch are cleared from uploading state
+      setUploadingFiles(prev => {
+        const next = new Set(prev);
+        newFiles.forEach(f => next.delete(f.name));
+        return next;
+      });
     }
   };
 
@@ -155,7 +168,7 @@ export function FormPhotoInput({
     e.stopPropagation();
     setDragActive(false);
 
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       handleFileChange(e.dataTransfer.files);
     }
   };
@@ -210,7 +223,10 @@ export function FormPhotoInput({
           type="file"
           multiple
           accept={accept}
-          onChange={(e) => handleFileChange(e.target.files)}
+          onChange={(e) => {
+            handleFileChange(e.target.files);
+            e.target.value = "";
+          }}
           className="mt-4 bg-white"
         />
       </div>

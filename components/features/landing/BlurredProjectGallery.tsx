@@ -18,6 +18,7 @@ import { createClient } from "@/lib/supabase";
 import { Project } from "@/server/database/interfaces";
 import LoadingSpinner from "@/components/shared/loading-spinner";
 import Navbar from "@/components/shared/navbar";
+import { normalizeFileReferences } from "@/utils/helpers";
 
 interface BlurredProject {
   id: string;
@@ -168,18 +169,8 @@ export default function BlurredProjectGallery({ projectSlug }: BlurredProjectGal
   const getProjectImages = () => {
     if (!project) return [];
     
-    const images = [];
-    
-    // Add project photos
-    if (project.project_photos && Array.isArray(project.project_photos)) {
-      project.project_photos.forEach(photo => {
-        if (typeof photo === 'string' && photo.trim() !== '') {
-          images.push(photo);
-        } else if (typeof photo === 'object' && photo.url) {
-          images.push(photo.url);
-        }
-      });
-    }
+    const normalized = normalizeFileReferences(project.project_photos);
+    const images = normalized.map(f => f.url).filter(Boolean);
     
     // If no project photos, use placeholder
     if (images.length === 0) {

@@ -256,17 +256,7 @@ export default function HomeownerProjectViewPage() {
           .from('proposals')
           .select(`
             *,
-            project_details:projects!proposals_project_fkey (
-              id,
-              project_title,
-              statement_of_work,
-              category,
-              location,
-              status,
-              budget,
-              pid
-            ),
-            contractor_profile:users!proposals_contractor_fkey (
+            contractor_profile:users!contractor_id (
               id,
               full_name,
               email,
@@ -274,10 +264,7 @@ export default function HomeownerProjectViewPage() {
               address
             )
           `)
-          .eq('project', id)
-          .eq('homeowner', user.id)
-          .eq('is_deleted', 'no')
-          .in('status', [PROPOSAL_STATUSES.SUBMITTED, PROPOSAL_STATUSES.VIEWED, PROPOSAL_STATUSES.ACCEPTED, PROPOSAL_STATUSES.REJECTED])
+          .eq('project_id', id)
           .order('created_at', { ascending: false })
 
         if (proposalsError) {
@@ -287,18 +274,20 @@ export default function HomeownerProjectViewPage() {
         // Get contractor ratings for each proposal
         const proposalsWithRatings = await Promise.all(
           (proposalsData || []).map(async (proposal) => {
-            const { data: ratingsData } = await supabase
+            const contractorId = (proposal as any).contractor_id || (proposal as any).contractor
+            const { data: ratingsData } = contractorId ? await supabase
               .from('reviews')
               .select('rating')
-              .eq('recipient', proposal.contractor)
-              .eq('is_verified', 'yes')
+              .eq('recipient', contractorId)
+              .eq('is_verified', 'yes') : { data: null }
 
             const averageRating = ratingsData && ratingsData.length > 0 
-              ? ratingsData.reduce((sum, review) => sum + review.rating, 0) / ratingsData.length
+              ? ratingsData.reduce((sum: number, review: any) => sum + review.rating, 0) / ratingsData.length
               : 0
 
             return {
               ...proposal,
+              contractor: contractorId,
               contractor_rating: averageRating,
               rating_count: ratingsData?.length || 0
             }
@@ -308,32 +297,37 @@ export default function HomeownerProjectViewPage() {
         const data = proposalsWithRatings
         
         if (data) {
-            // Store raw data for PDF generator (ProposalWithJoins type)
-            setRawProposals(data as ProposalWithJoins[])
+          // Store raw data for PDF generator (ProposalWithJoins type)
+          setRawProposals(data as unknown as ProposalWithJoins[])
           
           // Transform the data to match the expected Proposal interface
-          const transformedProposals: Proposal[] = data.map(proposal => ({
+          const transformedProposals: Proposal[] = data.map((proposal: any) => ({
             ...proposal,
-            createdAt: new Date(proposal.created_at),
-            updatedAt: new Date(proposal.updated_at),
-            proposed_start_date: new Date(proposal.proposed_start_date),
-            proposed_end_date: new Date(proposal.proposed_end_date),
-            expiry_date: new Date(proposal.expiry_date),
+            id: proposal.id,
+            project: id,
+            contractor: proposal.contractor_id || proposal.contractor,
+            title: proposal.title || '',
+            description_of_work: proposal.description || proposal.description_of_work || '',
+            createdAt: proposal.created_at ? new Date(proposal.created_at) : new Date(),
+            updatedAt: proposal.updated_at ? new Date(proposal.updated_at) : new Date(),
+            proposed_start_date: proposal.proposed_start_date ? new Date(proposal.proposed_start_date) : new Date(),
+            proposed_end_date: proposal.proposed_end_date ? new Date(proposal.proposed_end_date) : new Date(),
+            expiry_date: proposal.expiry_date ? new Date(proposal.expiry_date) : new Date(),
             deposit_due_on: proposal.deposit_due_on, // Keep as string for PDF generator compatibility
             submitted_date: proposal.submitted_date ? new Date(proposal.submitted_date) : undefined,
             accepted_date: proposal.accepted_date ? new Date(proposal.accepted_date) : undefined,
             rejected_date: proposal.rejected_date ? new Date(proposal.rejected_date) : undefined,
             withdrawn_date: proposal.withdrawn_date ? new Date(proposal.withdrawn_date) : undefined,
             viewed_date: proposal.viewed_date ? new Date(proposal.viewed_date) : undefined,
-            last_updated: new Date(proposal.updated_at),
+            last_updated: proposal.updated_at ? new Date(proposal.updated_at) : new Date(),
             // Ensure required fields are present with defaults if missing
             attached_files: proposal.attached_files || [],
             proposals: proposal.proposals || [],
             visibility_settings: proposal.visibility_settings || 'private',
-            created_by: proposal.created_by || proposal.contractor,
-              last_modified_by: proposal.last_modified_by || proposal.contractor
-            }))
-            setProposals(transformedProposals)
+            created_by: proposal.created_by || proposal.contractor_id || proposal.contractor,
+            last_modified_by: proposal.last_modified_by || proposal.contractor_id || proposal.contractor
+          }))
+          setProposals(transformedProposals)
         }
       } catch (error) {
         console.error('Error fetching homeowner proposals:', error)
@@ -350,19 +344,28 @@ export default function HomeownerProjectViewPage() {
     const guardAndNavigate = async () => {
       if (!project || !user) return
 
+      if (
+        project.status === 'Proposal Selected' ||
+        project.status === 'In Progress' ||
+        project.status === 'Completed'
+      ) {
+        toast.error('Project editing is disabled after selecting a proposal')
+        return
+      }
+
+      if (project.status === 'Draft') {
+        router.push(`/homeowner/projects/edit/${project.id}`)
+        return
+      }
+
       try {
         const supabase = createClient()
-        const { data: selectedProposal, error: selectedProposalError } = await supabase
+        const { data: selectedProposal } = await supabase
           .from('proposals')
           .select('id')
-          .eq('project', project.id)
-          .eq('homeowner', user.id)
-          .eq('is_selected', 'yes')
+          .eq('project_id', project.id)
+          .eq('status', 'accepted')
           .maybeSingle()
-
-        if (selectedProposalError) {
-          throw selectedProposalError
-        }
 
         if (selectedProposal) {
           toast.error('Project editing is disabled after selecting a proposal')
@@ -372,7 +375,7 @@ export default function HomeownerProjectViewPage() {
         router.push(`/homeowner/projects/edit/${project.id}`)
       } catch (error) {
         console.error('Error checking edit eligibility:', error)
-        toast.error('Unable to verify edit permissions right now')
+        router.push(`/homeowner/projects/edit/${project.id}`)
       }
     }
 

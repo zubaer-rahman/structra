@@ -79,7 +79,7 @@ export default function Navbar({
 
           <div className="flex items-center">
             <Link 
-              href={user?.user_role ? `/${user.user_role}/dashboard` : "/"} 
+              href={user?.user_role === 'admin' ? "/admin/identity-verification" : (user?.user_role ? `/${user.user_role}/dashboard` : "/")} 
               className="cursor-pointer"
             >
               <Image
@@ -87,6 +87,7 @@ export default function Navbar({
                 alt="Structra Logo"
                 width={120}
                 height={100}
+                priority
                 className="h-8 w-auto sm:h-10 lg:h-12"
               />
             </Link>
@@ -134,9 +135,7 @@ export default function Navbar({
             <>
               {!isDashboardPage && user && (
                 <Link
-                  href={`/${
-                    user?.user_role || "homeowner"
-                  }/dashboard`}
+                  href={user?.user_role === 'admin' ? "/admin/identity-verification" : `/${user?.user_role || "homeowner"}/dashboard`}
                 >
                   <Button
                     size="sm"

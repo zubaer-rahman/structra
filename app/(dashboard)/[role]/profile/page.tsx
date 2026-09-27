@@ -1,12 +1,13 @@
 "use client";
 
-import { use } from "react";
+import { use, useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   HomeownerProfile,
   ContractorProfile,
   AdminProfile,
 } from "@/components/features/profile";
+import LoadingSpinner from "@/components/shared/loading-spinner";
 
 interface ProfilePageProps {
   params: Promise<{
@@ -15,13 +16,26 @@ interface ProfilePageProps {
 }
 
 export default function ProfilePage({ params }: ProfilePageProps) {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const resolvedParams = use(params) as { role: string };
   const { role } = resolvedParams;
+  const [mounted, setMounted] = useState(false);
 
-   if (!user) {
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-[50vh] flex items-center justify-center" suppressHydrationWarning>
+        <LoadingSpinner text="Loading profile..." size="lg" variant="default" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-[50vh] flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-xl font-semibold text-gray-800 mb-2">Authentication Required</h2>
           <p className="text-gray-600">Please sign in to view your profile.</p>

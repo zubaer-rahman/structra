@@ -14,6 +14,7 @@
     "db:seed": "tsx server/database/seed.ts",
     "db:reset": "tsx server/database/reset.ts",
     "db:status": "tsx server/database/migrate.ts status",
+    "seed:admin": "tsx scripts/seed-admin.ts",
     "check-projects": "node scripts/check-projects.js"
   },
   "dependencies": {
@@ -38,7 +39,7 @@
     "@supabase/auth-ui-react": "^0.4.7",
     "@supabase/auth-ui-shared": "^0.1.8",
     "@supabase/ssr": "^0.6.1",
-    "@supabase/supabase-js": "^2.56.0",
+    "@supabase/supabase-js": "^2.117.2",
     "@t3-oss/env-nextjs": "^0.13.8",
     "@tanstack/react-query": "^5.84.2",
     "@tanstack/react-table": "^8.21.3",

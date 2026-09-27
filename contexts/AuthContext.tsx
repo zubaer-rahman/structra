@@ -67,17 +67,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   useEffect(() => {
-    // Add a timeout to prevent infinite loading
+    // Safety timeout to prevent infinite loading
     const timeout = setTimeout(() => {
-      if (loading) {
-        setLoading(false)
-      }
-    }, 10000) // 10 second timeout
+      setLoading(false)
+    }, 10000)
 
-    // Get initial session
+    // 1. Get initial session
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session?.user) {
-        // Fetch user profile data including role
         const { data, error } = await supabase
           .from('users')
           .select('user_role, first_name, last_name, full_name, profile_photo')
@@ -85,73 +82,66 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           .single()
 
         if (error) {
-          console.error('Error fetching user profile during initial session:', {
-            error: error,
-            message: error.message,
-            details: error.details,
-            hint: error.hint,
-            code: error.code
-          })
-          // Set user with basic data if profile fetch fails
-          const initialUser: ExtendedUser = { ...session.user, user_role: undefined, first_name: undefined, last_name: undefined, full_name: undefined, profile_photo: undefined }
+          console.error('Error fetching user profile during initial session:', error)
+          const initialUser: ExtendedUser = { ...session.user }
           setUser(initialUser)
         } else if (data) {
           setUserRole(data.user_role)
-          // Set user with complete profile data immediately
-          const completeUser: ExtendedUser = { ...session.user, user_role: data.user_role, first_name: data.first_name, last_name: data.last_name, full_name: data.full_name, profile_photo: data.profile_photo }
+          const completeUser: ExtendedUser = {
+            ...session.user,
+            user_role: data.user_role,
+            first_name: data.first_name,
+            last_name: data.last_name,
+            full_name: data.full_name,
+            profile_photo: data.profile_photo,
+          }
           setUser(completeUser)
         } else {
-          // Set user with basic data if no profile found
-          const initialUser: ExtendedUser = { ...session.user, user_role: undefined, first_name: undefined, last_name: undefined, full_name: undefined, profile_photo: undefined }
-          setUser(initialUser)
+          setUser({ ...session.user })
         }
       }
       setLoading(false)
     })
 
-    return () => clearTimeout(timeout)
+    // 2. Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (_event, session) => {
+        if (session?.user) {
+          const { data, error } = await supabase
+            .from('users')
+            .select('user_role, first_name, last_name, full_name, profile_photo')
+            .eq('id', session.user.id)
+            .single()
 
-         // Listen for auth changes
-     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-       async (event, session) => {
-         if (session?.user) {
-           // Fetch user profile data first, then set the complete user object
-           const { data, error } = await supabase
-             .from('users')
-             .select('user_role, first_name, last_name, full_name, profile_photo')
-             .eq('id', session.user.id)
-             .single()
+          if (error) {
+            console.error('Error fetching user profile during auth state change:', error)
+            const initialUser: ExtendedUser = { ...session.user }
+            setUser(initialUser)
+          } else if (data) {
+            const completeUser: ExtendedUser = {
+              ...session.user,
+              user_role: data.user_role,
+              first_name: data.first_name,
+              last_name: data.last_name,
+              full_name: data.full_name,
+              profile_photo: data.profile_photo,
+            }
+            setUser(completeUser)
+            setUserRole(data.user_role)
+          }
+        } else {
+          setUser(null)
+          setUserRole(null)
+        }
+        setLoading(false)
+      }
+    )
 
-           if (error) {
-             console.error('Error fetching user profile during auth state change:', error)
-             // Set user with basic data if profile fetch fails
-             const initialUser: ExtendedUser = { ...session.user, user_role: undefined, first_name: undefined, last_name: undefined, full_name: undefined, profile_photo: undefined }
-             setUser(initialUser)
-           } else if (data) {
-             // Set user with complete profile data
-             const completeUser: ExtendedUser = { 
-               ...session.user, 
-               user_role: data.user_role, 
-               first_name: data.first_name, 
-               last_name: data.last_name, 
-               full_name: data.full_name, 
-               profile_photo: data.profile_photo 
-             }
-             setUser(completeUser)
-             setUserRole(data.user_role)
-           }
-         } else {
-           setUser(null)
-           setUserRole(null)
-         }
-         setLoading(false)
-       }
-     )
-
-     return () => {
-       subscription.unsubscribe()
-     }
-   }, [supabase, loading])
+    return () => {
+      clearTimeout(timeout)
+      subscription.unsubscribe()
+    }
+  }, [])
 
   const signOut = async () => {
     setUser(null)
@@ -161,54 +151,67 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
+      console.log('AuthContext: Calling signInWithPassword for', email.trim())
+
+      const signInPromise = supabase.auth.signInWithPassword({
+        email: email.trim(),
         password,
       })
 
+      const timeoutPromise = new Promise<{ data: any; error: any }>((_, reject) =>
+        setTimeout(() => reject(new Error('Sign-in request timed out. Please try again.')), 10000)
+      )
+
+      const { data, error } = await Promise.race([signInPromise, timeoutPromise])
+
       if (error) {
+        console.warn('AuthContext: signIn returned error:', error.message)
         return { user: null, userRole: null, error: error.message }
       }
 
-      if (data.user) {
-        // Fetch user profile data including role
-        const { data: profileData, error: profileError } = await supabase
-          .from('users')
-          .select('user_role, first_name, last_name, full_name, profile_photo')
-          .eq('id', data.user.id)
-          .single()
+      if (data?.user) {
+        let role: UserRole = (data.user.user_metadata?.user_role || 'homeowner') as UserRole;
+        let firstName = data.user.user_metadata?.first_name;
+        let lastName = data.user.user_metadata?.last_name;
+        let photo = data.user.user_metadata?.profile_photo;
 
-        if (profileError) {
-          console.log('Error fetching user profile during sign-in:', {
-            message: profileError.message,
-            details: profileError.details,
-            hint: profileError.hint,
-            code: profileError.code
-          })
-          
-          // Check if it's a "no rows returned" error (profile doesn't exist)
-          if (profileError.code === 'PGRST116' || profileError.message?.includes('No rows')) {
-            return { user: null, userRole: null, error: 'Profile does not exist. Please contact support.' }
+        try {
+          const { data: profileData, error: profileError } = await supabase
+            .from('users')
+            .select('user_role, first_name, last_name, full_name, profile_photo')
+            .eq('id', data.user.id)
+            .single()
+
+          if (!profileError && profileData) {
+            if (profileData.user_role) role = profileData.user_role;
+            if (profileData.first_name) firstName = profileData.first_name;
+            if (profileData.last_name) lastName = profileData.last_name;
+            if (profileData.profile_photo) photo = profileData.profile_photo;
           }
-          
-          return { user: null, userRole: null, error: 'Failed to fetch user profile' }
-        } else if (profileData) {
-          setUserRole(profileData.user_role)
-          const extendedUser = { ...data.user, user_role: profileData.user_role, first_name: profileData.first_name, last_name: profileData.last_name, full_name: profileData.full_name, profile_photo: profileData.profile_photo }
-          setUser(extendedUser)
-          return { user: extendedUser, userRole: profileData.user_role, error: null }
+        } catch (fetchErr) {
+          console.warn('Non-blocking profile fetch error during sign in:', fetchErr);
         }
 
-        // Set user with basic data if no profile found
-        const initialUser: ExtendedUser = { ...data.user, user_role: undefined, first_name: undefined, last_name: undefined, full_name: undefined, profile_photo: undefined }
-        setUser(initialUser)
-        return { user: initialUser, userRole: null, error: null }
+        const extendedUser: ExtendedUser = {
+          ...data.user,
+          user_role: role,
+          first_name: firstName,
+          last_name: lastName,
+          full_name: firstName && lastName ? `${firstName} ${lastName}` : undefined,
+          profile_photo: photo,
+        }
+
+        setUserRole(role)
+        setUser(extendedUser)
+        setLoading(false)
+        return { user: extendedUser, userRole: role, error: null }
       }
 
+      setLoading(false)
       return { user: null, userRole: null, error: 'Sign-in failed' }
-    } catch (error) {
+    } catch (error: any) {
       console.error('AuthContext: Sign-in error:', error)
-      return { user: null, userRole: null, error: 'An unexpected error occurred' }
+      return { user: null, userRole: null, error: error?.message || 'An unexpected error occurred' }
     }
   }
 

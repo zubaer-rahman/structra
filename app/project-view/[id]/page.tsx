@@ -26,6 +26,7 @@ import { createClient } from "@/lib/supabase";
 import { Project } from "@/server/database/interfaces";
 import LoadingSpinner from "@/components/shared/loading-spinner";
 import { Navbar } from "@/components/shared";
+import { normalizeFileReferences } from "@/utils/helpers";
 
 interface ProjectWithContractor extends Omit<Project, 'homeowner'> {
   contractor?: {
@@ -154,29 +155,9 @@ export default function ProjectViewPage() {
   };
 
   const getProjectImages = (project: ProjectWithContractor) => {
-    const images: string[] = [];
-    
-    // Add after photos
-    if (project.after_photo && Array.isArray(project.after_photo)) {
-      project.after_photo.forEach((photo: any) => {
-        if (typeof photo === 'string' && photo.trim() !== '') {
-          images.push(photo);
-        } else if (typeof photo === 'object' && photo.url) {
-          images.push(photo.url);
-        }
-      });
-    }
-    
-    // Add project photos
-    if (project.project_photos && Array.isArray(project.project_photos)) {
-      project.project_photos.forEach((photo: any) => {
-        if (typeof photo === 'string' && photo.trim() !== '') {
-          images.push(photo);
-        } else if (typeof photo === 'object' && photo.url) {
-          images.push(photo.url);
-        }
-      });
-    }
+    const afterPhotos = normalizeFileReferences(project.after_photo).map(f => f.url).filter(Boolean);
+    const projPhotos = normalizeFileReferences(project.project_photos).map(f => f.url).filter(Boolean);
+    const images = [...afterPhotos, ...projPhotos];
     
     return images.length > 0 ? images : ["/images/placeholder-image.png"];
   };

@@ -94,7 +94,7 @@ export default function DashboardLayout({
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" suppressHydrationWarning>
         <LoadingSpinner
           text="Loading..."
           subtitle="Please wait a few seconds..."

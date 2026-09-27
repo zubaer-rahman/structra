@@ -26,6 +26,7 @@ interface ProfilePictureUploadProps {
   className?: string
   size?: number
   disabled?: boolean
+  compact?: boolean
 }
 
 export function ProfilePictureUpload({
@@ -36,7 +37,8 @@ export function ProfilePictureUpload({
   onUploadSuccess,
   className = "",
   size = 120,
-  disabled = false
+  disabled = false,
+  compact = false
 }: ProfilePictureUploadProps) {
   const [isUploading, setIsUploading] = React.useState(false)
   const [dragActive, setDragActive] = React.useState(false)
@@ -117,80 +119,97 @@ export function ProfilePictureUpload({
   }
 
   return (
-    <div className={cn("flex flex-col items-center space-y-4", className)}>
+    <div className={cn("flex flex-col items-center space-y-3", className)}>
+      {/* Hidden File Input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={(e) => handleFileChange(e.target.files)}
+        className="hidden"
+        disabled={disabled || isUploading}
+      />
+
       {/* Profile Picture Display */}
-      <div className="relative">
+      <div 
+        className="relative inline-block"
+        onDragEnter={compact ? handleDrag : undefined}
+        onDragLeave={compact ? handleDrag : undefined}
+        onDragOver={compact ? handleDrag : undefined}
+        onDrop={compact ? (e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          setDragActive(false)
+          if (!disabled && !isUploading) {
+            handleFileChange(e.dataTransfer.files)
+          }
+        } : undefined}
+      >
         <div
           className={cn(
-            "relative rounded-full overflow-hidden border-2 border-gray-200 transition-all duration-200",
-            dragActive && "border-blue-400 bg-blue-50",
+            "relative rounded-full overflow-hidden border-2 border-gray-200 shadow-sm transition-all duration-200 group cursor-pointer",
+            dragActive && "border-orange-500 ring-4 ring-orange-100 bg-orange-50",
             isUploading && "opacity-50",
             disabled && "opacity-50 cursor-not-allowed"
           )}
           style={{ width: size, height: size }}
+          onClick={handleClick}
         >
           {currentPhoto ? (
             <Image
               src={currentPhoto}
               alt="Profile picture"
               fill
-              className="object-cover"
+              className="object-cover group-hover:scale-105 transition-transform duration-200"
               onError={() => {
                 // Fallback to default avatar if image fails to load
                 onPhotoChange(null)
               }}
             />
           ) : (
-            <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-              <User className="w-8 h-8 text-gray-400" />
+            <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+              <User className="w-10 h-10 text-gray-400" />
             </div>
           )}
 
-          {/* Upload overlay */}
-          {!isUploading && (
-            <div
-              className={cn(
-                "absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-50 transition-all duration-200 flex items-center justify-center cursor-pointer",
-                disabled && "cursor-not-allowed"
-              )}
-              onClick={handleClick}
-            >
-              <div className="opacity-0 hover:opacity-100 transition-opacity duration-200">
-                <Camera className="w-6 h-6 text-white" />
-              </div>
+          {/* Hover overlay */}
+          {!isUploading && !disabled && (
+            <div className="absolute inset-0 bg-black/35 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center text-white">
+              <Camera className="w-5 h-5 mb-0.5" />
+              <span className="text-[10px] font-semibold tracking-tight">Edit</span>
             </div>
           )}
 
           {/* Loading overlay */}
           {isUploading && (
-            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-              <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent"></div>
+            <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-white">
+              <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent mb-1"></div>
+              <span className="text-[10px] font-medium">Uploading</span>
             </div>
           )}
-
-          {/* Remove button */}
-          {currentPhoto && !isUploading && !disabled && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                handleRemovePhoto()
-              }}
-              className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
-            >
-              <X className="w-3 h-3" />
-            </button>
-          )}
         </div>
+
+        {/* Visible, permanent Edit / Camera badge at bottom-right of avatar */}
+        {!isUploading && !disabled && (
+          <button
+            type="button"
+            onClick={handleClick}
+            title={currentPhoto ? "Change profile photo" : "Upload profile photo"}
+            className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-orange-600 hover:bg-orange-700 text-white flex items-center justify-center shadow-md border-2 border-white transition-transform hover:scale-110 active:scale-95 z-10 cursor-pointer"
+          >
+            <Camera className="w-4 h-4" />
+          </button>
+        )}
       </div>
 
-      {/* Upload Area */}
-      {!isUploading ? (
+      {/* Upload Area (Full mode only) */}
+      {!compact && !isUploading ? (
         <div
           className={cn(
-            "w-full max-w-sm border-2 border-dashed rounded-lg p-6 text-center transition-all duration-200",
+            "w-full max-w-sm border-2 border-dashed rounded-xl p-6 text-center transition-all duration-200 cursor-pointer",
             dragActive
-              ? "border-blue-400 bg-blue-50"
-              : "border-gray-300 hover:border-gray-400",
+              ? "border-orange-500 bg-orange-50/50"
+              : "border-gray-200 hover:border-orange-400 hover:bg-orange-50/10",
             disabled && "opacity-50 cursor-not-allowed"
           )}
           onDragEnter={handleDrag}
@@ -206,44 +225,37 @@ export function ProfilePictureUpload({
           }}
           onClick={handleClick}
         >
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={(e) => handleFileChange(e.target.files)}
-            className="hidden"
-            disabled={disabled || isUploading}
-          />
-
           <div className="flex flex-col items-center space-y-2">
-            <Upload className="w-8 h-8 text-gray-400" />
+            <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
+              <Upload className="w-5 h-5" />
+            </div>
             <div>
-              <p className="text-sm font-medium text-gray-700">
+              <p className="text-sm font-medium text-gray-800">
                 {currentPhoto ? "Change profile picture" : "Upload profile picture"}
               </p>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-500 mt-0.5">
                 Drag and drop or click to browse
               </p>
-              <p className="text-xs text-gray-400 mt-1">
-                PNG, JPG, GIF up to 5MB
+              <p className="text-[11px] text-gray-400 mt-1">
+                PNG, JPG, WebP up to 5MB
               </p>
             </div>
           </div>
         </div>
       ) : null}
 
-      {/* Upload Button */}
-      {!isUploading ? (
+      {/* Upload Button (Full mode only) */}
+      {!compact && !isUploading ? (
         <Button
           type="button"
           variant="outline"
           size="sm"
           onClick={handleClick}
           disabled={disabled}
-          className="w-full max-w-sm"
+          className="w-full max-w-sm font-semibold border-gray-200 hover:border-orange-200 hover:bg-orange-50/40 text-gray-700 hover:text-orange-700 transition-colors shadow-2xs"
         >
-          <Camera className="w-4 h-4 mr-2" />
-          {currentPhoto ? "Change Picture" : "Upload Picture"}
+          <Camera className="w-3.5 h-3.5 mr-1.5 text-orange-600" />
+          {currentPhoto ? "Change Photo" : "Upload Photo"}
         </Button>
       ) : null}
     </div>

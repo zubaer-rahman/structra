@@ -71,7 +71,18 @@ export async function GET(request: NextRequest) {
       }
 
       const { data: filteredSignatures, error } = await query
-      if (error) throw error
+      if (error) {
+        if (
+          error.code === 'PGRST205' ||
+          error.code === '42P01' ||
+          error.message?.includes('schema cache') ||
+          error.message?.includes('signatures')
+        ) {
+          console.warn('Signatures table does not exist in database yet. Returning empty array.')
+          return NextResponse.json({ signatures: [] })
+        }
+        throw error
+      }
 
       return NextResponse.json({ signatures: filteredSignatures })
     } else if (documentId) {
@@ -89,7 +100,18 @@ export async function GET(request: NextRequest) {
       }
 
       const { data: signatures, error } = await query
-      if (error) throw error
+      if (error) {
+        if (
+          error.code === 'PGRST205' ||
+          error.code === '42P01' ||
+          error.message?.includes('schema cache') ||
+          error.message?.includes('signatures')
+        ) {
+          console.warn('Signatures table does not exist in database yet. Returning empty array.')
+          return NextResponse.json({ signatures: [] })
+        }
+        throw error
+      }
 
       return NextResponse.json({ signatures })
     } else {
@@ -98,7 +120,15 @@ export async function GET(request: NextRequest) {
         { status: 400 }
       )
     }
-  } catch (error) {
+  } catch (error: any) {
+    if (
+      error?.code === 'PGRST205' ||
+      error?.code === '42P01' ||
+      error?.message?.includes('schema cache') ||
+      error?.message?.includes('signatures')
+    ) {
+      return NextResponse.json({ signatures: [] })
+    }
     console.error('Error fetching signatures:', error)
     const message = error instanceof Error ? error.message : 'Failed to fetch signatures'
     return NextResponse.json(
@@ -154,7 +184,19 @@ export async function POST(request: NextRequest) {
         user:users(id, first_name, last_name, email)
       `)
       .single()
-    if (insertError) throw insertError
+    if (insertError) {
+      if (
+        insertError.code === 'PGRST205' ||
+        insertError.code === '42P01' ||
+        insertError.message?.includes('schema cache')
+      ) {
+        return NextResponse.json(
+          { error: 'Signatures table not found in database. Please run migration 047 in Supabase SQL editor.' },
+          { status: 503 }
+        )
+      }
+      throw insertError
+    }
 
     // Mark as signed immediately for profile signatures
     if ((document_type || 'profile') === 'profile') {

@@ -28,8 +28,11 @@ export interface UploadOptions {
 }
 
 class SupabaseStorageService {
-  private supabase = createClient()
   private defaultBucket = 'structra-files'
+
+  private get supabase() {
+    return createClient()
+  }
 
   /**
    * Check if the service is properly configured
@@ -40,8 +43,8 @@ class SupabaseStorageService {
     
     try {
       // Try to access the Supabase client to see if it's configured
-      const hasClient = !!(this.supabase && this.supabase.storage)
-      console.log('Supabase client check:', { hasClient, supabase: !!this.supabase, storage: !!this.supabase?.storage })
+      const client = this.supabase
+      const hasClient = !!(client && client.storage)
       return hasClient
     } catch (error) {
       console.error('Error checking Supabase configuration:', error)
@@ -115,22 +118,33 @@ class SupabaseStorageService {
     
     // Only add folder to path if folder is specified
     const filePath = folder ? `${folder}/${filename}` : filename
+    const client = this.supabase
 
     try {
-      // Upload file to Supabase storage
-      const { data, error } = await this.supabase.storage
+      // Upload file to Supabase storage with 45s safety timeout
+      const uploadPromise = client.storage
         .from(bucket)
         .upload(filePath, file, {
           cacheControl: '3600',
           upsert: false
         })
 
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('File upload timed out. Please check your internet connection and try again.')), 45000)
+      )
+
+      const { data, error } = await Promise.race([uploadPromise, timeoutPromise])
+
       if (error) {
         throw new Error(`Upload failed: ${error.message}`)
       }
 
+      if (!data) {
+        throw new Error('Upload completed without returning storage path')
+      }
+
       // Get public URL
-      const { data: urlData } = this.supabase.storage
+      const { data: urlData } = client.storage
         .from(bucket)
         .getPublicUrl(filePath)
 

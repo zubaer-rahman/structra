@@ -7,6 +7,7 @@ import { FormField } from "./FormField"
 import { CreateProjectFormInputData } from "@/utils/validation/projects"
 import { supabaseStorageService } from "@/server/services/SupabaseStorageService"
 import { LoadingSpinner } from "@/components/shared"
+import toast from "react-hot-toast"
 
 // Define the file type based on the validation schema
 type FileReference = {
@@ -68,7 +69,7 @@ export function FormDocumentInput({
       }
     } catch (error) {
       console.error('Upload failed for file:', file.name, error)
-      throw new Error(`Failed to upload ${file.name}: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(error instanceof Error ? error.message : 'Unknown upload error')
     }
   }
 
@@ -78,7 +79,7 @@ export function FormDocumentInput({
         const selectedFiles = (field.value as FileReference[]) || []
         
         const handleFileChange = async (files: FileList | null) => {
-          if (!files) return
+          if (!files || files.length === 0) return
 
           const newFiles = Array.from(files).filter((file) => {
             // Check file type by extension
@@ -86,18 +87,20 @@ export function FormDocumentInput({
             const allowedExtensions = accept.replace(/\./g, '').split(',')
             
             if (!fileExtension || !allowedExtensions.includes(fileExtension)) {
-              alert(`${file.name} is not a supported file type`)
+              toast.error(`${file.name} is not a supported file type`)
               return false
             }
             
             // Check file size
             if (file.size > maxSize * 1024 * 1024) {
-              alert(`${file.name} is larger than ${maxSize}MB`)
+              toast.error(`${file.name} is larger than ${maxSize}MB`)
               return false
             }
             
             return true
           })
+
+          if (newFiles.length === 0) return
 
           // Add files to uploading state
           setUploadingFiles(prev => new Set([...prev, ...newFiles.map(f => f.name)]))
@@ -107,10 +110,16 @@ export function FormDocumentInput({
             const uploadPromises = newFiles.map(async (file) => {
               try {
                 const fileReference = await uploadFileToSupabase(file)
+                setUploadErrors(prev => {
+                  const next = new Map(prev)
+                  next.delete(file.name)
+                  return next
+                })
                 return fileReference
               } catch (uploadError) {
-                // Store upload error for this file
-                setUploadErrors(prev => new Map(prev).set(file.name, uploadError instanceof Error ? uploadError.message : 'Upload failed'))
+                const msg = uploadError instanceof Error ? uploadError.message : 'Upload failed'
+                setUploadErrors(prev => new Map(prev).set(file.name, msg))
+                toast.error(`Failed to upload ${file.name}: ${msg}`)
                 return null
               } finally {
                 // Remove from uploading state
@@ -128,17 +137,18 @@ export function FormDocumentInput({
             if (successfulUploads.length > 0) {
               // Update form field value with successfully uploaded files
               field.onChange([...selectedFiles, ...successfulUploads])
-            }
-
-            // Show error message if any uploads failed
-            const failedUploads = uploadResults.filter(result => result === null)
-            if (failedUploads.length > 0) {
-              alert(`Failed to upload ${failedUploads.length} file(s). Check the error messages below.`)
+              toast.success(`Successfully uploaded ${successfulUploads.length} document${successfulUploads.length > 1 ? 's' : ''}`)
             }
 
           } catch (error) {
             console.error('Error handling file uploads:', error)
-            alert('Error uploading files. Please try again.')
+            toast.error('Error uploading files. Please try again.')
+          } finally {
+            setUploadingFiles(prev => {
+              const next = new Set(prev)
+              newFiles.forEach(f => next.delete(f.name))
+              return next
+            })
           }
         }
 
@@ -199,7 +209,10 @@ export function FormDocumentInput({
                 type="file"
                 multiple
                 accept={accept}
-                onChange={(e) => handleFileChange(e.target.files)}
+                onChange={(e) => {
+                  handleFileChange(e.target.files)
+                  e.target.value = ""
+                }}
                 className="mt-4 bg-white"
               />
             </div>
