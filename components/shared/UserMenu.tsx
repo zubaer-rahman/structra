@@ -20,6 +20,7 @@ export function UserMenu() {
 
   const handleSignOut = async () => {
     await signOut()
+    window.location.href = '/login'
   }
 
   // Only render for authenticated users

@@ -11,13 +11,23 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'puawlwruyauyucxoueqp.supabase.co',
+        hostname: '*.supabase.co',
         pathname: '/storage/v1/object/public/**',
       },
       {
         protocol: 'https',
-        hostname: 'wjbscxtajimzahcilzoo.supabase.co',
+        hostname: 'dwmwrlwgyftxoenqxmhh.supabase.co',
         pathname: '/storage/v1/object/public/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'api.mapbox.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '/**',
       },
     ],
     unoptimized: false,
@@ -36,8 +46,19 @@ const nextConfig: NextConfig = {
     }
     return config;
   },
+  turbopack: {},
+  async redirects() {
+    return [
+      {
+        source: '/:path*;',
+        destination: '/:path*',
+        permanent: false,
+      },
+    ];
+  },
   // React 19 compatibility
   reactStrictMode: false,
 };
 
 export default nextConfig;
+

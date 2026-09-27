@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { Project } from "@/server/database/interfaces";
 import Image from "next/image";
+import { normalizeFileReference, normalizeFileReferences } from "@/utils/helpers";
 
 interface FeaturedProjectWithContractor extends Omit<Project, 'homeowner'> {
   contractor?: {
@@ -165,70 +166,78 @@ export default function ProjectDetailsModal({
           )}
 
           {/* Project Photos */}
-          {(project.project_photos && project.project_photos.length > 0) || project.after_photo ? (
-            <div className="space-y-4">
-              <h3 className="text-xl font-semibold text-gray-900">Project Gallery</h3>
-              
-              {/* Before and After Comparison */}
-              {project.project_photos && project.project_photos.length > 0 && project.after_photo ? (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Before Photo */}
-                    <div className="space-y-3">
-                      <h4 className="text-sm font-medium text-gray-700 text-center bg-gray-100 px-3 py-1 rounded-full">Before</h4>
-                      <div className="relative h-80 rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg">
-                        <Image
-                          src={project.project_photos[0].url || "/images/placeholder-image.png"}
-                          alt={`${project.project_title || "Project"} - Before`}
-                          fill
-                          className="object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.src = "/images/placeholder-image.png";
-                          }}
-                        />
+          {(() => {
+            const normalizedPhotos = normalizeFileReferences(project.project_photos, 'Project Photo');
+            const beforePhoto = normalizedPhotos[0];
+            const afterPhoto = normalizeFileReference(project.after_photo, 'After Photo');
+
+            if (!beforePhoto && !afterPhoto && normalizedPhotos.length === 0) return null;
+
+            return (
+              <div className="space-y-4">
+                <h3 className="text-xl font-semibold text-gray-900">Project Gallery</h3>
+                
+                {/* Before and After Comparison */}
+                {beforePhoto && afterPhoto ? (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* Before Photo */}
+                      <div className="space-y-3">
+                        <h4 className="text-sm font-medium text-gray-700 text-center bg-gray-100 px-3 py-1 rounded-full">Before</h4>
+                        <div className="relative h-80 rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg">
+                          <Image
+                            src={beforePhoto.url || "/images/placeholder-image.png"}
+                            alt={`${project.project_title || "Project"} - Before`}
+                            fill
+                            className="object-cover"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.src = "/images/placeholder-image.png";
+                            }}
+                          />
+                        </div>
                       </div>
-                    </div>
-                    
-                    {/* After Photo */}
-                    <div className="space-y-3">
-                      <h4 className="text-sm font-medium text-gray-700 text-center bg-green-100 px-3 py-1 rounded-full">After</h4>
-                      <div className="relative h-80 rounded-xl overflow-hidden border-2 border-green-200 shadow-lg">
-                        <Image
-                          src={project.after_photo.url || "/images/placeholder-image.png"}
-                          alt={`${project.project_title || "Project"} - After`}
-                          fill
-                          className="object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.src = "/images/placeholder-image.png";
-                          }}
-                        />
+                      
+                      {/* After Photo */}
+                      <div className="space-y-3">
+                        <h4 className="text-sm font-medium text-gray-700 text-center bg-green-100 px-3 py-1 rounded-full">After</h4>
+                        <div className="relative h-80 rounded-xl overflow-hidden border-2 border-green-200 shadow-lg">
+                          <Image
+                            src={afterPhoto.url || "/images/placeholder-image.png"}
+                            alt={`${project.project_title || "Project"} - After`}
+                            fill
+                            className="object-cover"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.src = "/images/placeholder-image.png";
+                            }}
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ) : (
-                /* Fallback to regular photo grid if no before/after available */
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {project.project_photos?.filter(photo => photo && photo.url).map((photo, index) => (
-                    <div key={`photo-${project.id}-${index}`} className="relative h-80 rounded-xl overflow-hidden shadow-lg">
-                      <Image
-                        src={photo.url || "/images/placeholder-image.png"}
-                        alt={`${project.project_title || "Project"} - Photo ${index + 1}`}
-                        fill
-                        className="object-cover"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.src = "/images/placeholder-image.png";
-                        }}
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          ) : null}
+                ) : (
+                  /* Fallback to regular photo grid if no before/after available */
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {normalizedPhotos.map((photo, index) => (
+                      <div key={`photo-${project.id}-${index}`} className="relative h-80 rounded-xl overflow-hidden shadow-lg">
+                        <Image
+                          src={photo.url || "/images/placeholder-image.png"}
+                          alt={`${project.project_title || "Project"} - Photo ${index + 1}`}
+                          fill
+                          className="object-cover"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = "/images/placeholder-image.png";
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })()}
 
           {/* Project Details */}
           <div className="bg-white border border-gray-200 p-6 rounded-xl">

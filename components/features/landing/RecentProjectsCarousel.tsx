@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase";
 import { Project } from "@/server/database/interfaces";
 import LoadingSpinner from "@/components/shared/loading-spinner";
+import { normalizeFileReference } from "@/utils/helpers";
 
 interface RecentProjectWithContractor extends Omit<Project, 'homeowner'> {
   contractor?: {
@@ -93,23 +94,8 @@ export function RecentProjectsCarousel() {
     // Helper function to safely get image URL from various formats
     const getImageUrl = (imageData: any): string | null => {
       if (!imageData) return null;
-      
-      // If it's already a string
-      if (typeof imageData === 'string' && imageData.trim() !== '') {
-        return imageData;
-      }
-      
-      // If it's an object with url property
-      if (typeof imageData === 'object' && imageData.url && typeof imageData.url === 'string' && imageData.url.trim() !== '') {
-        return imageData.url;
-      }
-      
-      // If it's an object with src property
-      if (typeof imageData === 'object' && imageData.src && typeof imageData.src === 'string' && imageData.src.trim() !== '') {
-        return imageData.src;
-      }
-      
-      return null;
+      const normalized = normalizeFileReference(imageData);
+      return normalized?.url || null;
     };
 
     // Check for valid after photo

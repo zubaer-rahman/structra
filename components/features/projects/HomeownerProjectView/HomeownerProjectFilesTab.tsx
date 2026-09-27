@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import { USER_ROLES } from '@/utils/constants'
 import Image from 'next/image'
+import { normalizeFileReferences } from '@/utils/helpers'
 
 interface HomeownerProjectFilesTabProps {
   project: Project
@@ -21,9 +22,13 @@ interface HomeownerProjectFilesTabProps {
 }
 
 export function HomeownerProjectFilesTab({ project }: HomeownerProjectFilesTabProps) {
+  const normalizedPhotos = normalizeFileReferences(project.project_photos, 'Project Photo')
+  const normalizedFiles = normalizeFileReferences(project.files, 'Project Document')
+  
   // Helper function to check if an image URL is valid
-  const isValidImageUrl = (url: string): boolean => {
-    return Boolean(url && url !== '' && !url.includes('placeholder-image.png'));
+  const isValidImageUrl = (url?: string | null): boolean => {
+    if (!url || typeof url !== 'string' || url.trim() === '') return false
+    return !url.includes('placeholder-image.png')
   }
 
   // Helper function to get a safe image URL
@@ -77,9 +82,9 @@ export function HomeownerProjectFilesTab({ project }: HomeownerProjectFilesTabPr
       <div>
         <h3 className="text-base sm:text-lg font-semibold text-black mb-3 sm:mb-4">Project Files</h3>
         <div className="space-y-4">
-          {project.files && project.files.length > 0 ? (
+          {normalizedFiles && normalizedFiles.length > 0 ? (
             <div className="space-y-3">
-              {project.files.map((file, index) => (
+              {normalizedFiles.map((file, index) => (
                 <div key={index} className="flex items-center justify-between p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
                   {/* File Info */}
                   <div className="flex items-center space-x-3 flex-1 min-w-0">
@@ -149,9 +154,9 @@ export function HomeownerProjectFilesTab({ project }: HomeownerProjectFilesTabPr
       <div>
         <h3 className="text-base sm:text-lg font-semibold text-black mb-3 sm:mb-4">Project Photos</h3>
         <div className="space-y-4">
-          {project.project_photos && project.project_photos.length > 0 ? (
+          {normalizedPhotos && normalizedPhotos.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {project.project_photos.map((photo, index) => (
+              {normalizedPhotos.map((photo, index) => (
                 <div key={index} className="group relative bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
                   {/* Photo Preview */}
                   <div className="aspect-video bg-gray-100 relative overflow-hidden">

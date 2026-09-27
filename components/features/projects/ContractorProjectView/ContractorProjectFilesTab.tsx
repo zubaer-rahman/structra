@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import { USER_ROLES } from '@/utils/constants'
 import Image from 'next/image'
+import { normalizeFileReferences } from '@/utils/helpers'
 
 interface ContractorProjectFilesTabProps {
   project: Project
@@ -21,6 +22,9 @@ interface ContractorProjectFilesTabProps {
 }
 
 export function ContractorProjectFilesTab({ project }: ContractorProjectFilesTabProps) {
+  const normalizedPhotos = normalizeFileReferences(project.project_photos, 'Project Photo')
+  const normalizedFiles = normalizeFileReferences(project.files, 'Project Document')
+
   // Helper function to check if an image URL is valid
   const isValidImageUrl = (url: string): boolean => {
     return Boolean(url && url !== '' && !url.includes('placeholder-image.png'));
@@ -106,9 +110,9 @@ export function ContractorProjectFilesTab({ project }: ContractorProjectFilesTab
       <div>
         <h3 className="text-base sm:text-lg font-semibold text-black mb-3 sm:mb-4">Project Files & Documents</h3>
         <div className="space-y-4">
-          {project.files && project.files.length > 0 ? (
+          {normalizedFiles && normalizedFiles.length > 0 ? (
             <div className="space-y-3">
-              {project.files.map((file, index) => (
+              {normalizedFiles.map((file, index) => (
                 <div key={index} className="flex items-center gap-3 p-4 bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition-colors">
                   {/* File Icon */}
                   <div className="flex-shrink-0">
@@ -184,9 +188,9 @@ export function ContractorProjectFilesTab({ project }: ContractorProjectFilesTab
       <div>
         <h3 className="text-base sm:text-lg font-semibold text-black mb-3 sm:mb-4">Project Photos</h3>
         <div className="space-y-4">
-          {project.project_photos && project.project_photos.length > 0 ? (
+          {normalizedPhotos && normalizedPhotos.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {project.project_photos.map((photo, index) => (
+              {normalizedPhotos.map((photo, index) => (
                 <div key={index} className="group relative bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
                   {/* Photo Preview */}
                   <div className="aspect-video bg-gray-100 relative overflow-hidden">

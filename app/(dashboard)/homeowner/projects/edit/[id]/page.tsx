@@ -43,9 +43,8 @@ export default function EditProjectPage() {
         const supabase = createClient()
         const { data, error: fetchError } = await supabase
           .from('projects')
-          .select('id, creator')
+          .select('id, creator, status')
           .eq('id', id)
-          .eq('creator', user.id)
           .single()
         
         if (fetchError || !data) {
@@ -54,26 +53,37 @@ export default function EditProjectPage() {
           return
         }
 
-        // Block edits once a proposal has been selected for this project.
-        const { data: selectedProposal, error: selectedProposalError } = await supabase
-          .from('proposals')
-          .select('id')
-          .eq('project', id)
-          .eq('homeowner', user.id)
-          .eq('is_selected', 'yes')
-          .maybeSingle()
-
-        if (selectedProposalError) {
-          console.error('Error checking selected proposal state:', selectedProposalError)
-          setError('Failed to verify project edit permissions')
-          setLoading(false)
+        if (data.creator && data.creator !== user.id) {
+          setError('Project not found or access denied')
+          router.push('/homeowner/projects')
           return
         }
 
-        if (selectedProposal) {
+        // Block edits once a proposal has been selected or work is in progress.
+        if (
+          data.status === 'Proposal Selected' ||
+          data.status === 'In Progress' ||
+          data.status === 'Completed'
+        ) {
           setError('This project can no longer be edited after selecting a proposal')
           router.push(`/homeowner/projects/view/${id}`)
           return
+        }
+
+        // Check if there is an accepted proposal in proposals table
+        if (data.status !== 'Draft') {
+          const { data: selectedProposal } = await supabase
+            .from('proposals')
+            .select('id')
+            .eq('project_id', id)
+            .eq('status', 'accepted')
+            .maybeSingle()
+
+          if (selectedProposal) {
+            setError('This project can no longer be edited after selecting a proposal')
+            router.push(`/homeowner/projects/view/${id}`)
+            return
+          }
         }
         
         setLoading(false)

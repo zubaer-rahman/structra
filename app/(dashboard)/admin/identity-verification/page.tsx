@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useMemo } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -20,84 +20,68 @@ import {
   Shield
 } from 'lucide-react'
 import Image from 'next/image'
-import { createClient } from '@/lib/supabase'
+import { trpc } from '@/utils/trpc'
 import toast from 'react-hot-toast'
 import { LoadingSpinner } from '@/components/shared'
 
+interface VerificationRequest {
+  id: string
+  name: string
+  email: string
+  userType: string
+  submittedAt: string
+  status: string
+  governmentId: {
+    id: string
+    filename: string
+    url: string
+    size?: number
+    mimeType?: string
+    uploadedAt?: Date | string
+  } | null
+  priority: string
+}
+
 export default function IdentityVerificationPage() {
-  const [selectedUser, setSelectedUser] = useState<{
-    id: string
-    name: string
-    email: string
-    userType: string
-    submittedAt: string
-    status: string
-    governmentId: {
-      id: string
-      filename: string
-      url: string
-      size?: number
-      mimeType?: string
-      uploadedAt?: Date
-    } | null
-    priority: string
-  } | null>(null)
+  const [selectedUser, setSelectedUser] = useState<VerificationRequest | null>(null)
   const [isReviewDialogOpen, setIsReviewDialogOpen] = useState(false)
-  const [verificationRequests, setVerificationRequests] = useState<{
-    id: string
-    name: string
-    email: string
-    userType: string
-    submittedAt: string
-    status: string
-    governmentId: {
-      id: string
-      filename: string
-      url: string
-      size?: number
-      mimeType?: string
-      uploadedAt?: Date
-    } | null
-    priority: string
-  }[]>([])
-  const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
 
-  useEffect(() => {
-    fetchVerificationRequests()
-  }, [])
+  const { data: rawRequests, isLoading, refetch } = trpc.admin.getIdentityVerifications.useQuery()
+  const approveMutation = trpc.admin.approveIdentityVerification.useMutation()
+  const rejectMutation = trpc.admin.rejectIdentityVerification.useMutation()
+  const loading = isLoading
 
-  const fetchVerificationRequests = async () => {
-    try {
-      const supabase = createClient()
-      const { data, error } = await supabase
-        .from('users')
-        .select('id, first_name, last_name, email, user_role, government_id, government_id_verified, created_at')
-        .not('government_id', 'is', null)
-        .order('created_at', { ascending: false })
+  const verificationRequests: VerificationRequest[] = useMemo(() => {
+    return (rawRequests || []).map((user: any) => {
+      let governmentId = user.government_id
+      if (typeof governmentId === 'string') {
+        try {
+          governmentId = JSON.parse(governmentId)
+        } catch {}
+      }
 
-      if (error) throw error
+      const submittedAt = governmentId?.uploadedAt
+        ? new Date(governmentId.uploadedAt).toLocaleDateString()
+        : user.created_at
+        ? new Date(user.created_at).toLocaleDateString()
+        : 'N/A'
 
-      const requests = data?.map(user => ({
+      const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim()
+
+      return {
         id: user.id,
-        name: `${user.first_name} ${user.last_name}`,
+        name: fullName || user.email,
         email: user.email,
         userType: user.user_role === 'contractor' ? 'Contractor' : 'Homeowner',
-        submittedAt: new Date(user.created_at).toLocaleDateString(),
+        submittedAt,
         status: user.government_id_verified ? 'approved' : 'pending',
-        governmentId: user.government_id,
-        priority: 'medium'
-      })) || []
-
-      setVerificationRequests(requests)
-    } catch (error) {
-      console.error('Error fetching verification requests:', error)
-      toast.error('Failed to load verification requests')
-    } finally {
-      setLoading(false)
-    }
-  }
+        governmentId,
+        priority: 'medium',
+      }
+    })
+  }, [rawRequests])
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -112,36 +96,7 @@ export default function IdentityVerificationPage() {
     }
   }
 
-  // const getPriorityBadge = (priority: string) => {
-  //   switch (priority) {
-  //     case 'high':
-  //       return <Badge className="bg-red-100 text-red-800">High</Badge>
-  //     case 'medium':
-  //       return <Badge className="bg-yellow-100 text-yellow-800">Medium</Badge>
-  //     case 'low':
-  //       return <Badge className="bg-green-100 text-green-800">Low</Badge>
-  //     default:
-  //       return <Badge className="bg-gray-100 text-gray-800">{priority}</Badge>
-  //   }
-  // }
-
-  const handleReview = (user: {
-    id: string
-    name: string
-    email: string
-    userType: string
-    submittedAt: string
-    status: string
-    governmentId: {
-      id: string
-      filename: string
-      url: string
-      size?: number
-      mimeType?: string
-      uploadedAt?: Date
-    } | null
-    priority: string
-  }) => {
+  const handleReview = (user: VerificationRequest) => {
     setSelectedUser(user)
     setIsReviewDialogOpen(true)
   }
@@ -150,20 +105,13 @@ export default function IdentityVerificationPage() {
     if (!selectedUser) return
 
     try {
-      const supabase = createClient()
-      const { error } = await supabase
-        .from('users')
-        .update({ government_id_verified: true })
-        .eq('id', selectedUser.id)
-
-      if (error) throw error
-
+      await approveMutation.mutateAsync({ userId: selectedUser.id })
       toast.success('Government ID verified successfully')
-      fetchVerificationRequests()
+      await refetch()
       setIsReviewDialogOpen(false)
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error approving verification:', error)
-      toast.error('Failed to approve verification')
+      toast.error(error?.message || 'Failed to approve verification')
     }
   }
 
@@ -171,23 +119,13 @@ export default function IdentityVerificationPage() {
     if (!selectedUser) return
 
     try {
-      const supabase = createClient()
-      const { error } = await supabase
-        .from('users')
-        .update({ 
-          government_id: null,
-          government_id_verified: false 
-        })
-        .eq('id', selectedUser.id)
-
-      if (error) throw error
-
+      await rejectMutation.mutateAsync({ userId: selectedUser.id })
       toast.success('Government ID rejected and removed')
-      fetchVerificationRequests()
+      await refetch()
       setIsReviewDialogOpen(false)
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error rejecting verification:', error)
-      toast.error('Failed to reject verification')
+      toast.error(error?.message || 'Failed to reject verification')
     }
   }
 

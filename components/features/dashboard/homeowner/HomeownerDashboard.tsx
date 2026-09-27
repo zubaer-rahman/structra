@@ -83,10 +83,8 @@ export default function HomeownerDashboard() {
         if (projectIds.length > 0) {
           const { data: proposalCounts, error: proposalCountsError } = await supabase
             .from('proposals')
-            .select('project, id')
-            .eq('homeowner', currentUser.id)
-            .eq('is_deleted', 'no')
-            .in('project', projectIds)
+            .select('project_id, id')
+            .in('project_id', projectIds)
           
           if (proposalCountsError) {
             console.warn('Proposal counts query failed:', proposalCountsError)
@@ -94,7 +92,10 @@ export default function HomeownerDashboard() {
             // Count proposals per project
             const counts: Record<string, number> = {}
             proposalCounts?.forEach(proposal => {
-              counts[proposal.project] = (counts[proposal.project] || 0) + 1
+              const pid = proposal.project_id || (proposal as any).project
+              if (pid) {
+                counts[pid] = (counts[pid] || 0) + 1
+              }
             })
             setProjectProposalCounts(counts)
           }
@@ -105,17 +106,21 @@ export default function HomeownerDashboard() {
 
       // Fetch accepted proposals count
       try {
-        const { count: acceptedCount, error: proposalsError } = await supabase
-          .from('proposals')
-          .select('*', { count: 'exact', head: true })
-          .eq('homeowner', currentUser.id)
-          .eq('status', 'accepted')
-          .eq('is_deleted', 'no')
-        
-        if (proposalsError) {
-          console.warn('Proposals table query failed:', proposalsError)
+        const projectIds = (projectsData || []).map(p => p.id)
+        if (projectIds.length > 0) {
+          const { count: acceptedCount, error: proposalsError } = await supabase
+            .from('proposals')
+            .select('*', { count: 'exact', head: true })
+            .in('project_id', projectIds)
+            .eq('status', 'accepted')
+          
+          if (proposalsError) {
+            console.warn('Proposals table query failed:', proposalsError)
+          } else {
+            setAcceptedProposalsCount(acceptedCount || 0)
+          }
         } else {
-          setAcceptedProposalsCount(acceptedCount || 0)
+          setAcceptedProposalsCount(0)
         }
       } catch (proposalsError) {
         console.warn('Proposals table might not exist yet:', proposalsError)

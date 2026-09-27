@@ -164,7 +164,7 @@ export default function LoginPage() {
        
        // Add a longer delay to ensure session is fully established and stable
        const redirectTimer = setTimeout(() => {
-         const roleDashboard = `/${userRole}/dashboard`;
+         const roleDashboard = userRole === 'admin' ? '/admin/identity-verification' : `/${userRole}/dashboard`;
          router.push(roleDashboard);
        }, 1000); // 1 second delay to ensure session stability
        
@@ -275,17 +275,17 @@ export default function LoginPage() {
         } else {
           setError(error);
         }
-             } else if (signedInUser) {
-         
-         // Don't redirect here - let the useEffect handle the redirect
-         // after the session is fully established and stable
-         // The AuthContext will update the user and userRole states,
-         // which will trigger the redirect useEffect
-       }
+        setIsLoading(false);
+      } else if (signedInUser) {
+        const role = signInUserRole || signedInUser.user_role || "homeowner";
+        const targetUrl = role === "admin" ? "/admin/identity-verification" : `/${role}/dashboard`;
+        window.location.href = targetUrl;
+      } else {
+        setIsLoading(false);
+      }
     } catch (error) {
       console.error("Sign-in error:", error);
       setError("An unexpected error occurred. Please try again.");
-    } finally {
       setIsLoading(false);
     }
   };

@@ -19,6 +19,7 @@ import toast from 'react-hot-toast'
 import { format } from 'date-fns'
 import { SIGNATURE_STATUSES } from '@/utils/constants/signatures'
 import { SignatureWithUser } from '@/server/database/schemas/signatures'
+import { cn } from '@/lib/utils'
 
 interface ProfileSignatureSectionProps {
   userId: string
@@ -26,6 +27,7 @@ interface ProfileSignatureSectionProps {
   userName: string
   userEmail?: string
   className?: string
+  cardClassName?: string
 }
 
 export function ProfileSignatureSection({
@@ -33,7 +35,8 @@ export function ProfileSignatureSection({
   userRole,
   userName,
   userEmail,
-  className = ''
+  className = '',
+  cardClassName = ''
 }: ProfileSignatureSectionProps) {
   const [signature, setSignature] = useState<SignatureWithUser | null>(null)
   const [loading, setLoading] = useState(false)
@@ -64,8 +67,9 @@ export function ProfileSignatureSection({
       })
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}))
-        throw new Error(errorData.error || `Failed to load signature (${response.status})`)
+        console.warn('Profile signature not loaded (status:', response.status, ')')
+        setSignature(null)
+        return
       }
 
       const { signatures } = await response.json()
@@ -75,8 +79,8 @@ export function ProfileSignatureSection({
         setSignature(null)
       }
     } catch (error) {
-      console.error('Error loading signature:', error)
-      toast.error('Failed to load signature')
+      console.warn('Could not load profile signature:', error)
+      setSignature(null)
     } finally {
       setLoading(false)
     }
@@ -225,7 +229,7 @@ export function ProfileSignatureSection({
 
   return (
     <div className={`profile-signature-section ${className}`}>
-      <Card>
+      <Card className={cn("rounded-2xl border border-gray-200/80 shadow-xs", cardClassName)}>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <PenTool className="h-5 w-5" />
@@ -336,7 +340,7 @@ export function ProfileSignatureSection({
               <p className="text-gray-600 mb-4">
                 Create your digital signature to use in contracts and agreements
               </p>
-              <Button onClick={() => setShowSignatureModal(true)}>
+              <Button onClick={() => setShowSignatureModal(true)} className="bg-orange-600 hover:bg-orange-700 text-white font-medium shadow-xs">
                 <PenTool className="h-4 w-4 mr-2" />
                 Create Signature
               </Button>

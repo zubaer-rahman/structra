@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, Resolver, FieldErrors, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -146,7 +146,7 @@ export default function CreateProjectForm({
     resolver: zodResolver(
       createProjectFormInputSchema
     ) as Resolver<CreateProjectFormInputData>,
-    mode: "onSubmit",
+    mode: "onChange",
     defaultValues: {
       project_title: "",
       statement_of_work: "",
@@ -176,46 +176,79 @@ export default function CreateProjectForm({
 
   const { handleSubmit } = form;
 
-  const saveAsDraft = async (data: CreateProjectFormInputData) => {
-    if (!data.pid || data.pid.trim() === '') {
-      toast.error("Parcel Identifier is required");
+  const watchedValues = form.watch();
+
+  const isFormValid = useMemo(() => {
+    return createProjectFormInputSchema.safeParse(watchedValues).success;
+  }, [watchedValues]);
+
+  const missingFields = useMemo(() => {
+    const result = createProjectFormInputSchema.safeParse(watchedValues);
+    if (result.success) return [];
+
+    const missing: string[] = [];
+    const issues = result.error.issues;
+
+    if (issues.some((i) => i.path[0] === "project_title")) missing.push("Project Title");
+    if (issues.some((i) => i.path[0] === "statement_of_work")) missing.push("Statement of Work");
+    if (issues.some((i) => i.path[0] === "budget")) missing.push("Budget (> $0)");
+    if (issues.some((i) => i.path[0] === "category")) missing.push("Trade Category");
+    if (issues.some((i) => i.path[0] === "pid")) missing.push("9-digit Parcel Identifier (PID)");
+    if (issues.some((i) => i.path[0] === "location")) missing.push("Location Address");
+    if (issues.some((i) => i.path[0] === "start_date" || i.path[0] === "end_date")) missing.push("Project Dates");
+    if (issues.some((i) => i.path[0] === "expiry_date" || i.path[0] === "decision_date")) missing.push("Deadlines");
+    if (issues.some((i) => i.path[0] === "project_photos")) missing.push("Area of Work Pictures (min 1)");
+
+    return missing;
+  }, [watchedValues]);
+
+  const saveAsDraft = async (data: Partial<CreateProjectFormInputData>) => {
+    // For drafts, only require a project title at minimum
+    if (!data.project_title || data.project_title.trim() === '') {
+      toast.error("Project title is required to save as draft");
       return;
     }
 
-    // PID uniqueness check removed - duplicates are now allowed
     setLoading(true);
     try {
       const supabase = createClient();
 
       // Note: Slug will be generated when admin approves the project (title_awarded = true)
 
+      // Build insert data with sensible defaults for missing fields
+      const insertData: Record<string, unknown> = {
+        title: data.project_title.trim(),
+        project_title: data.project_title.trim(),
+        statement_of_work: data.statement_of_work || '',
+        budget: data.budget || 0,
+        category: Array.isArray(data.category) && data.category.length > 0 ? data.category : [],
+        pid: data.pid?.trim() || '',
+        location: data.location || { address: '', latitude: 0, longitude: 0 },
+        project_type: data.project_type || PROJECT_TYPES.RENOVATION,
+        permit_required: data.permit_required || false,
+        visibility_settings: 'Public To Marketplace', // Default visibility
+        status: PROJECT_STATUSES.DRAFT,
+        delay_penalty: data.delay_penalty || 0,
+        abandonment_penalty: data.abandonment_penalty || 0,
+        project_photos: data.project_photos || [],
+        files: data.files || [],
+        creator: user.id,
+        homeowner_id: user.id,
+        // slug will be generated when admin approves the project
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+
+      // Only include date fields if they have values
+      if (data.start_date) insertData.start_date = new Date(data.start_date);
+      if (data.end_date) insertData.end_date = new Date(data.end_date);
+      if (data.expiry_date) insertData.expiry_date = new Date(data.expiry_date);
+      if (data.decision_date) insertData.decision_date = new Date(data.decision_date);
+
       // Create project with draft status
       const { data: project, error: createError } = await supabase
         .from('projects')
-        .insert({
-          project_title: data.project_title,
-          statement_of_work: data.statement_of_work,
-          budget: data.budget,
-          category: Array.isArray(data.category) ? data.category : [data.category],
-          pid: data.pid.trim(),
-          location: data.location,
-          project_type: data.project_type,
-          start_date: new Date(data.start_date),
-          end_date: new Date(data.end_date),
-          expiry_date: new Date(data.expiry_date),
-          decision_date: data.decision_date ? new Date(data.decision_date) : null,
-          permit_required: data.permit_required || false,
-          visibility_settings: 'Public To Marketplace', // Default visibility
-          status: PROJECT_STATUSES.DRAFT,
-          delay_penalty: data.delay_penalty,
-          abandonment_penalty: data.abandonment_penalty,
-          project_photos: data.project_photos || [],
-          files: data.files || [],
-          creator: user.id,
-          // slug will be generated when admin approves the project
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        })
+        .insert(insertData)
         .select('id')
         .single();
 
@@ -309,6 +342,8 @@ export default function CreateProjectForm({
       const { data: project, error: createError } = await supabase
         .from('projects')
         .insert({
+          title: pendingProjectData.project_title,
+          homeowner_id: user.id,
           project_title: pendingProjectData.project_title,
           statement_of_work: pendingProjectData.statement_of_work,
           budget: pendingProjectData.budget,
@@ -515,11 +550,13 @@ export default function CreateProjectForm({
             <FormActions 
               loading={loading || isProcessingPaymentSuccess}
               showDraftButton={true}
-              onSaveAsDraft={handleSubmit(saveAsDraft, onFormError)}
+              onSaveAsDraft={() => saveAsDraft(form.getValues())}
               onPublish={handleSubmit(handlePublish, onFormError)}
               isDraftLoading={loading || isCheckingPid || isProcessingPaymentSuccess}
               isPublishLoading={loading || isCheckingPid || isProcessingPaymentSuccess}
               isProcessingPaymentSuccess={isProcessingPaymentSuccess}
+              isPublishDisabled={!isFormValid}
+              missingFields={missingFields}
             />
           </form>
         </FormProvider>
@@ -556,11 +593,13 @@ export default function CreateProjectForm({
           <FormActions 
             loading={loading || isProcessingPaymentSuccess}
             showDraftButton={true}
-            onSaveAsDraft={handleSubmit(saveAsDraft, onFormError)}
+            onSaveAsDraft={() => saveAsDraft(form.getValues())}
             onPublish={handleSubmit(handlePublish, onFormError)}
             isDraftLoading={loading || isCheckingPid || isProcessingPaymentSuccess}
             isPublishLoading={loading || isCheckingPid || isProcessingPaymentSuccess}
             isProcessingPaymentSuccess={isProcessingPaymentSuccess}
+            isPublishDisabled={!isFormValid}
+            missingFields={missingFields}
           />
         </form>
       </FormProvider>

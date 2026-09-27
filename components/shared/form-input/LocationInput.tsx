@@ -2,12 +2,10 @@
 
 import * as React from "react";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Search, MapPin, X, Navigation } from "lucide-react";
+import { Search, MapPin, X, Loader2, Globe } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { LoadingSpinner } from "@/components/shared";
-import { useGoogleMaps } from "@/hooks/useGoogleMaps";
 
 export interface LocationData {
   address: string;
@@ -34,9 +32,14 @@ export interface LocationInputProps {
   disabled?: boolean;
 }
 
-import type { GoogleMaps, MapOptions, MarkerOptions, InfoWindowOptions, AutocompleteService, PlacePrediction, PlacesService, PlaceResult } from '../types/google-maps'
+interface SearchResultItem {
+  id: string;
+  mainText: string;
+  secondaryText: string;
+  locationData: LocationData;
+}
 
-// Simple Map Component using Google Maps
+// Mapbox Static Map & OpenStreetMap interactive preview (Free & high performance)
 function LocationMap({
   latitude,
   longitude,
@@ -48,159 +51,52 @@ function LocationMap({
   address: string;
   className?: string;
 }) {
-  const mapRef = useRef<HTMLDivElement>(null)
-  const [isLoaded, setIsLoaded] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const mapInstanceRef = useRef<any | null>(null)
-  const markerRef = useRef<any | null>(null)
-
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
-
-  const initializeMap = useCallback(() => {
-    if (!mapRef.current || !window.google || !window.google.maps || !window.google.maps.MapTypeId || latitude === 0 || longitude === 0) {
-      return
-    }
-
-    try {
-      const mapOptions = {
-        center: { lat: latitude, lng: longitude },
-        zoom: 15,
-        mapTypeId: window.google.maps.MapTypeId.ROADMAP,
-      }
-
-      const map = new window.google.maps.Map(mapRef.current, mapOptions)
-      mapInstanceRef.current = map
-
-      // Add marker
-      const marker = new window.google.maps.Marker({
-        position: { lat: latitude, lng: longitude },
-        map: map,
-        title: address,
-      })
-      markerRef.current = marker
-
-      // Add info window
-      const infoWindow = new window.google.maps.InfoWindow({
-        content: `
-          <div style="padding: 8px; max-width: 200px;">
-            <div style="font-weight: 600; margin-bottom: 4px;">${address}</div>
-            <div style="font-size: 12px; color: #666;">
-              ${latitude.toFixed(6)}, ${longitude.toFixed(6)}
-            </div>
-          </div>
-        `,
-        position: { lat: latitude, lng: longitude },
-      })
-
-      marker.addListener('click', () => {
-        infoWindow.open(map, marker)
-      })
-
-      setIsLoaded(true)
-    } catch (err) {
-      console.error('Error initializing Google Map:', err)
-      setError('Failed to initialize map')
-    }
-  }, [latitude, longitude, address])
-
-  useEffect(() => {
-    if (!apiKey) {
-      setError('Google Maps API key is not configured')
-      return
-    }
-
-    if (latitude === 0 || longitude === 0) {
-      setError('Location coordinates are not available')
-      return
-    }
-
-    // Check if Google Maps is already loaded
-    if (window.google && window.google.maps) {
-      initializeMap()
-      return
-    }
-
-    // Load Google Maps script
-    const script = document.createElement('script')
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&loading=async`
-    script.async = true
-    script.defer = true
-    
-    window.initGoogleMapsLocation = () => {
-      setIsLoaded(true)
-      initializeMap()
-    }
-    
-    script.onload = window.initGoogleMapsLocation
-    script.onerror = () => {
-      setError('Failed to load Google Maps')
-    }
-
-    document.head.appendChild(script)
-
-    return () => {
-      if (script.parentNode) {
-        script.parentNode.removeChild(script)
-      }
-      delete window.initGoogleMapsLocation
-    }
-  }, [apiKey, latitude, longitude, initializeMap])
-
-  if (error) {
-    return (
-      <div className={`bg-gray-100 rounded-lg flex items-center justify-center ${className}`}>
-        <div className="text-center p-6">
-          <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-          <p className="text-sm text-gray-500">{error}</p>
-        </div>
-      </div>
-    )
-  }
-
   if (latitude === 0 || longitude === 0) {
-    return (
-      <div className={`bg-gray-100 rounded-lg flex items-center justify-center ${className}`}>
-        <div className="text-center p-6">
-          <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-          <p className="text-sm text-gray-500">
-            Select a location to view on map
-          </p>
-        </div>
-      </div>
-    )
+    return null;
   }
+
+  const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+  const mapboxStaticUrl = mapboxToken
+    ? `https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/pin-s+ea580c(${longitude},${latitude})/${longitude},${latitude},14,0/600x260@2x?access_token=${mapboxToken}`
+    : null;
+
+  const osmUrl = `https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}#map=16/${latitude}/${longitude}`;
 
   return (
-    <div className={`border border-gray-200 rounded-lg overflow-hidden ${className}`}>
-      <div className="p-3 bg-gray-50 border-b border-gray-200">
-        <div className="flex items-center space-x-2">
-          <Navigation className="h-4 w-4 text-blue-600" />
-          <span className="text-sm font-medium text-gray-700">
-            Location Map
-          </span>
-        </div>
-        <p className="text-xs text-gray-500 mt-1 truncate">{address}</p>
+    <div className={`mt-3 space-y-2 ${className}`}>
+      <div className="relative w-full h-[220px] rounded-xl overflow-hidden border border-gray-200 dark:border-white/10 shadow-sm bg-gray-900">
+        {mapboxStaticUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={mapboxStaticUrl}
+            alt={address || "Location Preview"}
+            className="w-full h-full object-cover"
+            loading="lazy"
+          />
+        ) : (
+          <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 p-4 text-center">
+            <MapPin className="h-8 w-8 text-orange-500 mb-2" />
+            <p className="text-xs text-gray-300 font-medium">{address}</p>
+            <p className="text-[11px] text-gray-500 mt-1">
+              {latitude.toFixed(5)}, {longitude.toFixed(5)}
+            </p>
+          </div>
+        )}
       </div>
-      <div className="relative">
-        <div ref={mapRef} style={{ height: '200px', width: '100%' }} />
-      </div>
-      <div className="p-3 bg-gray-50 border-t border-gray-200">
-        <div className="flex items-center justify-between text-xs text-gray-600">
-          <span>
-            Coordinates: {latitude.toFixed(6)}, {longitude.toFixed(6)}
-          </span>
-          <a
-            href={`https://www.google.com/maps?q=${latitude},${longitude}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 hover:text-blue-800 hover:underline"
-          >
-            Open in Google Maps
-          </a>
-        </div>
+      <div className="flex items-center justify-between text-xs text-gray-500 px-1">
+        <span>Coordinates: {latitude.toFixed(6)}, {longitude.toFixed(6)}</span>
+        <a
+          href={osmUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 text-orange-600 hover:text-orange-700 hover:underline font-medium"
+        >
+          <Globe className="h-3 w-3" />
+          View on Map
+        </a>
       </div>
     </div>
-  )
+  );
 }
 
 export function LocationInput({
@@ -208,7 +104,7 @@ export function LocationInput({
   onChange,
   onBlur,
   label,
-  placeholder = "Search for a location...",
+  placeholder = "Search for an address or city...",
   required = false,
   error,
   helperText,
@@ -217,273 +113,268 @@ export function LocationInput({
   showSelectedLocation = true,
   disabled = false,
 }: LocationInputProps) {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [searchResults, setSearchResults] = useState<PlacePrediction[]>([])
-  const [isSearching, setIsSearching] = useState(false)
-  const [showResults, setShowResults] = useState(false)
-  const [selectedLocation, setSelectedLocation] = useState<LocationData | null>(value)
-  const [highlightedIndex, setHighlightedIndex] = useState(-1)
-  
-  // Use the singleton Google Maps hook
-  const { isLoaded: isGoogleMapsLoaded, error: googleMapsError } = useGoogleMaps()
+  const [searchQuery, setSearchQuery] = useState(value?.address || "");
+  const [searchResults, setSearchResults] = useState<SearchResultItem[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showResults, setShowResults] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState<LocationData | null>(value);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
 
-  const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
-  const resultsRef = useRef<HTMLDivElement>(null)
-  const autocompleteServiceRef = useRef<AutocompleteService | null>(null)
-  const placesServiceRef = useRef<PlacesService | null>(null)
+  const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
 
-  // Initialize Google Maps services when loaded
+  // Synchronize internal query state with incoming value
   useEffect(() => {
-    if (isGoogleMapsLoaded) {
-      // Add a small delay to ensure Places library is fully loaded
-      const timer = setTimeout(() => {
-        initializeServices()
-      }, 100)
-      
-      return () => clearTimeout(timer)
+    if (value?.address !== undefined && value.address !== searchQuery) {
+      setSearchQuery(value.address);
+      setSelectedLocation(value);
     }
-  }, [isGoogleMapsLoaded])
+  }, [value?.address]);
 
-  // Handle Google Maps loading errors
-  useEffect(() => {
-    if (googleMapsError) {
-      console.error('Google Maps loading error:', googleMapsError)
-    }
-  }, [googleMapsError])
-
-  const initializeServices = useCallback(() => {
-    if (!window.google || !window.google.maps || !window.google.maps.places) {
-      return
+  // Fast Address Geocoding: Mapbox Places API -> Photon (OSM) -> Nominatim
+  const searchLocation = useCallback(async (query: string) => {
+    const trimmed = query.trim();
+    if (trimmed.length < 2) {
+      setSearchResults([]);
+      setIsSearching(false);
+      return;
     }
 
+    setIsSearching(true);
     try {
-      // Create a dummy div for PlacesService
-      const dummyDiv = document.createElement('div')
-      placesServiceRef.current = new window.google.maps.places.PlacesService(dummyDiv)
-      autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService()
-    } catch (error) {
-      console.error('Failed to initialize Google Places services:', error)
-    }
-  }, [])
+      const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
-  // Update selected location when value prop changes
-  useEffect(() => {
-    setSelectedLocation(value)
-    if (value?.address) {
-      setSearchQuery(value.address)
-    }
-  }, [value])
+      // 1. Try Mapbox Geocoding (if token is available)
+      if (mapboxToken) {
+        try {
+          const mbUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+            trimmed
+          )}.json?access_token=${mapboxToken}&autocomplete=true&limit=6`;
+          const mbResponse = await fetch(mbUrl);
+          if (mbResponse.ok) {
+            const mbData = await mbResponse.json();
+            if (mbData.features && mbData.features.length > 0) {
+              const results: SearchResultItem[] = mbData.features.map((f: any) => {
+                const [lng, lat] = f.center || [0, 0];
+                const context = f.context || [];
 
-  // Handle location selection from search results
-  const handleLocationSelect = useCallback((prediction: PlacePrediction) => {
-    if (!placesServiceRef.current) return
+                const getContext = (prefix: string) => {
+                  const item = context.find((c: any) => c.id?.startsWith(prefix));
+                  return item ? item.text : null;
+                };
 
-    placesServiceRef.current.getDetails(
-      {
-        placeId: prediction.place_id,
-        fields: [
-          'formatted_address',
-          'geometry',
-          'address_components',
-        ],
-      },
-      (place, status) => {
-        if (status === window.google.maps.places.PlacesServiceStatus.OK && place) {
-          const lat = place.geometry.location.lat()
-          const lng = place.geometry.location.lng()
-          
-          // Ensure coordinates are valid
-          if (isNaN(lat) || isNaN(lng)) {
-            console.error('Invalid coordinates received from Google Places API')
-            return
-          }
-          
-          const locationData: LocationData = {
-            address: place.formatted_address,
-            latitude: lat,
-            longitude: lng,
-            city: null,
-            province: null,
-            postalCode: null,
-          }
+                const city =
+                  getContext("place") ||
+                  getContext("district") ||
+                  (f.place_type?.includes("place") ? f.text : null);
+                const province = getContext("region");
+                const postalCode = getContext("postcode");
+                const country = getContext("country") || "USA";
 
-          // Extract address components
-          place.address_components.forEach((component) => {
-            const types = component.types
-            if (types.includes('locality')) {
-              locationData.city = component.long_name
-            } else if (types.includes('administrative_area_level_1')) {
-              locationData.province = component.long_name
-            } else if (types.includes('postal_code')) {
-              locationData.postalCode = component.long_name
-            } else if (types.includes('country')) {
-              locationData.country = component.long_name
+                return {
+                  id: f.id,
+                  mainText: f.text || trimmed,
+                  secondaryText: f.place_name?.replace(`${f.text}, `, "") || "",
+                  locationData: {
+                    address: f.place_name || f.text,
+                    city,
+                    province,
+                    postalCode,
+                    latitude: typeof lat === "number" ? lat : 0,
+                    longitude: typeof lng === "number" ? lng : 0,
+                    country,
+                  },
+                };
+              });
+
+              setSearchResults(results);
+              setIsSearching(false);
+              return;
             }
-          })
-
-          setSelectedLocation(locationData)
-          onChange(locationData)
-          setSearchQuery(place.formatted_address)
-          setShowResults(false)
-          setHighlightedIndex(-1)
+          }
+        } catch (mbErr) {
+          console.warn("Mapbox geocoding fallback:", mbErr);
         }
       }
-    )
-  }, [onChange])
 
-  // Check if search query exactly matches any suggestion
-  const findExactMatch = useCallback((query: string, results: PlacePrediction[]) => {
-    const normalizedQuery = query.toLowerCase().trim()
-    return results.find(result => {
-      const mainText = result.structured_formatting.main_text.toLowerCase()
-      const secondaryText = result.structured_formatting.secondary_text.toLowerCase()
-      const fullText = `${mainText}, ${secondaryText}`.toLowerCase()
-      
-      return mainText === normalizedQuery || 
-             fullText === normalizedQuery ||
-             result.description.toLowerCase() === normalizedQuery
-    })
-  }, [])
+      // 2. Try Photon API (Fast OSM search-as-you-type)
+      const photonUrl = `https://photon.komoot.io/api/?q=${encodeURIComponent(trimmed)}&limit=6`;
+      const response = await fetch(photonUrl);
 
-  // Debounced search function using Google Places Autocomplete
-  const searchLocation = useCallback(async (query: string) => {
-    if (!query.trim() || query.length < 3) {
-      setSearchResults([])
-      return
-    }
+      if (response.ok) {
+        const data = await response.json();
+        if (data.features && data.features.length > 0) {
+          const results: SearchResultItem[] = data.features.map((f: any, idx: number) => {
+            const p = f.properties || {};
+            const [lng, lat] = f.geometry?.coordinates || [0, 0];
 
-    if (!autocompleteServiceRef.current) {
-      setSearchResults([])
-      return
-    }
+            const streetPart = [p.housenumber, p.street || p.name].filter(Boolean).join(" ");
+            const mainText = streetPart || p.name || p.city || trimmed;
+            const secondaryText = [p.city, p.state, p.country].filter(Boolean).join(", ");
 
-    setIsSearching(true)
-    try {
-      autocompleteServiceRef.current.getPlacePredictions(
-        {
-          input: query,
-          types: ['address'],
-          // No country restriction - global search
-        },
-        (predictions, status) => {
-          if (status === window.google.maps.places.PlacesServiceStatus.OK && predictions) {
-            setSearchResults(predictions)
-            
-            // Check for exact match and auto-select if found
-            const exactMatch = findExactMatch(query, predictions)
-            if (exactMatch) {
-              // Small delay to ensure UI updates properly
-              setTimeout(() => {
-                handleLocationSelect(exactMatch)
-              }, 100)
-            }
-          } else {
-            setSearchResults([])
-          }
-          setIsSearching(false)
+            const fullAddress = [
+              p.housenumber,
+              p.street,
+              p.name && p.name !== p.street ? p.name : null,
+              p.city,
+              p.state,
+              p.postcode,
+              p.country,
+            ].filter(Boolean).join(", ");
+
+            return {
+              id: `photon-${idx}-${lat}-${lng}`,
+              mainText,
+              secondaryText,
+              locationData: {
+                address: fullAddress || mainText,
+                city: p.city || null,
+                province: p.state || null,
+                postalCode: p.postcode || null,
+                latitude: typeof lat === 'number' ? lat : 0,
+                longitude: typeof lng === 'number' ? lng : 0,
+                country: p.country || "USA",
+              },
+            };
+          });
+
+          setSearchResults(results);
+          setIsSearching(false);
+          return;
         }
-      )
-    } catch (error) {
-      console.error("Location search failed:", error)
-      setSearchResults([])
-      setIsSearching(false)
-    }
-  }, [findExactMatch, handleLocationSelect])
+      }
 
-  // Handle search input changes
+      // 3. Fallback to Nominatim (Official OpenStreetMap search)
+      const nomUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(trimmed)}&limit=6&addressdetails=1`;
+      const nomResponse = await fetch(nomUrl);
+      if (nomResponse.ok) {
+        const nomData = await nomResponse.json();
+        const results: SearchResultItem[] = nomData.map((item: any, idx: number) => {
+          const addr = item.address || {};
+          const road = [addr.house_number, addr.road || item.name].filter(Boolean).join(" ");
+          const mainText = road || item.name || trimmed;
+          const secondaryText = [addr.city || addr.town || addr.village, addr.state, addr.country].filter(Boolean).join(", ");
+
+          return {
+            id: `nom-${item.place_id || idx}`,
+            mainText,
+            secondaryText,
+            locationData: {
+              address: item.display_name || mainText,
+              city: addr.city || addr.town || addr.village || null,
+              province: addr.state || null,
+              postalCode: addr.postcode || null,
+              latitude: parseFloat(item.lat) || 0,
+              longitude: parseFloat(item.lon) || 0,
+              country: addr.country || "USA",
+            },
+          };
+        });
+
+        setSearchResults(results);
+      } else {
+        setSearchResults([]);
+      }
+    } catch (err) {
+      console.warn("Free location lookup fallback:", err);
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  }, []);
+
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value
-    setSearchQuery(query)
-    setShowResults(true)
-    setHighlightedIndex(-1) // Reset highlighted index when typing
+    const query = e.target.value;
+    setSearchQuery(query);
+    setShowResults(true);
+    setHighlightedIndex(-1);
 
-    // Clear previous timeout
+    // Immediately propagate typed address so manual typing works even without clicking autocomplete
+    onChange({
+      address: query,
+      city: selectedLocation?.city || null,
+      province: selectedLocation?.province || null,
+      postalCode: selectedLocation?.postalCode || null,
+      latitude: selectedLocation?.latitude || 0,
+      longitude: selectedLocation?.longitude || 0,
+      country: selectedLocation?.country || "",
+    });
+
     if (searchTimeoutRef.current) {
-      clearTimeout(searchTimeoutRef.current)
+      clearTimeout(searchTimeoutRef.current);
     }
 
-    // Debounce search
     searchTimeoutRef.current = setTimeout(() => {
-      searchLocation(query)
-    }, 300)
-  }
+      searchLocation(query);
+    }, 300);
+  };
 
-  // Handle keyboard navigation
+  const handleLocationSelect = (item: SearchResultItem) => {
+    setSelectedLocation(item.locationData);
+    onChange(item.locationData);
+    setSearchQuery(item.locationData.address);
+    setShowResults(false);
+    setHighlightedIndex(-1);
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!showResults || searchResults.length === 0) {
-      return
-    }
+    if (!showResults || searchResults.length === 0) return;
 
     switch (e.key) {
-      case 'ArrowDown':
-        e.preventDefault()
-        setHighlightedIndex(prev => 
-          prev < searchResults.length - 1 ? prev + 1 : 0
-        )
-        break
-      case 'ArrowUp':
-        e.preventDefault()
-        setHighlightedIndex(prev => 
-          prev > 0 ? prev - 1 : searchResults.length - 1
-        )
-        break
-      case 'Enter':
-        e.preventDefault()
+      case "ArrowDown":
+        e.preventDefault();
+        setHighlightedIndex((prev) => (prev < searchResults.length - 1 ? prev + 1 : 0));
+        break;
+      case "ArrowUp":
+        e.preventDefault();
+        setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : searchResults.length - 1));
+        break;
+      case "Enter":
+        e.preventDefault();
         if (highlightedIndex >= 0 && highlightedIndex < searchResults.length) {
-          handleLocationSelect(searchResults[highlightedIndex])
+          handleLocationSelect(searchResults[highlightedIndex]);
         } else if (searchResults.length > 0) {
-          // If no item is highlighted, select the first one
-          handleLocationSelect(searchResults[0])
+          handleLocationSelect(searchResults[0]);
         }
-        break
-      case 'Tab':
-        // Always select first result when tabbing if there are results
-        if (searchResults.length > 0) {
-          e.preventDefault()
-          handleLocationSelect(searchResults[0])
+        break;
+      case "Tab":
+        if (searchResults.length > 0 && highlightedIndex >= 0) {
+          handleLocationSelect(searchResults[highlightedIndex]);
         }
-        break
-      case 'Escape':
-        setShowResults(false)
-        setHighlightedIndex(-1)
-        break
+        break;
+      case "Escape":
+        setShowResults(false);
+        setHighlightedIndex(-1);
+        break;
     }
-  }
+  };
 
-  // Handle input blur - select first result if available
   const handleInputBlur = () => {
-    // Use setTimeout to allow click events on suggestions to fire first
     setTimeout(() => {
-      if (showResults && searchResults.length > 0) {
-        handleLocationSelect(searchResults[0])
-      }
-      setShowResults(false)
-      setHighlightedIndex(-1)
-      onBlur?.()
-    }, 150)
-  }
+      setShowResults(false);
+      setHighlightedIndex(-1);
+      onBlur?.();
+    }, 200);
+  };
 
-  // Handle clearing location
   const handleClearLocation = () => {
-    setSelectedLocation(null)
+    setSelectedLocation(null);
+    setSearchQuery("");
+    setShowResults(false);
+    setHighlightedIndex(-1);
     onChange({
-      address: '',
+      address: "",
       city: null,
       province: null,
       postalCode: null,
       latitude: 0,
       longitude: 0,
-    })
-    setSearchQuery("")
-    setShowResults(false)
-    setHighlightedIndex(-1)
-    if (inputRef.current) {
-      inputRef.current.focus()
-    }
-  }
+      country: "",
+    });
+  };
 
-  // Handle clicking outside to close results
+  // Close suggestions on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -492,24 +383,22 @@ export function LocationInput({
         inputRef.current &&
         !inputRef.current.contains(event.target as Node)
       ) {
-        setShowResults(false)
-        setHighlightedIndex(-1)
+        setShowResults(false);
+        setHighlightedIndex(-1);
       }
-    }
+    };
 
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [])
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <div className={`space-y-2 ${className}`}>
       {/* Label */}
       {label && (
-        <Label htmlFor="location-input" className="text-sm font-medium">
+        <Label htmlFor="location-input" className="text-sm font-medium text-gray-700">
           {label}
-          {required && <span className="text-red-500 ml-1">*</span>}
+          {required && <span className="text-red-500 ml-1 font-semibold">*</span>}
         </Label>
       )}
 
@@ -525,8 +414,13 @@ export function LocationInput({
             onChange={handleSearchChange}
             onKeyDown={handleKeyDown}
             onBlur={handleInputBlur}
+            onFocus={() => {
+              if (searchQuery.trim().length >= 2 && searchResults.length > 0) {
+                setShowResults(true);
+              }
+            }}
             placeholder={placeholder}
-            className={`pl-10 pr-10 ${error ? 'border-red-500' : ''}`}
+            className={`pl-10 pr-10 ${error ? "border-red-500 focus-visible:ring-red-400 bg-red-50/10" : "border-gray-200"}`}
             disabled={disabled}
           />
           {searchQuery && !disabled && (
@@ -535,108 +429,90 @@ export function LocationInput({
               variant="ghost"
               size="sm"
               onClick={handleClearLocation}
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0 hover:bg-gray-100"
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0 hover:bg-gray-100 text-gray-400 hover:text-gray-600"
             >
-              <X className="h-3 w-3" />
+              <X className="h-3.5 w-3.5" />
             </Button>
           )}
         </div>
 
-        {/* Search Results Dropdown */}
+        {/* Free OpenStreetMap Autocomplete Results Dropdown */}
         {showResults && searchResults.length > 0 && !disabled && (
           <div
             ref={resultsRef}
-            className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto"
+            className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-xl max-h-64 overflow-y-auto divide-y divide-gray-100"
           >
             {searchResults.map((result, index) => (
               <button
-                key={result.place_id}
+                key={result.id}
                 type="button"
-                onClick={() => handleLocationSelect(result)}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  handleLocationSelect(result);
+                }}
                 onMouseEnter={() => setHighlightedIndex(index)}
-                className={`w-full px-4 py-3 text-left hover:bg-gray-50 focus:bg-gray-50 focus:outline-none border-b border-gray-100 last:border-b-0 ${
-                  highlightedIndex === index ? 'bg-blue-50' : ''
+                className={`w-full px-4 py-2.5 text-left transition-colors flex items-start space-x-3 ${
+                  highlightedIndex === index ? "bg-orange-50/70" : "hover:bg-gray-50"
                 }`}
               >
-                <div className="flex items-start space-x-3">
-                  <MapPin className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium text-gray-900 truncate">
-                      {result.structured_formatting.main_text}
-                    </div>
-                    <div className="text-xs text-gray-500 truncate">
-                      {result.structured_formatting.secondary_text}
-                    </div>
+                <MapPin className="h-4 w-4 text-orange-500 mt-1 flex-shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-medium text-gray-900 truncate">
+                    {result.mainText}
                   </div>
+                  {result.secondaryText && (
+                    <div className="text-xs text-gray-500 truncate">
+                      {result.secondaryText}
+                    </div>
+                  )}
                 </div>
               </button>
             ))}
           </div>
         )}
 
-        {/* Loading State */}
+        {/* Searching Indicator */}
         {isSearching && (
-          <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-            <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 border-t-blue-600"></div>
+          <div className="absolute right-10 top-1/2 transform -translate-y-1/2">
+            <Loader2 className="animate-spin h-3.5 w-3.5 text-orange-500" />
           </div>
         )}
       </div>
 
-      {/* Error Message */}
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {/* Helper Text or Error */}
+      {error ? (
+        <p className="text-xs text-red-500 mt-1">{error}</p>
+      ) : helperText ? (
+        <p className="text-xs text-gray-500">{helperText}</p>
+      ) : null}
 
-      {/* Selected Location Display */}
-      {selectedLocation && showSelectedLocation && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <div className="flex items-start justify-between mb-3">
-            <div className="flex-1">
-              <div className="font-medium text-blue-900 text-lg">
-                {selectedLocation.address}
-              </div>
-              <div className="text-sm text-blue-700 mt-1">
-                {[
-                  selectedLocation.city,
-                  selectedLocation.province,
-                  selectedLocation.postalCode,
-                ]
-                  .filter(Boolean)
-                  .join(", ")}
-              </div>
-              {/* Show country if available */}
-              {selectedLocation.country && (
-                <div className="text-xs text-blue-600 mt-1 flex items-center space-x-2">
-                  <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
-                    {selectedLocation.country}
-                  </span>
+      {/* Selected Location Pill */}
+      {selectedLocation && showSelectedLocation && selectedLocation.address && (
+        <div className="bg-orange-50/60 border border-orange-200/80 rounded-lg p-3 text-xs text-orange-950 flex items-start justify-between gap-2">
+          <div className="flex items-start gap-2">
+            <MapPin className="h-4 w-4 text-orange-600 mt-0.5 flex-shrink-0" />
+            <div>
+              <div className="font-semibold text-gray-900">{selectedLocation.address}</div>
+              {(selectedLocation.city || selectedLocation.province || selectedLocation.postalCode) && (
+                <div className="text-gray-600 mt-0.5">
+                  {[selectedLocation.city, selectedLocation.province, selectedLocation.postalCode]
+                    .filter(Boolean)
+                    .join(", ")}
                 </div>
               )}
             </div>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={handleClearLocation}
-              className="text-blue-600 hover:text-blue-800 hover:bg-blue-100"
-            >
-              <X className="h-4 w-4" />
-            </Button>
           </div>
-
-          {/* Location Map */}
-          {showMap && (
-            <LocationMap
-              latitude={selectedLocation.latitude}
-              longitude={selectedLocation.longitude}
-              address={selectedLocation.address}
-              className="mt-3"
-            />
-          )}
         </div>
       )}
 
-      {/* Helper Text */}
-      {helperText && <p className="text-sm text-gray-600">{helperText}</p>}
-
+      {/* Free Interactive OpenStreetMap Preview if requested */}
+      {showMap && selectedLocation && selectedLocation.latitude !== 0 && (
+        <LocationMap
+          latitude={selectedLocation.latitude}
+          longitude={selectedLocation.longitude}
+          address={selectedLocation.address}
+        />
+      )}
     </div>
-  )
+  );
 }

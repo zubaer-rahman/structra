@@ -60,8 +60,13 @@ export class SignatureService {
       .single()
 
     if (error) {
-      if (error.code === 'PGRST116') {
-        return null // Not found
+      if (
+        error.code === 'PGRST116' ||
+        error.code === 'PGRST205' ||
+        error.code === '42P01' ||
+        error.message?.includes('schema cache')
+      ) {
+        return null // Not found or table not created yet
       }
       throw new Error(`Failed to get signature: ${error.message}`)
     }
@@ -92,6 +97,13 @@ export class SignatureService {
     const { data, error } = await query.order('created_at', { ascending: false })
 
     if (error) {
+      if (
+        error.code === 'PGRST205' ||
+        error.code === '42P01' ||
+        error.message?.includes('schema cache')
+      ) {
+        return []
+      }
       throw new Error(`Failed to get signatures: ${error.message}`)
     }
 
@@ -118,6 +130,13 @@ export class SignatureService {
       .range(offset, offset + limit - 1)
 
     if (error) {
+      if (
+        error.code === 'PGRST205' ||
+        error.code === '42P01' ||
+        error.message?.includes('schema cache')
+      ) {
+        return []
+      }
       throw new Error(`Failed to get user signatures: ${error.message}`)
     }
 

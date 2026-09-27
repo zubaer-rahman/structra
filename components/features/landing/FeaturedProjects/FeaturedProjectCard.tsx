@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { Project } from "@/server/database/interfaces";
 import Image from "next/image";
+import { normalizeFileReferences } from "@/utils/helpers";
 
 import { motion } from "framer-motion";
 
@@ -122,31 +123,29 @@ export default function FeaturedProjectCard({
           </div>
 
           {/* Project Image */}
-          {project.project_photos && project.project_photos.length > 0 && project.project_photos[0] && (
-            <div className="relative w-full h-48 mb-3 rounded-lg overflow-hidden">
-              {(() => {
-                const projectSrc = project.project_photos?.[0]?.url || "/images/placeholder-image.png";
-                
-                // Ensure src is never empty or undefined
-                if (!projectSrc || typeof projectSrc !== 'string' || projectSrc.trim() === '') {
-                  return null;
-                }
-                
-                return (
-                  <Image
-                    src={projectSrc}
-                    alt={project.project_title || "Project image"}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = "/images/placeholder-image.png";
-                    }}
-                  />
-                );
-              })()}
-            </div>
-          )}
+          {(() => {
+            const photos = normalizeFileReferences(project.project_photos, 'Project Photo');
+            const projectSrc = photos[0]?.url || "/images/placeholder-image.png";
+            
+            if (!projectSrc || typeof projectSrc !== 'string' || projectSrc.trim() === '') {
+              return null;
+            }
+            
+            return (
+              <div className="relative w-full h-48 mb-3 rounded-lg overflow-hidden">
+                <Image
+                  src={projectSrc}
+                  alt={project.project_title || "Project image"}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = "/images/placeholder-image.png";
+                  }}
+                />
+              </div>
+            );
+          })()}
         </CardHeader>
 
         <CardContent className="space-y-3 flex-1 flex flex-col">

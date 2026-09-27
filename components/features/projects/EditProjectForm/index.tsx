@@ -19,6 +19,7 @@ import { FileUploadSection } from "../CreateProjectForm/FileUploadSection";
 import { FormActions } from "../CreateProjectForm/FormActions";
 import PaymentWall from "@/components/shared/PaymentWall";
 import { ErrorDisplay } from "../CreateProjectForm/ErrorDisplay";
+import { normalizeFileReferences } from "@/utils/helpers";
 
 interface EditProjectFormProps {
   user: ExtendedUser;
@@ -132,8 +133,8 @@ export default function EditProjectForm({
           permit_required: data.permit_required || false,
           delay_penalty: data.delay_penalty || 0,
           abandonment_penalty: data.abandonment_penalty || 0,
-          project_photos: data.project_photos || [],
-          files: data.files || [],
+          project_photos: normalizeFileReferences(data.project_photos, 'Photo'),
+          files: normalizeFileReferences(data.files, 'File'),
         });
         
         setInitialLoading(false);
@@ -458,6 +459,7 @@ export default function EditProjectForm({
       
       // Update project with draft status (keep existing status if it's already published)
       const updateData = {
+          title: data.project_title,
           project_title: data.project_title,
           statement_of_work: data.statement_of_work,
           budget: data.budget,

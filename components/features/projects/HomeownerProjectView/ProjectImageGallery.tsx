@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useEffect } from "react";
+import { normalizeFileReferences } from "@/utils/helpers";
 
 interface ProjectPhoto {
   id: string;
@@ -30,18 +30,20 @@ export default function ProjectImageGallery({
   const placeholderImage = '/images/placeholder-image.png';
 
   // Helper function to check if an image is a placeholder
-  const isPlaceholderImage = (url: string): boolean => {
+  const isPlaceholderImage = (url?: string | null): boolean => {
+    if (!url || typeof url !== 'string') return true;
     return url === placeholderImage || url.includes('placeholder-image.png');
   };
 
   // Helper function to check if an image is a blob URL
-  const isBlobUrl = (url: string): boolean => {
+  const isBlobUrl = (url?: string | null): boolean => {
+    if (!url || typeof url !== 'string') return false;
     return url.startsWith('blob:');
   };
 
   // Helper function to get a safe image URL (fallback to placeholder if blob or invalid)
-  const getSafeImageUrl = (url: string): string => {
-    if (isBlobUrl(url) || !url || url === '') {
+  const getSafeImageUrl = (url?: string | null): string => {
+    if (!url || typeof url !== 'string' || url.trim() === '' || isBlobUrl(url)) {
       return placeholderImage;
     }
     return url;
@@ -49,14 +51,19 @@ export default function ProjectImageGallery({
 
   // Get available images or use placeholders
   const getProjectImages = (): ProjectPhoto[] => {
-    if (projectPhotos && projectPhotos.length > 0) {
-      // Filter out any blob URLs and replace them with placeholders
-      const cleanPhotos = projectPhotos.map(photo => ({
-        ...photo,
-        url: getSafeImageUrl(photo.url)
+    if (projectPhotos && Array.isArray(projectPhotos) && projectPhotos.length > 0) {
+      const normalized = normalizeFileReferences(projectPhotos, `${projectType || 'Project'} - Image`);
+
+      const cleanPhotos: ProjectPhoto[] = normalized.map((photo) => ({
+        id: photo.id,
+        url: getSafeImageUrl(photo.url),
+        filename: photo.filename,
+        size: photo.size || 0,
+        mimeType: photo.mimeType || 'image/jpeg',
+        uploadedAt: photo.uploadedAt || new Date()
       }));
-      
-      // Filter out any photos that are now placeholders (failed images)
+
+      // Filter out any photos that are placeholders (failed images)
       const validPhotos = cleanPhotos.filter(photo => !isPlaceholderImage(photo.url));
       
       // If we have valid photos, return them
@@ -65,7 +72,7 @@ export default function ProjectImageGallery({
       }
       
       // If all photos were invalid, return the same number of placeholders as original
-      const placeholderCount = projectPhotos.length;
+      const placeholderCount = cleanPhotos.length > 0 ? cleanPhotos.length : 1;
       return Array.from({ length: placeholderCount }, (_, index) => ({
         id: `placeholder-${index + 1}`,
         url: placeholderImage,
@@ -107,7 +114,7 @@ export default function ProjectImageGallery({
 
   const projectImages = getProjectImages();
   const hasImages = projectImages.length > 0; // Check if we have any images at all
-  const isUsingPlaceholders = !projectPhotos || projectPhotos.length === 0;
+  const isUsingPlaceholders = !projectPhotos || projectPhotos.length === 0 || projectImages.every(p => isPlaceholderImage(p.url));
 
   // Ensure currentImageIndex is always valid
   useEffect(() => {
@@ -140,15 +147,15 @@ export default function ProjectImageGallery({
       {/* Main Project Image */}
       <div className="relative group">
         <Image
-          src={projectImages[currentImageIndex].url}
-          alt={projectImages[currentImageIndex].filename}
+          src={projectImages[currentImageIndex]?.url || placeholderImage}
+          alt={projectImages[currentImageIndex]?.filename || `${projectType || 'Project'} image`}
           width={800}
           height={600}
           className="w-full h-48 sm:h-64 object-cover rounded-lg transition-all duration-300"
           priority={currentImageIndex === 0}
           unoptimized
           onError={(e) => {
-            const imageUrl = projectImages[currentImageIndex].url;
+            const imageUrl = projectImages[currentImageIndex]?.url || placeholderImage;
             console.error('Image failed to load:', imageUrl);
             
             // Track this image as failed
@@ -238,8 +245,8 @@ export default function ProjectImageGallery({
                   }`}
                 >
                   <Image
-                    src={photo.url}
-                    alt={photo.filename}
+                    src={photo.url || placeholderImage}
+                    alt={photo.filename || 'Thumbnail'}
                     width={64}
                     height={64}
                     unoptimized

@@ -4,6 +4,7 @@ import { Project } from '@/server/database/interfaces'
 import { User } from '@/server/database/interfaces/auth'
 import { Camera } from 'lucide-react'
 import { USER_ROLES } from '@/utils/constants'
+import { normalizeFileReference, normalizeFileReferences } from '@/utils/helpers'
 
 interface ProjectPhotosTabProps {
   project: Project
@@ -12,10 +13,14 @@ interface ProjectPhotosTabProps {
 }
 
 export function ProjectPhotosTab({ project }: ProjectPhotosTabProps) {
+  const normalizedPhotos = normalizeFileReferences(project.project_photos, 'Before Photo')
+  const beforePhoto = normalizedPhotos[0]
+  const afterPhoto = normalizeFileReference(project.after_photo, 'After Photo')
+
   return (
     <div className="space-y-6 sm:space-y-8">
       {/* Before/After Photos */}
-      {((project.project_photos && project.project_photos.length > 0) || project.after_photo) ? (
+      {(beforePhoto || afterPhoto) ? (
         <div>
           <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
             <Camera className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
@@ -24,7 +29,7 @@ export function ProjectPhotosTab({ project }: ProjectPhotosTabProps) {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             {/* Before Photo - from first project_photo */}
-            {project.project_photos && project.project_photos.length > 0 && (
+            {beforePhoto && (
               <div className="space-y-2">
                 <h4 className="text-sm font-medium text-gray-700 flex items-center gap-2">
                   <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
@@ -34,14 +39,14 @@ export function ProjectPhotosTab({ project }: ProjectPhotosTabProps) {
                   <div className="aspect-video bg-gray-100">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={project.project_photos[0].url}
+                      src={beforePhoto.url}
                       alt="Before photo"
                       className="w-full h-full object-cover"
                     />
                   </div>
                   <div className="p-3 bg-gray-50">
                     <p className="text-xs text-gray-600 truncate">
-                      {project.project_photos[0].filename}
+                      {beforePhoto.filename}
                     </p>
                   </div>
                 </div>
@@ -49,7 +54,7 @@ export function ProjectPhotosTab({ project }: ProjectPhotosTabProps) {
             )}
 
             {/* After Photo */}
-            {project.after_photo && (
+            {afterPhoto && (
               <div className="space-y-2">
                 <h4 className="text-sm font-medium text-gray-700 flex items-center gap-2">
                   <span className="w-2 h-2 bg-green-500 rounded-full"></span>
@@ -59,14 +64,14 @@ export function ProjectPhotosTab({ project }: ProjectPhotosTabProps) {
                   <div className="aspect-video bg-gray-100">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={project.after_photo.url}
+                      src={afterPhoto.url}
                       alt="After photo"
                       className="w-full h-full object-cover"
                     />
                   </div>
                   <div className="p-3 bg-gray-50">
                     <p className="text-xs text-gray-600 truncate">
-                      {project.after_photo.filename}
+                      {afterPhoto.filename}
                     </p>
                   </div>
                 </div>

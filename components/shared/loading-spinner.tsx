@@ -60,10 +60,10 @@ export default function LoadingSpinner({
   // Inline spinner for buttons and small spaces
   if (inline) {
     return (
-      <div className={`inline-flex items-center ${className}`}>
-        <div className={`animate-spin rounded-full border-b-2 ${currentVariant.spinner} ${sizeClasses[size]} ${showText ? 'mr-2' : ''}`}></div>
+      <div className={`inline-flex items-center ${className}`} suppressHydrationWarning>
+        <div className={`animate-spin rounded-full border-b-2 ${currentVariant.spinner} ${sizeClasses[size]} ${showText ? 'mr-2' : ''}`} suppressHydrationWarning></div>
         {showText && (
-          <span className={currentVariant.text}>{text}</span>
+          <span className={currentVariant.text} suppressHydrationWarning>{text}</span>
         )}
       </div>
     )
@@ -71,13 +71,13 @@ export default function LoadingSpinner({
 
   // Full spinner with text below
   return (
-    <div className={`flex flex-col items-center justify-center ${className}`}>
-      <div className={`animate-spin rounded-full border-b-2 ${currentVariant.spinner} ${sizeClasses[size]} ${showText ? 'mb-4' : ''}`}></div>
+    <div className={`flex flex-col items-center justify-center ${className}`} suppressHydrationWarning>
+      <div className={`animate-spin rounded-full border-b-2 ${currentVariant.spinner} ${sizeClasses[size]} ${showText ? 'mb-4' : ''}`} suppressHydrationWarning></div>
       {showText && (
-        <div className="text-center">
-          <div className={`text-base font-semibold mb-1 ${currentVariant.text}`}>{text}</div>
+        <div className="text-center" suppressHydrationWarning>
+          <div className={`text-base font-semibold mb-1 ${currentVariant.text}`} suppressHydrationWarning>{text}</div>
           {subtitle && (
-            <div className={`text-sm ${currentVariant.subtitle}`}>{subtitle}</div>
+            <div className={`text-sm ${currentVariant.subtitle}`} suppressHydrationWarning>{subtitle}</div>
           )}
         </div>
       )}

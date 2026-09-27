@@ -94,10 +94,8 @@ export default function HomeownerProjectsPage() {
           if (projectIds.length > 0) {
             const { data: proposalCounts, error: proposalCountsError } = await supabase
               .from('proposals')
-              .select('project, id')
-              .eq('homeowner', user.id)
-              .eq('is_deleted', 'no')
-              .in('project', projectIds)
+              .select('project_id, id')
+              .in('project_id', projectIds)
             
             if (proposalCountsError) {
               console.warn('Proposal counts query failed:', proposalCountsError)
@@ -105,7 +103,10 @@ export default function HomeownerProjectsPage() {
               // Count proposals per project
               const counts: Record<string, number> = {}
               proposalCounts?.forEach(proposal => {
-                counts[proposal.project] = (counts[proposal.project] || 0) + 1
+                const pid = proposal.project_id || (proposal as any).project
+                if (pid) {
+                  counts[pid] = (counts[pid] || 0) + 1
+                }
               })
               setProjectProposalCounts(counts)
             }
