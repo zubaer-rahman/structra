@@ -71,14 +71,14 @@ export default function FeaturedProjectCard({
       transition={{ duration: 0.3, ease: "easeOut" }}
       className="h-full"
     >
-      <Card className="cursor-pointer bg-white/[0.03] backdrop-blur-3xl transition-all hover:shadow-2xl border border-white/5 hover:border-orange-500/30 group h-full flex flex-col relative overflow-hidden rounded-[2rem]">
+      <Card className="cursor-pointer bg-white dark:bg-white/[0.03] backdrop-blur-3xl transition-all shadow-md dark:shadow-2xl hover:shadow-xl border border-gray-200 dark:border-white/5 hover:border-orange-500/40 group h-full flex flex-col relative overflow-hidden rounded-[2rem]">
         {/* Subtle decorative background gradient */}
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 to-orange-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         
         <CardHeader className="pb-3 flex-shrink-0">
           <div className="flex items-start justify-between mb-3">
             <div className="flex-1">
-              <h3 className="font-bold text-xl text-white mb-2 line-clamp-2 group-hover:text-orange-500 transition-colors tracking-tight">
+              <h3 className="font-bold text-xl text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-orange-500 transition-colors tracking-tight">
                 {project.project_title}
               </h3>
               {/* Contractor Name - Display prominently below title */}
@@ -97,12 +97,12 @@ export default function FeaturedProjectCard({
                       }}
                     />
                   </div>
-                    <p className="text-sm font-semibold text-orange-500 hover:underline">
+                    <p className="text-sm font-semibold text-orange-600 dark:text-orange-500 hover:underline">
                       {project.contractor.contractor_profile?.business_name || project.contractor.full_name}
                     </p>
                   </div>
               )}
-                <p className="text-sm text-gray-400 line-clamp-2 mb-3 leading-relaxed">
+                <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3 leading-relaxed">
                   {project.statement_of_work}
                 </p>
             </div>
@@ -110,12 +110,12 @@ export default function FeaturedProjectCard({
             {/* Featured Badges - Glassmorphic */}
             <div className="flex flex-col gap-1.5 ml-3">
               {isFeaturedProject && (
-                <span className="px-2.5 py-1 text-[10px] uppercase tracking-wider bg-orange-500/20 backdrop-blur-md text-orange-400 border border-orange-500/20 rounded-lg font-black shadow-sm">
+                <span className="px-2.5 py-1 text-[10px] uppercase tracking-wider bg-orange-500/10 dark:bg-orange-500/20 backdrop-blur-md text-orange-600 dark:text-orange-400 border border-orange-500/20 rounded-lg font-black shadow-sm">
                   Featured
                 </span>
               )}
               {isFeaturedContractor && (
-                <span className="px-2.5 py-1 text-[10px] uppercase tracking-wider bg-blue-500/20 backdrop-blur-md text-blue-400 border border-blue-500/20 rounded-lg font-black shadow-sm">
+                <span className="px-2.5 py-1 text-[10px] uppercase tracking-wider bg-blue-500/10 dark:bg-blue-500/20 backdrop-blur-md text-blue-600 dark:text-blue-400 border border-blue-500/20 rounded-lg font-black shadow-sm">
                   Elite
                 </span>
               )}
@@ -152,7 +152,7 @@ export default function FeaturedProjectCard({
           {/* Budget */}
           <div className="flex items-center gap-2 text-sm">
             <DollarSign className="h-4 w-4 text-orange-500" />
-            <span className="font-bold text-white">
+            <span className="font-bold text-gray-900 dark:text-white">
               {formatBudget(project.budget)}
             </span>
           </div>
@@ -163,7 +163,7 @@ export default function FeaturedProjectCard({
               {project.category.slice(0, 3).map((cat, index) => (
                 <span 
                   key={index}
-                  className="px-2 py-1 text-[10px] font-bold uppercase bg-white/5 text-gray-400 rounded"
+                  className="px-2 py-1 text-[10px] font-bold uppercase bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-400 rounded"
                 >
                   {cat}
                 </span>
@@ -178,7 +178,7 @@ export default function FeaturedProjectCard({
 
           {/* Location */}
           {project.location?.city && project.location?.province && (
-            <div className="flex items-center gap-2 text-sm text-gray-500">
+            <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
               <MapPin className="h-4 w-4" />
               <span className="truncate">
                 {project.location.city}, {project.location.province}
@@ -188,7 +188,7 @@ export default function FeaturedProjectCard({
 
           {/* Completion Date */}
           {project.substantial_completion && (
-            <div className="flex items-center gap-2 text-sm text-gray-500">
+            <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
               <Calendar className="h-4 w-4" />
               <span>
                 Completed {formatDate(project.substantial_completion?.toString() || '')}
@@ -201,7 +201,7 @@ export default function FeaturedProjectCard({
 
           {/* Contractor Info (if featured contractor) */}
           {project.contractor && (
-            <div className="pt-3 border-t border-white/10">
+            <div className="pt-3 border-t border-gray-100 dark:border-white/10">
               <div className="flex items-center gap-3">
                 <div className="relative flex-shrink-0">
                   {(() => {
@@ -233,14 +233,14 @@ export default function FeaturedProjectCard({
                   </div>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-white truncate">
+                  <p className="text-sm font-bold text-gray-900 dark:text-white truncate">
                     {project.contractor.contractor_profile?.business_name || project.contractor.full_name}
                   </p>
                   <p className="text-[10px] font-black uppercase text-gray-500">
                     Elite Contractor
                   </p>
                   {project.contractor.contractor_profile?.trade_category && project.contractor.contractor_profile.trade_category.length > 0 && (
-                    <p className="text-[10px] font-bold text-gray-600 truncate uppercase tracking-tighter">
+                    <p className="text-[10px] font-bold text-gray-600 dark:text-gray-400 truncate uppercase tracking-tighter">
                       {project.contractor.contractor_profile.trade_category.slice(0, 2).join(", ")}
                       {project.contractor.contractor_profile.trade_category.length > 2 && "..."}
                     </p>

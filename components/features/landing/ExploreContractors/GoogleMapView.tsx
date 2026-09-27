@@ -73,41 +73,41 @@ export default function GoogleMapView({
   }, [contractors])
 
   return (
-    <div className="flex flex-col lg:grid lg:grid-cols-4 gap-0 min-h-[600px] bg-black">
+    <div className="flex flex-col lg:grid lg:grid-cols-4 gap-0 min-h-[600px] bg-white dark:bg-black">
       {/* Sidebar with Search and Contractor Cards */}
-      <div className="lg:col-span-1 overflow-hidden order-2 lg:order-1 border-r border-white/5 flex flex-col h-[600px]">
+      <div className="lg:col-span-1 overflow-hidden order-2 lg:order-1 border-r border-gray-200 dark:border-white/5 flex flex-col h-[600px]">
         {/* Search header */}
-        <div className="p-6 border-b border-white/5 space-y-4 flex-shrink-0 bg-black/40">
+        <div className="p-6 border-b border-gray-200 dark:border-white/5 space-y-4 flex-shrink-0 bg-gray-50/70 dark:bg-black/40">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-orange-600 flex items-center justify-center text-white font-bold text-xs">
               02
             </div>
             <div>
-              <h2 className="text-sm font-bold text-white uppercase tracking-wider">
+              <h2 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">
                 Elite Network
               </h2>
-              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+              <p className="text-[10px] text-gray-500 dark:text-gray-400 font-bold uppercase tracking-widest">
                 Verified Master Contractors
               </p>
             </div>
           </div>
 
           <div className="relative group">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 group-focus-within:text-orange-500 transition-colors" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500 group-focus-within:text-orange-500 transition-colors" />
             <Input
               placeholder="Search trade or territory..."
               value={searchQuery}
               onChange={(e) => onSearch(e.target.value)}
-              className="pl-10 h-10 bg-white/[0.03] border-white/5 focus:border-orange-500/50 text-xs text-white placeholder:text-gray-500 rounded-xl transition-all"
+              className="pl-10 h-10 bg-white dark:bg-white/[0.03] border-gray-200 dark:border-white/5 focus:border-orange-500/50 text-xs text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 rounded-xl transition-all"
             />
           </div>
         </div>
 
         {/* Contractor List */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-3 bg-black/20">
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-3 bg-slate-50/50 dark:bg-black/20">
           {contractors.length === 0 ? (
             <div className="py-12 text-center">
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+              <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">
                 Zero network profiles found
               </p>
             </div>
@@ -127,7 +127,7 @@ export default function GoogleMapView({
                     'p-4 rounded-2xl border cursor-pointer transition-all duration-300 group relative overflow-hidden',
                     selectedContractor?.id === contractor.id
                       ? 'border-orange-500/60 bg-orange-500/10 shadow-[0_0_20px_rgba(234,88,12,0.15)]'
-                      : 'border-white/5 bg-white/[0.02] hover:bg-white/[0.06] hover:border-white/10'
+                      : 'border-gray-200/80 dark:border-white/5 bg-white dark:bg-white/[0.02] hover:bg-gray-100/60 dark:hover:bg-white/[0.06] hover:border-gray-300 dark:hover:border-white/10 shadow-sm dark:shadow-none'
                   )}
                 >
                   <div className="relative z-10 space-y-3">
@@ -137,30 +137,30 @@ export default function GoogleMapView({
                           src={contractor.profile_photo || '/assets/avatar.png'}
                           alt={`${contractor.first_name || ''} ${contractor.last_name || ''}`}
                           fill
-                          className="rounded-full object-cover border border-white/10"
+                          className="rounded-full object-cover border border-gray-200 dark:border-white/10"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement
                             target.src = '/assets/avatar.png'
                           }}
                         />
                         {profile.is_admin_verified && (
-                          <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-orange-600 rounded-full flex items-center justify-center border border-[#0A0A0A]">
+                          <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-orange-600 rounded-full flex items-center justify-center border border-white dark:border-[#0A0A0A]">
                             <Shield className="w-2.5 h-2.5 text-white" />
                           </div>
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-xs text-white line-clamp-1 group-hover:text-orange-500 transition-colors">
+                        <h3 className="font-bold text-xs text-gray-900 dark:text-white line-clamp-1 group-hover:text-orange-500 transition-colors">
                           {profile.business_name || `${contractor.first_name || ''} ${contractor.last_name || ''}`}
                         </h3>
-                        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest truncate">
+                        <p className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest truncate">
                           {contractor.first_name} {contractor.last_name}
                         </p>
                       </div>
                     </div>
 
                     <div className="flex flex-col gap-1.5">
-                      <div className="flex items-center gap-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                      <div className="flex items-center gap-1.5 text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         <MapPin className="h-3 w-3 text-orange-500 flex-shrink-0" />
                         <span className="truncate">
                           {profile.address?.city && profile.address?.province
@@ -170,11 +170,11 @@ export default function GoogleMapView({
                       </div>
 
                       {contractor.average_rating && contractor.rating_count && contractor.rating_count > 0 && (
-                        <div className="flex items-center gap-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                        <div className="flex items-center gap-1.5 text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                           <Star className="h-3 w-3 text-yellow-500 fill-yellow-500 flex-shrink-0" />
-                          <span className="text-white">
+                          <span className="text-gray-900 dark:text-white font-bold">
                             {contractor.average_rating.toFixed(1)}{' '}
-                            <span className="text-gray-500">({contractor.rating_count})</span>
+                            <span className="text-gray-400 dark:text-gray-500">({contractor.rating_count})</span>
                           </span>
                         </div>
                       )}
@@ -186,7 +186,7 @@ export default function GoogleMapView({
                           <Badge
                             key={tIdx}
                             variant="outline"
-                            className="bg-white/5 border-white/10 text-[9px] font-black uppercase text-gray-400 px-2 py-0"
+                            className="bg-gray-100 dark:bg-white/5 border-gray-200 dark:border-white/10 text-[9px] font-black uppercase text-gray-600 dark:text-gray-400 px-2 py-0"
                           >
                             {trade}
                           </Badge>

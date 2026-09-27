@@ -14,11 +14,11 @@ export function Hero() {
       {/* Premium Background Elements */}
       <div className="absolute inset-0 -z-10 bg-transparent dark:bg-[#0A0A0A]">
         {/* 3D Perspective Grid */}
-        <div className="absolute inset-0 opacity-[0.15]" 
+        <div className="absolute inset-0 opacity-[0.07] dark:opacity-[0.15]" 
              style={{ 
                backgroundImage: `
-                 linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
-                 linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)
+                 linear-gradient(currentColor 1px, transparent 1px),
+                 linear-gradient(90deg, currentColor 1px, transparent 1px)
                `,
                backgroundSize: '100px 100px',
                transform: 'perspective(1000px) rotateX(60deg) translateY(-100px)',

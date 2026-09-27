@@ -69,8 +69,8 @@ export default function ContractorCard({
     <Card 
       className={`cursor-pointer transition-all hover:shadow-sm border ${
         isSelected 
-          ? 'border-gray-400 bg-gray-50' 
-          : 'border-gray-200 hover:border-gray-300'
+          ? 'border-orange-500 bg-orange-50/50 dark:bg-orange-500/10' 
+          : 'border-gray-200 dark:border-white/10 bg-white dark:bg-[#141414] hover:border-gray-300 dark:hover:border-white/20'
       }`}
     >
       <CardHeader className="pb-3">
@@ -84,21 +84,17 @@ export default function ContractorCard({
               height={48}
               className="rounded-full object-cover"
               onError={(e) => {
-                console.log("Image error for contractor:", contractor.full_name, "src:", contractor.profile_photo);
                 const target = e.target as HTMLImageElement;
                 target.src = "/assets/avatar.png";
-              }}
-              onLoad={() => {
-                console.log("Image loaded successfully for contractor:", contractor.full_name, "src:", contractor.profile_photo);
               }}
             />
           </div>
           
           <div className="flex-1 min-w-0">
-            <h3 className="font-medium text-base text-gray-900 mb-1 line-clamp-1">
+            <h3 className="font-medium text-base text-gray-900 dark:text-white mb-1 line-clamp-1">
               {profile?.business_name || contractor.full_name}
             </h3>
-            <p className="text-sm text-gray-500 line-clamp-1">
+            <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-1">
               {contractor.full_name}
             </p>
           </div>
@@ -112,7 +108,7 @@ export default function ContractorCard({
             <div className="flex items-center gap-1">
               {renderStars(contractor.average_rating)}
             </div>
-            <span className="text-xs text-gray-600">
+            <span className="text-xs text-gray-600 dark:text-gray-400">
               {contractor.average_rating.toFixed(1)} ({contractor.rating_count} review{contractor.rating_count !== 1 ? 's' : ''})
             </span>
           </div>
@@ -124,31 +120,21 @@ export default function ContractorCard({
             {profile.trade_category.slice(0, 3).map((trade, index) => (
               <span 
                 key={`${contractor.id}-card-trade-${index}-${trade}`}
-                className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded"
+                className="px-2 py-1 text-xs bg-gray-100 dark:bg-white/5 text-gray-700 dark:text-gray-300 rounded"
               >
                 {trade}
               </span>
             ))}
             {profile.trade_category.length > 3 && (
-              <span className="px-2 py-1 text-xs text-gray-500">
+              <span className="px-2 py-1 text-xs text-gray-500 dark:text-gray-400">
                 +{profile.trade_category.length - 3} more
               </span>
             )}
           </div>
         )}
 
-        {/* Location - HIDDEN FROM LANDING PAGE */}
-        {/* {(profile?.address?.address || contractor.address) && (
-          <div className="flex items-center gap-2 text-sm text-gray-500">
-            <MapPin className="h-3 w-3" />
-            <span className="truncate text-xs">
-              {profile?.address?.address || contractor.address}
-            </span>
-          </div>
-        )} */}
-
         {/* Footer */}
-        <div className="pt-2 border-t border-gray-100">
+        <div className="pt-2 border-t border-gray-100 dark:border-white/10">
           <div className="flex items-center justify-between text-xs text-gray-400 mb-3">
             <span>Joined {formatDate(contractor.created_at)}</span>
             <span className="text-gray-500">Contractor</span>

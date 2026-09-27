@@ -161,8 +161,8 @@ export function FeaturedContractorsCarousel() {
   }
 
   return (
-    <section className="py-24 bg-[#0A0A0A]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-24 bg-transparent dark:bg-[#0A0A0A]">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex items-center justify-between mb-12">
           <div className="flex items-center gap-4">
@@ -170,10 +170,10 @@ export function FeaturedContractorsCarousel() {
                 <Award className="w-5 h-5 text-orange-500" />
              </div>
              <div>
-                <h2 className="text-2xl font-black text-white tracking-tighter uppercase italic">
-                  Featured <span className="text-orange-500">Master Builders</span>
+                <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tighter uppercase italic">
+                  Featured <span className="text-orange-600 dark:text-orange-500">Master Builders</span>
                 </h2>
-                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em]">Institutional Grade Performance</p>
+                <p className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-[0.2em]">Institutional Grade Performance</p>
              </div>
           </div>
           
@@ -184,7 +184,7 @@ export function FeaturedContractorsCarousel() {
                   variant="outline"
                   size="icon"
                   onClick={prevSlide}
-                  className="w-10 h-10 rounded-full bg-white/5 border-white/10 text-white hover:bg-white/10 transition-all"
+                  className="w-10 h-10 rounded-full bg-white dark:bg-white/5 border-gray-200 dark:border-white/10 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-all"
                 >
                   <ChevronLeft className="w-5 h-5" />
                 </Button>
@@ -192,7 +192,7 @@ export function FeaturedContractorsCarousel() {
                   variant="outline"
                   size="icon"
                   onClick={nextSlide}
-                  className="w-10 h-10 rounded-full bg-white/5 border-white/10 text-white hover:bg-white/10 transition-all"
+                  className="w-10 h-10 rounded-full bg-white dark:bg-white/5 border-gray-200 dark:border-white/10 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-all"
                 >
                   <ChevronRight className="w-5 h-5" />
                 </Button>
@@ -210,10 +210,10 @@ export function FeaturedContractorsCarousel() {
         </div>
 
         {featuredContractors.length === 0 ? (
-          <div className="flex items-center justify-center h-64 bg-white/5 rounded-3xl border border-white/5">
+          <div className="flex items-center justify-center h-64 bg-white dark:bg-white/5 rounded-3xl border border-gray-200 dark:border-white/5 shadow-sm dark:shadow-none">
             <div className="text-center">
-              <Wrench className="h-12 w-12 text-gray-700 mx-auto mb-4" />
-              <p className="text-sm font-bold text-gray-500 uppercase tracking-widest">
+              <Wrench className="h-12 w-12 text-gray-400 dark:text-gray-700 mx-auto mb-4" />
+              <p className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">
                 Scanning for Elite Talent...
               </p>
             </div>
@@ -235,7 +235,7 @@ export function FeaturedContractorsCarousel() {
                   }}
                 >
                   <Link href={`/new-contractor-view/${contractor.slug || contractor.id}`} className="group block">
-                    <div className="relative aspect-[3/4] rounded-3xl overflow-hidden border border-white/10 bg-white/5 shadow-2xl transition-all duration-500 group-hover:border-orange-500/30 group-hover:-translate-y-2">
+                    <div className="relative aspect-[3/4] rounded-3xl overflow-hidden border border-gray-200 dark:border-white/10 bg-slate-900 dark:bg-white/5 shadow-lg dark:shadow-2xl transition-all duration-500 group-hover:border-orange-500/40 group-hover:-translate-y-2">
                       <Image
                         src={getContractorImage(contractor)}
                         alt={contractor.full_name || 'Contractor'}

@@ -57,7 +57,7 @@ export default function LandingProjectCard({
       className="h-full"
     >
       <Card 
-        className="group overflow-hidden h-full transition-all duration-500 cursor-pointer border border-white/5 shadow-2xl bg-white/[0.03] backdrop-blur-3xl hover:border-orange-500/30 relative"
+        className="group overflow-hidden h-full transition-all duration-500 cursor-pointer border border-gray-200 dark:border-white/5 shadow-md dark:shadow-2xl bg-white dark:bg-white/[0.03] backdrop-blur-3xl hover:border-orange-500/40 relative"
         onClick={() => window.open(`/recent-project-preview/${project.slug || project.id}`, '_blank')}
       >
         {/* Subtle decorative background gradient */}
@@ -110,7 +110,7 @@ export default function LandingProjectCard({
                   alt={project.homeowner.full_name || "Homeowner"}
                   width={32}
                   height={32}
-                  className="rounded-full object-cover ring-2 ring-orange-50"
+                  className="rounded-full object-cover ring-2 ring-orange-500/20"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.src = "/assets/avatar.png";
@@ -118,57 +118,57 @@ export default function LandingProjectCard({
                 />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-white truncate">
+                <p className="text-sm font-bold text-gray-900 dark:text-white truncate">
                   {project.homeowner.full_name}
                 </p>
-                <p className="text-[10px] text-gray-500 uppercase font-bold tracking-tight">Project Owner</p>
+                <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase font-bold tracking-tight">Project Owner</p>
               </div>
             </div>
           )}
 
           {/* Project Title */}
-          <h4 className="font-bold text-lg text-white mb-2 line-clamp-1 group-hover:text-orange-500 transition-colors duration-300 tracking-tight">
+          <h4 className="font-bold text-lg text-gray-900 dark:text-white mb-2 line-clamp-1 group-hover:text-orange-500 transition-colors duration-300 tracking-tight">
             {project.project_title}
           </h4>
 
           {/* Budget - More Professional Layout */}
           <div className="flex items-baseline gap-2 mb-4">
-            <span className="text-2xl font-extrabold text-white tabular-nums">
+            <span className="text-2xl font-extrabold text-gray-900 dark:text-white tabular-nums">
               {formatBudget(project.budget)}
             </span>
-            <span className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Est. Budget</span>
+            <span className="text-[10px] text-gray-500 dark:text-gray-400 uppercase font-bold tracking-widest">Est. Budget</span>
           </div>
 
           {/* Key Details Grid */}
           <div className="grid grid-cols-2 gap-y-3 gap-x-2 mb-4">
             <div className="flex items-center gap-1.5">
-              <div className="p-1.5 bg-white/5 rounded-md">
+              <div className="p-1.5 bg-gray-100 dark:bg-white/5 rounded-md">
                 <Building2 className="h-3.5 w-3.5 text-orange-500" />
               </div>
-              <span className="text-xs font-semibold text-gray-400 truncate">
+              <span className="text-xs font-semibold text-gray-600 dark:text-gray-400 truncate">
                 {project.project_type || 'Construction'}
               </span>
             </div>
             <div className="flex items-center gap-1.5">
-              <div className="p-1.5 bg-white/5 rounded-md">
+              <div className="p-1.5 bg-gray-100 dark:bg-white/5 rounded-md">
                 <MapPin className="h-3.5 w-3.5 text-orange-500" />
               </div>
-              <span className="text-xs font-semibold text-gray-400 truncate">
+              <span className="text-xs font-semibold text-gray-600 dark:text-gray-400 truncate">
                 {project.location?.city || 'Remote'}
               </span>
             </div>
           </div>
 
-          <div className="flex items-center justify-between pt-4 border-t border-white/10">
+          <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-white/10">
             <div className="flex items-center gap-1.5">
-              <Calendar className="h-3.5 w-3.5 text-gray-500" />
-              <span className="text-[10px] font-bold text-gray-500 uppercase">
+              <Calendar className="h-3.5 w-3.5 text-gray-400 dark:text-gray-500" />
+              <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase">
                 {project.start_date ? formatDate(String(project.start_date)) : 'TBD'}
               </span>
             </div>
             <div className={cn(
               "px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest border",
-              project.status === PROJECT_STATUSES.OPEN_FOR_PROPOSALS ? "bg-green-500/10 text-green-500 border-green-500/20" : "bg-white/5 text-gray-500 border-white/10"
+              project.status === PROJECT_STATUSES.OPEN_FOR_PROPOSALS ? "bg-green-500/10 text-green-600 dark:text-green-500 border-green-500/20" : "bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-white/10"
             )}>
               {project.status}
             </div>

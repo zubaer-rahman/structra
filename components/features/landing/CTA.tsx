@@ -9,8 +9,9 @@ export function CTA() {
   const { user } = useAuth();
   
   return (
-    <section className="py-12 px-4 sm:px-6 lg:px-8 bg-transparent dark:bg-[#0A0A0A]">
-      <div className="max-w-[1440px] mx-auto overflow-hidden rounded-[2.5rem] border border-gray-200 dark:border-white/5 relative group">
+    <section className="py-24 bg-transparent dark:bg-[#0A0A0A]">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="overflow-hidden rounded-[2.5rem] border border-gray-200 dark:border-white/5 relative group">
         {/* Banner Background with Advanced Gradients */}
         <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-slate-100 to-white dark:from-orange-600/20 dark:via-black dark:to-black -z-10" />
         <div className="absolute inset-0 opacity-30" 
@@ -64,6 +65,7 @@ export function CTA() {
             <span className="text-[8px] font-black text-gray-600 dark:text-gray-500 uppercase tracking-widest">Elite Member Network: 500+</span>
         </div>
       </div>
-    </section>
-  );
+    </div>
+  </section>
+);
 }
