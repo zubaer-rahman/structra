@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Save } from "lucide-react";
+import LoadingSpinner from "@/components/shared/loading-spinner";
 
 export function AdminProfile() {
   const { user, fetchUserProfile } = useAuth();
@@ -109,8 +110,8 @@ export function AdminProfile() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="text-center py-12">
-          <div className="text-gray-600">Loading profile...</div>
+        <div className="flex items-center justify-center py-12">
+          <LoadingSpinner text="Loading profile..." size="lg" variant="default" />
         </div>
       </div>
     );
@@ -123,20 +124,20 @@ export function AdminProfile() {
       {/* Header */}
       <div className="flex items-center space-x-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Admin Profile</h1>
-          <p className="text-gray-600">Manage your administrator account</p>
-          <p className="text-sm font-medium text-blue-600">
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Admin Profile</h1>
+          <p className="text-gray-600 dark:text-gray-400">Manage your administrator account</p>
+          <p className="text-sm font-medium text-blue-600 dark:text-blue-400">
             Administrator Account
           </p>
         </div>
       </div>
 
       {/* Profile Picture Section */}
-      <div className="rounded-lg bg-white border border-gray-200 p-6 shadow-sm">
+      <div className="rounded-lg bg-card text-card-foreground border border-border p-6 shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">Profile Picture</h3>
-            <p className="text-sm text-gray-600">Upload a photo for your profile</p>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Profile Picture</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Upload a photo for your profile</p>
           </div>
         </div>
         <ProfilePictureUpload
@@ -147,11 +148,11 @@ export function AdminProfile() {
       </div>
 
       {/* Name Section */}
-      <div className="rounded-lg bg-white border border-gray-200 p-6 shadow-sm">
+      <div className="rounded-lg bg-card text-card-foreground border border-border p-6 shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">Personal Information</h3>
-            <p className="text-sm text-gray-600">Update your name information</p>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Personal Information</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Update your name information</p>
           </div>
           <Button
             onClick={handleSave}
@@ -165,7 +166,7 @@ export function AdminProfile() {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label htmlFor="first_name" className="text-sm font-medium text-gray-700">
+            <Label htmlFor="first_name" className="text-sm font-medium text-gray-700 dark:text-gray-300">
               First Name
             </Label>
             <Input
@@ -179,7 +180,7 @@ export function AdminProfile() {
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="last_name" className="text-sm font-medium text-gray-700">
+            <Label htmlFor="last_name" className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Last Name
             </Label>
             <Input
@@ -195,25 +196,25 @@ export function AdminProfile() {
       </div>
 
       {/* Account Info Section - Read Only */}
-      <div className="rounded-lg bg-white border border-gray-200 p-6 shadow-sm">
+      <div className="rounded-lg bg-card text-card-foreground border border-border p-6 shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">Account Information</h3>
-            <p className="text-sm text-gray-600">Your administrator account details</p>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Account Information</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Your administrator account details</p>
           </div>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Email Address</label>
-            <div className="p-3 bg-gray-50 rounded-md text-gray-900">
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Email Address</label>
+            <div className="p-3 bg-gray-50 dark:bg-zinc-900/60 border border-gray-200 dark:border-zinc-800 rounded-md text-gray-900 dark:text-gray-100">
               {user?.email || "Not set"}
             </div>
           </div>
           
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Role</label>
-            <div className="p-3 bg-gray-50 rounded-md">
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Role</label>
+            <div className="p-3 bg-gray-50 dark:bg-zinc-900/60 border border-gray-200 dark:border-zinc-800 rounded-md">
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-500 text-white">
                 Administrator
               </span>
@@ -221,8 +222,8 @@ export function AdminProfile() {
           </div>
           
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Account Status</label>
-            <div className="p-3 bg-gray-50 rounded-md">
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Account Status</label>
+            <div className="p-3 bg-gray-50 dark:bg-zinc-900/60 border border-gray-200 dark:border-zinc-800 rounded-md">
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500 text-white">
                 Active
               </span>

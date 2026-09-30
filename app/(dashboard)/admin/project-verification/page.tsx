@@ -214,13 +214,13 @@ export default function ProjectVerificationPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'pending':
-        return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-300">Pending</Badge>
+        return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-300 dark:bg-yellow-950/50 dark:text-yellow-300 dark:border-yellow-800">Pending</Badge>
       case 'approved':
-        return <Badge className="bg-green-100 text-green-800 border-green-300">Approved</Badge>
+        return <Badge className="bg-green-100 text-green-800 border-green-300 dark:bg-green-950/50 dark:text-green-300 dark:border-green-800">Approved</Badge>
       case 'rejected':
-        return <Badge className="bg-red-100 text-red-800 border-red-300">Rejected</Badge>
+        return <Badge className="bg-red-100 text-red-800 border-red-300 dark:bg-red-950/50 dark:text-red-300 dark:border-red-800">Rejected</Badge>
       default:
-        return <Badge className="bg-gray-100 text-gray-700 border-gray-200">{status}</Badge>
+        return <Badge className="bg-gray-100 text-gray-700 border-gray-200 dark:bg-zinc-800 dark:text-gray-300 dark:border-zinc-700">{status}</Badge>
     }
   }
 
@@ -378,8 +378,8 @@ export default function ProjectVerificationPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Project Verification</h1>
-          <p className="text-gray-600">Review and verify project authenticity and quality</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Project Verification</h1>
+          <p className="text-gray-600 dark:text-gray-400">Review and verify project authenticity and quality</p>
         </div>
       </div>
 
@@ -388,10 +388,10 @@ export default function ProjectVerificationPage() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
-              <Clock className="h-5 w-5 text-gray-600" />
+              <Clock className="h-5 w-5 text-gray-600 dark:text-gray-400" />
               <div>
-                <p className="text-2xl font-bold text-gray-900">{projectRequests.filter(p => p.status === 'pending').length}</p>
-                <p className="text-sm text-gray-600">Pending</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{projectRequests.filter(p => p.status === 'pending').length}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Pending</p>
               </div>
             </div>
           </CardContent>
@@ -399,10 +399,10 @@ export default function ProjectVerificationPage() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
-              <CheckCircle className="h-5 w-5 text-gray-600" />
+              <CheckCircle className="h-5 w-5 text-gray-600 dark:text-gray-400" />
               <div>
-                <p className="text-2xl font-bold text-gray-900">{projectRequests.filter(p => p.status === 'approved').length}</p>
-                <p className="text-sm text-gray-600">Approved</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{projectRequests.filter(p => p.status === 'approved').length}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Approved</p>
               </div>
             </div>
           </CardContent>
@@ -410,10 +410,10 @@ export default function ProjectVerificationPage() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
-              <XCircle className="h-5 w-5 text-gray-600" />
+              <XCircle className="h-5 w-5 text-gray-600 dark:text-gray-400" />
               <div>
-                <p className="text-2xl font-bold text-gray-900">{projectRequests.filter(p => p.status === 'rejected').length}</p>
-                <p className="text-sm text-gray-600">Rejected</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{projectRequests.filter(p => p.status === 'rejected').length}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Rejected</p>
               </div>
             </div>
           </CardContent>
@@ -421,10 +421,10 @@ export default function ProjectVerificationPage() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
-              <FileText className="h-5 w-5 text-gray-600" />
+              <FileText className="h-5 w-5 text-gray-600 dark:text-gray-400" />
               <div>
-                <p className="text-2xl font-bold text-gray-900">{projectRequests.length}</p>
-                <p className="text-sm text-gray-600">Total</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{projectRequests.length}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Total</p>
               </div>
             </div>
           </CardContent>
@@ -437,7 +437,7 @@ export default function ProjectVerificationPage() {
           <div className="flex space-x-4">
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
                 <Input
                   placeholder="Search by project title or homeowner..."
                   className="pl-10"
@@ -449,7 +449,7 @@ export default function ProjectVerificationPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-2 border border-gray-300 dark:border-zinc-800 bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
             >
               <option value="all">All Status</option>
               <option value="pending">Pending</option>
@@ -470,7 +470,7 @@ export default function ProjectVerificationPage() {
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="bg-gray-50">
+                <TableRow className="bg-gray-50/50 dark:bg-zinc-900/50">
                   <TableHead>Project</TableHead>
                   <TableHead>Homeowner</TableHead>
                   <TableHead>Location</TableHead>
@@ -495,36 +495,36 @@ export default function ProjectVerificationPage() {
                   </TableRow>
                 ) : filteredRequests.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center py-8 text-gray-500">
+                    <TableCell colSpan={8} className="text-center py-8 text-gray-500 dark:text-gray-400">
                       No projects found
                     </TableCell>
                   </TableRow>
                 ) : (
                   filteredRequests.map((project) => (
-                  <TableRow key={project.id} className="hover:bg-gray-50">
+                  <TableRow key={project.id} className="hover:bg-gray-50/50 dark:hover:bg-zinc-800/50">
                     <TableCell>
                       <div>
-                        <p className="font-medium">{project.title}</p>
-                        <p className="text-sm text-gray-600">{project.category}</p>
-                        <p className="text-xs text-gray-500 mt-1">{project.description}</p>
+                        <p className="font-medium text-gray-900 dark:text-white">{project.title}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">{project.category}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{project.description}</p>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-2">
-                        <div className="h-6 w-6 bg-gray-200 rounded-full flex items-center justify-center">
-                          <span className="text-xs font-medium">{project.homeowner.charAt(0)}</span>
+                        <div className="h-6 w-6 bg-gray-200 dark:bg-zinc-800 rounded-full flex items-center justify-center">
+                          <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{project.homeowner.charAt(0)}</span>
                         </div>
-                        <span className="text-sm">{project.homeowner}</span>
+                        <span className="text-sm text-gray-900 dark:text-gray-200">{project.homeowner}</span>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-1">
                         <MapPin className="h-3 w-3 text-gray-400" />
-                        <span className="text-sm">{project.location.address}</span>
+                        <span className="text-sm text-gray-700 dark:text-gray-300">{project.location.address}</span>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <span className="font-medium text-gray-900">{project.budget}</span>
+                      <span className="font-medium text-gray-900 dark:text-white">{project.budget}</span>
                     </TableCell>
                     <TableCell>
                       {getStatusBadge(project.status)}
@@ -532,14 +532,14 @@ export default function ProjectVerificationPage() {
                     <TableCell>
                       {project.certificateOfTitle ? (
                         <div className="flex items-center space-x-2">
-                          <Award className="h-4 w-4 text-gray-600" />
-                          <span className="text-sm text-gray-700">Uploaded</span>
+                          <Award className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                          <span className="text-sm text-gray-700 dark:text-gray-300">Uploaded</span>
                         </div>
                       ) : (
-                        <span className="text-sm text-gray-500">Not uploaded</span>
+                        <span className="text-sm text-gray-500 dark:text-gray-400">Not uploaded</span>
                       )}
                     </TableCell>
-                    <TableCell className="text-sm text-gray-600">
+                    <TableCell className="text-sm text-gray-600 dark:text-gray-400">
                       {project.submittedAt}
                     </TableCell>
                     <TableCell>
@@ -557,7 +557,7 @@ export default function ProjectVerificationPage() {
                             <Button 
                               variant="outline" 
                               size="sm" 
-                              className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                              className="border-gray-300 dark:border-zinc-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-800"
                               onClick={() => {
                                 setSelectedProject(project)
                                 handleReject()
@@ -569,7 +569,7 @@ export default function ProjectVerificationPage() {
                             <Button 
                               variant="outline" 
                               size="sm" 
-                              className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                              className="border-gray-300 dark:border-zinc-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-800"
                               onClick={() => {
                                 setSelectedProject(project)
                                 handleApprove()
@@ -593,11 +593,11 @@ export default function ProjectVerificationPage() {
       {/* Review Dialog */}
       <Dialog open={isReviewDialogOpen} onOpenChange={setIsReviewDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[70vh] flex flex-col">
-          <DialogHeader className="flex-shrink-0 border-b pb-3">
-            <DialogTitle className="text-base font-semibold text-gray-900">
+          <DialogHeader className="flex-shrink-0 border-b dark:border-zinc-800 pb-3">
+            <DialogTitle className="text-base font-semibold text-gray-900 dark:text-white">
               Project Verification
             </DialogTitle>
-            <DialogDescription className="text-xs text-gray-600">
+            <DialogDescription className="text-xs text-gray-600 dark:text-gray-400">
               {selectedProject?.title}
             </DialogDescription>
           </DialogHeader>
@@ -607,50 +607,50 @@ export default function ProjectVerificationPage() {
               <div className="space-y-4">
                 {/* Project Information Section */}
                 <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-gray-900">Project Details</h3>
-                  <div className="bg-gray-50 rounded-lg p-3 space-y-2">
+                  <h3 className="text-sm font-medium text-gray-900 dark:text-white">Project Details</h3>
+                  <div className="bg-gray-50 dark:bg-zinc-900/60 border border-gray-200 dark:border-zinc-800 rounded-lg p-3 space-y-2">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
-                        <span className="text-xs text-gray-500">Title</span>
-                        <p className="text-sm font-medium text-gray-900 truncate">{selectedProject.title}</p>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">Title</span>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{selectedProject.title}</p>
                       </div>
                       <div>
-                        <span className="text-xs text-gray-500">Budget</span>
-                        <p className="text-sm font-medium text-gray-900">{selectedProject.budget}</p>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">Budget</span>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">{selectedProject.budget}</p>
                       </div>
                       <div>
-                        <span className="text-xs text-gray-500">Homeowner</span>
-                        <p className="text-sm font-medium text-gray-900">{selectedProject.homeowner}</p>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">Homeowner</span>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">{selectedProject.homeowner}</p>
                       </div>
                       <div>
-                        <span className="text-xs text-gray-500">Category</span>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">Category</span>
                         <Badge variant="outline" className="text-xs">{selectedProject.category}</Badge>
                       </div>
                     </div>
                     <div>
-                      <span className="text-xs text-gray-500">Location</span>
-                      <p className="text-sm text-gray-900">{selectedProject.location.address}</p>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">Location</span>
+                      <p className="text-sm text-gray-900 dark:text-gray-200">{selectedProject.location.address}</p>
                     </div>
                     <div>
-                      <span className="text-xs text-gray-500">Description</span>
-                      <p className="text-sm text-gray-700 mt-1 line-clamp-3">{selectedProject.description}</p>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">Description</span>
+                      <p className="text-sm text-gray-700 dark:text-gray-300 mt-1 line-clamp-3">{selectedProject.description}</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Certificate Section */}
                 <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-gray-900">Certificate of Title</h3>
+                  <h3 className="text-sm font-medium text-gray-900 dark:text-white">Certificate of Title</h3>
                   {selectedProject.certificateOfTitle ? (
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 rounded-lg p-3">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                            <Award className="h-4 w-4 text-blue-600" />
+                          <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/60 rounded-lg flex items-center justify-center">
+                            <Award className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                           </div>
                           <div>
-                            <p className="text-sm font-medium text-blue-900">Certificate Uploaded</p>
-                            <p className="text-xs text-blue-600 truncate max-w-[200px]">
+                            <p className="text-sm font-medium text-blue-900 dark:text-blue-200">Certificate Uploaded</p>
+                            <p className="text-xs text-blue-600 dark:text-blue-400 truncate max-w-[200px]">
                               {selectedProject.certificateOfTitle.name}
                             </p>
                           </div>
@@ -658,7 +658,7 @@ export default function ProjectVerificationPage() {
                         <Button 
                           variant="outline" 
                           size="sm"
-                          className="text-xs h-8"
+                          className="text-xs h-8 dark:border-zinc-700"
                           onClick={() => {
                             if (selectedProject.certificateOfTitle?.url) {
                               window.open(selectedProject.certificateOfTitle.url, '_blank')
@@ -671,12 +671,12 @@ export default function ProjectVerificationPage() {
                       </div>
                     </div>
                   ) : (
-                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                    <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 rounded-lg p-3">
                       <div className="text-center">
-                        <div className="w-6 h-6 bg-amber-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-                          <Award className="h-3 w-3 text-amber-600" />
+                        <div className="w-6 h-6 bg-amber-100 dark:bg-amber-900/60 rounded-lg flex items-center justify-center mx-auto mb-2">
+                          <Award className="h-3 w-3 text-amber-600 dark:text-amber-400" />
                         </div>
-                        <p className="text-xs text-amber-800 mb-2">
+                        <p className="text-xs text-amber-800 dark:text-amber-300 mb-2">
                           No certificate uploaded. Upload to approve.
                         </p>
                         <div>
@@ -684,10 +684,10 @@ export default function ProjectVerificationPage() {
                             type="file"
                             accept=".pdf,.jpg,.jpeg,.png"
                             onChange={(e) => setCertificateFile(e.target.files?.[0] || null)}
-                            className="block w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border file:border-gray-300 file:text-xs file:font-medium file:bg-white file:text-gray-700 hover:file:bg-gray-50"
+                            className="block w-full text-xs text-gray-500 dark:text-gray-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border file:border-gray-300 dark:file:border-zinc-700 file:text-xs file:font-medium file:bg-white dark:file:bg-zinc-800 file:text-gray-700 dark:file:text-gray-200 hover:file:bg-gray-50 dark:hover:file:bg-zinc-700 cursor-pointer"
                           />
                           {certificateFile && (
-                            <p className="text-xs text-gray-600 mt-2 truncate">
+                            <p className="text-xs text-gray-600 dark:text-gray-300 mt-2 truncate">
                               {certificateFile.name}
                             </p>
                           )}
@@ -700,7 +700,7 @@ export default function ProjectVerificationPage() {
             )}
           </div>
 
-          <DialogFooter className="flex-shrink-0 border-t pt-3">
+          <DialogFooter className="flex-shrink-0 border-t dark:border-zinc-800 pt-3">
             <div className="flex justify-end space-x-2">
               <Button 
                 variant="outline" 
@@ -718,7 +718,7 @@ export default function ProjectVerificationPage() {
                   variant="outline" 
                   size="sm"
                   onClick={handleReject}
-                  className="text-xs text-red-600 border-red-300 hover:bg-red-50"
+                  className="text-xs text-red-600 dark:text-red-400 border-red-300 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-950/30"
                 >
                   <XCircle className="h-3 w-3 mr-1" />
                   Reject
@@ -728,7 +728,7 @@ export default function ProjectVerificationPage() {
                   size="sm"
                   onClick={handleApprove}
                   disabled={!certificateFile || uploadingCertificate}
-                  className="text-xs bg-gray-900 text-white hover:bg-gray-800"
+                  className="text-xs bg-gray-900 dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200"
                 >
                   {uploadingCertificate ? (
                     <>

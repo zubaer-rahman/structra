@@ -28,11 +28,11 @@ export default function ProjectActions({
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4 mb-6">
+    <div className="bg-white dark:bg-[#141414] rounded-lg border border-gray-200 dark:border-white/10 p-4 mb-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">Project Actions</h3>
-          <p className="text-sm text-gray-600 mt-1">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Project Actions</h3>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
             Manage your project status and workflow
           </p>
         </div>

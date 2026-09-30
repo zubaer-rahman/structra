@@ -237,7 +237,7 @@ export default function LegacyPublicContractorProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-[#0A0A0A] flex items-center justify-center">
         <LoadingSpinner />
       </div>
     )
@@ -245,10 +245,10 @@ export default function LegacyPublicContractorProfilePage() {
 
   if (error || !contractor) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-[#0A0A0A] flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Contractor Not Found</h1>
-          <p className="text-gray-600 mb-6">{error || 'The contractor profile you are looking for does not exist.'}</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Contractor Not Found</h1>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">{error || 'The contractor profile you are looking for does not exist.'}</p>
           <Link href="/">
             <Button>
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -263,7 +263,7 @@ export default function LegacyPublicContractorProfilePage() {
   const averageRating = calculateAverageRating()
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-[#0A0A0A] text-gray-900 dark:text-gray-100">
       {/* Header */}
       <div className="border-b border-gray-200">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">

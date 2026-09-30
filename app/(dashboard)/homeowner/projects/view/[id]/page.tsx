@@ -865,11 +865,11 @@ export default function HomeownerProjectViewPage() {
   return (
     <>
       {isProcessingPaymentSuccess && (
-        <div className="fixed inset-0 bg-white/50 backdrop-blur-sm z-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg shadow-lg p-6 text-center max-w-md mx-4">
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="bg-card text-card-foreground border border-border rounded-lg shadow-lg p-6 text-center max-w-md mx-4">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600 mx-auto mb-4"></div>
-            <p className="text-gray-700 font-medium">Publishing your project...</p>
-            <p className="text-gray-500 text-sm mt-2">Please wait while we process your payment and publish your project.</p>
+            <p className="text-foreground font-medium">Publishing your project...</p>
+            <p className="text-muted-foreground text-sm mt-2">Please wait while we process your payment and publish your project.</p>
           </div>
         </div>
       )}

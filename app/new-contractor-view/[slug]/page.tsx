@@ -222,7 +222,7 @@ export default function ContractorViewPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-white dark:bg-[#0A0A0A] flex items-center justify-center">
         <LoadingSpinner />
       </div>
     );
@@ -230,9 +230,9 @@ export default function ContractorViewPage() {
 
   if (!contractor) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-white dark:bg-[#0A0A0A] flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Contractor Not Found</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Contractor Not Found</h1>
           <Link href="/new-landing">
             <Button>Back to Home</Button>
           </Link>
@@ -244,7 +244,7 @@ export default function ContractorViewPage() {
   const mainImage = getContractorImage(contractor);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-[#0A0A0A] text-gray-900 dark:text-gray-100">
       <Navbar />
 
       {/* Main Content */}

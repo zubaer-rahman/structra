@@ -131,8 +131,8 @@ export default function ContractorVerificationPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Contractor Verification</h1>
-          <p className="text-gray-600">Review and approve contractor applications</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Contractor Verification</h1>
+          <p className="text-gray-600 dark:text-gray-400">Review and approve contractor applications</p>
         </div>
       </div>
 
@@ -141,10 +141,10 @@ export default function ContractorVerificationPage() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
-              <Clock className="h-5 w-5 text-yellow-600" />
+              <Clock className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
               <div>
-                <p className="text-2xl font-bold">{contractors?.filter(c => !c.is_admin_verified).length || 0}</p>
-                <p className="text-sm text-gray-600">Pending Verification</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{contractors?.filter(c => !c.is_admin_verified).length || 0}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Pending Verification</p>
               </div>
             </div>
           </CardContent>
@@ -152,10 +152,10 @@ export default function ContractorVerificationPage() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
-              <CheckCircle className="h-5 w-5 text-green-600" />
+              <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
               <div>
-                <p className="text-2xl font-bold">{contractors?.filter(c => c.is_admin_verified).length || 0}</p>
-                <p className="text-sm text-gray-600">Admin Verified</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{contractors?.filter(c => c.is_admin_verified).length || 0}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Admin Verified</p>
               </div>
             </div>
           </CardContent>
@@ -163,10 +163,10 @@ export default function ContractorVerificationPage() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
-              <Shield className="h-5 w-5 text-blue-600" />
+              <Shield className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               <div>
-                <p className="text-2xl font-bold">{contractors?.filter(c => c.user.is_verified_contractor).length || 0}</p>
-                <p className="text-sm text-gray-600">Payment Verified</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{contractors?.filter(c => c.user.is_verified_contractor).length || 0}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Payment Verified</p>
               </div>
             </div>
           </CardContent>
@@ -174,10 +174,10 @@ export default function ContractorVerificationPage() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
-              <Wrench className="h-5 w-5 text-purple-600" />
+              <Wrench className="h-5 w-5 text-purple-600 dark:text-purple-400" />
               <div>
-                <p className="text-2xl font-bold">{contractors?.length || 0}</p>
-                <p className="text-sm text-gray-600">Total Contractors</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{contractors?.length || 0}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Total Contractors</p>
               </div>
             </div>
           </CardContent>
@@ -202,7 +202,7 @@ export default function ContractorVerificationPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as 'all' | 'pending' | 'verified' | 'unverified')}
-              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-2 border border-gray-300 dark:border-zinc-800 rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">All Status</option>
               <option value="pending">Pending Verification</option>
@@ -223,7 +223,7 @@ export default function ContractorVerificationPage() {
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="bg-gray-50">
+                <TableRow className="bg-gray-50 dark:bg-zinc-900/50">
                   <TableHead>Contractor</TableHead>
                   <TableHead>Business</TableHead>
                   <TableHead>Trade Category</TableHead>
@@ -249,28 +249,28 @@ export default function ContractorVerificationPage() {
                   </TableRow>
                 ) : filteredContractors.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={9} className="text-center py-8 text-gray-500">
+                    <TableCell colSpan={9} className="text-center py-8 text-gray-500 dark:text-gray-400">
                       No contractors found
                     </TableCell>
                   </TableRow>
                 ) : (
                   filteredContractors.map((contractor) => (
-                    <TableRow key={contractor.id} className="hover:bg-gray-50">
+                    <TableRow key={contractor.id} className="hover:bg-gray-50 dark:hover:bg-zinc-800/50">
                       <TableCell>
                         <div className="flex items-center space-x-3">
-                          <div className="h-8 w-8 bg-gray-200 rounded-full flex items-center justify-center">
-                            <Wrench className="h-4 w-4 text-gray-600" />
+                          <div className="h-8 w-8 bg-gray-200 dark:bg-zinc-800 rounded-full flex items-center justify-center">
+                            <Wrench className="h-4 w-4 text-gray-600 dark:text-gray-300" />
                           </div>
                           <div>
-                            <p className="font-medium">{contractor.user.full_name}</p>
-                            <p className="text-sm text-gray-600">{contractor.user.email}</p>
+                            <p className="font-medium text-gray-900 dark:text-white">{contractor.user.full_name}</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">{contractor.user.email}</p>
                           </div>
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center space-x-2">
                           <Building className="h-4 w-4 text-gray-400" />
-                          <span className="text-sm">{contractor.business_name}</span>
+                          <span className="text-sm text-gray-900 dark:text-gray-100">{contractor.business_name}</span>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -290,18 +290,18 @@ export default function ContractorVerificationPage() {
                       <TableCell>
                         <div className="text-sm">
                           {contractor.gst_hst_number ? (
-                            <span className="text-green-600 font-medium">{contractor.gst_hst_number}</span>
+                            <span className="text-green-600 dark:text-green-400 font-medium">{contractor.gst_hst_number}</span>
                           ) : (
-                            <span className="text-gray-400">Not provided</span>
+                            <span className="text-gray-400 dark:text-gray-500">Not provided</span>
                           )}
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="text-sm">
                           {contractor.wcb_number ? (
-                            <span className="text-green-600 font-medium">{contractor.wcb_number}</span>
+                            <span className="text-green-600 dark:text-green-400 font-medium">{contractor.wcb_number}</span>
                           ) : (
-                            <span className="text-gray-400">Not provided</span>
+                            <span className="text-gray-400 dark:text-gray-500">Not provided</span>
                           )}
                         </div>
                       </TableCell>
@@ -309,32 +309,32 @@ export default function ContractorVerificationPage() {
                         <div className="flex justify-center">
                           {contractor.user.government_id ? (
                             contractor.user.government_id_verified ? (
-                              <CheckCircle className="h-4 w-4 text-green-600" />
+                              <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
                             ) : (
-                              <Clock className="h-4 w-4 text-yellow-500" />
+                              <Clock className="h-4 w-4 text-yellow-500 dark:text-yellow-400" />
                             )
                           ) : (
-                            <XCircle className="h-4 w-4 text-red-500" />
+                            <XCircle className="h-4 w-4 text-red-500 dark:text-red-400" />
                           )}
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex justify-center">
                           {contractor.is_admin_verified ? (
-                            <CheckCircle className="h-4 w-4 text-green-600" />
+                            <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
                           ) : (
-                            <XCircle className="h-4 w-4 text-red-500" />
+                            <XCircle className="h-4 w-4 text-red-500 dark:text-red-400" />
                           )}
                         </div>
                       </TableCell>
                       <TableCell>
                         {contractor.user.is_verified_contractor ? (
-                          <Badge className="bg-blue-100 text-blue-800">
+                          <Badge className="bg-blue-100 dark:bg-blue-950/50 text-blue-800 dark:text-blue-400 border-blue-200 dark:border-blue-900/50">
                             <CheckCircle className="h-3 w-3 mr-1" />
                             Payment Verified
                           </Badge>
                         ) : (
-                          <Badge variant="outline" className="text-gray-600">
+                          <Badge variant="outline" className="text-gray-600 dark:text-gray-400 border-gray-300 dark:border-zinc-700">
                             <Clock className="h-3 w-3 mr-1" />
                             Pending Payment
                           </Badge>

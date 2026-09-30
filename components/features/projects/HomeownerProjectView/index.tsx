@@ -184,7 +184,7 @@ export default function HomeownerProjectView({
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-4">
         <LoadingSpinner size="lg" text="Loading project details..." />
       </div>
     );
@@ -226,7 +226,7 @@ export default function HomeownerProjectView({
             saving={updateAmenitiesLoading}
           />
         ) : (
-          <div className="p-6 text-center text-gray-500">
+          <div className="p-6 text-center text-muted-foreground">
             Amenities management not available
           </div>
         );
@@ -316,7 +316,7 @@ export default function HomeownerProjectView({
                 onClick={onEdit}
                 variant="ghost"
                 size="sm"
-                className="bg-transparent border-none text-orange-500 hover:bg-orange-50 hover:text-orange-600 flex items-center gap-2 transition-all duration-200 font-medium px-3 py-2 rounded-lg cursor-pointer text-xs sm:text-sm"
+                className="bg-transparent border-none text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-950/30 hover:text-orange-600 dark:hover:text-orange-400 flex items-center gap-2 transition-all duration-200 font-medium px-3 py-2 rounded-lg cursor-pointer text-xs sm:text-sm"
               >
                 <Edit className="w-4 h-4" />
                 <span className="hidden sm:inline">Edit Project</span>

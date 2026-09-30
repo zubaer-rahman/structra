@@ -493,7 +493,7 @@ export default function ContractorProposalViewPage({ params }: { params: Promise
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-[#0A0A0A] flex items-center justify-center">
         <LoadingSpinner size="lg" variant="default" text="Loading proposal details..." />
       </div>
     )
@@ -501,11 +501,11 @@ export default function ContractorProposalViewPage({ params }: { params: Promise
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-[#0A0A0A] flex items-center justify-center">
         <div className="text-center">
           <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Error Loading Proposal</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Error Loading Proposal</h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">{error}</p>
           <Button onClick={() => router.back()}>Go Back</Button>
         </div>
       </div>
@@ -514,11 +514,11 @@ export default function ContractorProposalViewPage({ params }: { params: Promise
 
   if (!projectData?.proposal) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-[#0A0A0A] flex items-center justify-center">
         <div className="text-center">
           <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Proposal Not Found</h2>
-          <p className="text-gray-600 mb-4">The requested proposal could not be found.</p>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Proposal Not Found</h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">The requested proposal could not be found.</p>
           <Button onClick={() => router.push('/contractor/my-projects')}>View All Proposals</Button>
         </div>
       </div>
@@ -527,11 +527,11 @@ export default function ContractorProposalViewPage({ params }: { params: Promise
 
   if (userRole !== USER_ROLES.CONTRACTOR) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-[#0A0A0A] flex items-center justify-center">
         <div className="text-center">
           <Shield className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Access Denied</h2>
-          <p className="text-gray-600">You don&apos;t have permission to view this proposal.</p>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Access Denied</h2>
+          <p className="text-gray-600 dark:text-gray-400">You don&apos;t have permission to view this proposal.</p>
         </div>
       </div>
     )

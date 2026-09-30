@@ -163,7 +163,7 @@ export default function LegacyPublicProjectViewPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-[#0A0A0A] flex items-center justify-center">
         <LoadingSpinner size="lg" text="Loading project details..." />
       </div>
     )
@@ -171,9 +171,9 @@ export default function LegacyPublicProjectViewPage() {
 
   if (error || !project) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-[#0A0A0A] flex items-center justify-center">
         <div className="text-center">
-          <div className="text-red-600 text-xl mb-4">
+          <div className="text-red-600 dark:text-red-400 text-xl mb-4">
             {error || 'Project not found'}
           </div>
           <Link href="/">

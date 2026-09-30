@@ -409,9 +409,9 @@ export default function SearchPage() {
             {loading ? (
               <div className="flex-1 flex justify-center items-center py-16">
                 <div className="text-center">
-                  <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-gray-600 mx-auto mb-4"></div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Searching projects...</h3>
-                  <p className="text-gray-500">Finding the best matches for your criteria</p>
+                  <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 dark:border-zinc-800 border-t-gray-600 dark:border-t-gray-300 mx-auto mb-4"></div>
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Searching projects...</h3>
+                  <p className="text-gray-500 dark:text-gray-400">Finding the best matches for your criteria</p>
                 </div>
               </div>
             ) : projects.length === 0 ? (
@@ -638,11 +638,11 @@ export default function SearchPage() {
                       formatDate={formatDate}
                     />
                   ) : (
-                    <div className="h-full flex items-center justify-center bg-gray-50">
+                    <div className="h-full flex items-center justify-center bg-gray-50 dark:bg-zinc-900/50">
                       <div className="text-center">
-                        <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-gray-600 mx-auto mb-4"></div>
-                        <h3 className="text-lg font-medium text-gray-900 mb-2">Loading map...</h3>
-                        <p className="text-gray-500">Initializing interactive map</p>
+                        <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 dark:border-zinc-800 border-t-gray-600 dark:border-t-gray-300 mx-auto mb-4"></div>
+                        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Loading map...</h3>
+                        <p className="text-gray-500 dark:text-gray-400">Initializing interactive map</p>
                       </div>
                     </div>
                   )}

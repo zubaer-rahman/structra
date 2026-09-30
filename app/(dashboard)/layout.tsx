@@ -94,7 +94,7 @@ export default function DashboardLayout({
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" suppressHydrationWarning>
+      <div className="min-h-screen flex items-center justify-center bg-background text-foreground transition-colors duration-200" suppressHydrationWarning>
         <LoadingSpinner
           text="Loading..."
           subtitle="Please wait a few seconds..."
@@ -114,8 +114,8 @@ export default function DashboardLayout({
     const routeRole = pathSegments[1];
 
     return (
-      <div className="min-h-screen flex items-center justify-center ">
-        <div className="text-center max-w-md mx-auto">
+      <div className="min-h-screen flex items-center justify-center bg-background text-foreground transition-colors duration-200">
+        <div className="text-center max-w-md mx-auto p-6">
           <LoadingSpinner
             text="Access Denied"
             subtitle={`You don't have permission to access the ${routeRole} dashboard. Redirecting you to your ${userRole} dashboard...`}
@@ -124,8 +124,8 @@ export default function DashboardLayout({
             className="mb-4"
           />
           <div className="animate-pulse">
-            <div className="h-2 bg-gray-200 rounded mb-2"></div>
-            <div className="h-2 bg-gray-200 rounded w-3/4 mx-auto"></div>
+            <div className="h-2 bg-gray-200 dark:bg-zinc-800 rounded mb-2"></div>
+            <div className="h-2 bg-gray-200 dark:bg-zinc-800 rounded w-3/4 mx-auto"></div>
           </div>
         </div>
       </div>

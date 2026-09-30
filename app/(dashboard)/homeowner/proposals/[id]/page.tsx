@@ -573,7 +573,7 @@ export default function HomeownerProposalViewPage({
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-[#0A0A0A] flex items-center justify-center">
         <LoadingSpinner />
       </div>
     );
@@ -581,13 +581,13 @@ export default function HomeownerProposalViewPage({
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-[#0A0A0A] flex items-center justify-center">
         <div className="text-center">
           <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
             Error Loading Proposal
           </h2>
-          <p className="text-gray-600 mb-4">{error}</p>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">{error}</p>
           <Button onClick={() => router.back()}>Go Back</Button>
         </div>
       </div>
@@ -596,13 +596,13 @@ export default function HomeownerProposalViewPage({
 
   if (!proposal) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-[#0A0A0A] flex items-center justify-center">
         <div className="text-center">
           <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
             Proposal Not Found
           </h2>
-          <p className="text-gray-600 mb-4">
+          <p className="text-gray-600 dark:text-gray-400 mb-4">
             The requested proposal could not be found.
           </p>
           <Button onClick={() => router.push("/homeowner/proposals")}>
@@ -615,13 +615,13 @@ export default function HomeownerProposalViewPage({
 
   if (userRole !== USER_ROLES.HOMEOWNER) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-[#0A0A0A] flex items-center justify-center">
         <div className="text-center">
           <Shield className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
             Access Denied
           </h2>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-400">
             You don&apos;t have permission to view this proposal.
           </p>
         </div>
@@ -634,18 +634,18 @@ export default function HomeownerProposalViewPage({
 
   if (decisionMade) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-[#0A0A0A] flex items-center justify-center">
         <div className="text-center max-w-md mx-auto">
           <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
             Decision Recorded
           </h2>
-          <p className="text-gray-600 mb-4">
+          <p className="text-gray-600 dark:text-gray-400 mb-4">
             Your decision has been recorded. You&apos;ll be redirected shortly.
           </p>
           <div className="animate-pulse">
-            <div className="h-2 bg-gray-200 rounded-full mb-2"></div>
-            <div className="h-2 bg-gray-200 rounded-full w-3/4"></div>
+            <div className="h-2 bg-gray-200 dark:bg-zinc-800 rounded-full mb-2"></div>
+            <div className="h-2 bg-gray-200 dark:bg-zinc-800 rounded-full w-3/4 mx-auto"></div>
           </div>
         </div>
       </div>

@@ -117,15 +117,15 @@ export default function AdminDashboard() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'pending':
-        return <Badge className="bg-yellow-100 text-yellow-800">Pending</Badge>
+        return <Badge className="bg-yellow-100 dark:bg-yellow-950/50 text-yellow-800 dark:text-yellow-400 border-yellow-200 dark:border-yellow-900/50">Pending</Badge>
       case 'completed':
-        return <Badge className="bg-green-100 text-green-800">Completed</Badge>
+        return <Badge className="bg-green-100 dark:bg-green-950/50 text-green-800 dark:text-green-400 border-green-200 dark:border-green-900/50">Completed</Badge>
       case 'new':
-        return <Badge className="bg-blue-100 text-blue-800">New</Badge>
+        return <Badge className="bg-blue-100 dark:bg-blue-950/50 text-blue-800 dark:text-blue-400 border-blue-200 dark:border-blue-900/50">New</Badge>
       case 'approved':
-        return <Badge className="bg-green-100 text-green-800">Approved</Badge>
+        return <Badge className="bg-green-100 dark:bg-green-950/50 text-green-800 dark:text-green-400 border-green-200 dark:border-green-900/50">Approved</Badge>
       default:
-        return <Badge className="bg-gray-100 text-gray-800">{status}</Badge>
+        return <Badge className="bg-gray-100 dark:bg-zinc-800 text-gray-800 dark:text-gray-300 border-gray-200 dark:border-zinc-700">{status}</Badge>
     }
   }
 
@@ -147,11 +147,11 @@ export default function AdminDashboard() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-          <p className="text-gray-600">Manage and monitor platform operations</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>
+          <p className="text-gray-600 dark:text-gray-400">Manage and monitor platform operations</p>
         </div>
         <div className="flex items-center space-x-2">
-          <Badge className="bg-green-100 text-green-800">
+          <Badge className="bg-green-100 dark:bg-green-950/50 text-green-800 dark:text-green-400 border-green-200 dark:border-green-900/50">
             <CheckCircle className="h-3 w-3 mr-1" />
             System Online
           </Badge>
@@ -167,22 +167,22 @@ export default function AdminDashboard() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                    <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                    <p className="text-xs text-gray-500">{stat.description}</p>
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{stat.title}</p>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{stat.value}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{stat.description}</p>
                   </div>
-                  <div className="p-3 bg-gray-100 rounded-full">
-                    <Icon className="h-6 w-6 text-gray-600" />
+                  <div className="p-3 bg-gray-100 dark:bg-zinc-800 rounded-full">
+                    <Icon className="h-6 w-6 text-gray-600 dark:text-gray-300" />
                   </div>
                 </div>
                 <div className="mt-4 flex items-center">
                   <span className={`text-sm font-medium ${
-                    stat.changeType === 'positive' ? 'text-green-600' : 
-                    stat.changeType === 'neutral' ? 'text-gray-600' : 'text-red-600'
+                    stat.changeType === 'positive' ? 'text-green-600 dark:text-green-400' : 
+                    stat.changeType === 'neutral' ? 'text-gray-600 dark:text-gray-400' : 'text-red-600 dark:text-red-400'
                   }`}>
                     {stat.change}
                   </span>
-                  <span className="text-sm text-gray-500 ml-2">from last month</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">from last month</span>
                 </div>
               </CardContent>
             </Card>
@@ -208,7 +208,7 @@ export default function AdminDashboard() {
               return (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+                  className="flex items-center justify-between p-3 border dark:border-zinc-800 rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-800/50 cursor-pointer transition-colors"
                   onClick={() => router.push(action.href)}
                 >
                   <div className="flex items-center space-x-3">
@@ -216,8 +216,8 @@ export default function AdminDashboard() {
                       <Icon className="h-4 w-4" />
                     </div>
                     <div>
-                      <p className="font-medium text-sm">{action.title}</p>
-                      <p className="text-xs text-gray-500">{action.description}</p>
+                      <p className="font-medium text-sm text-gray-900 dark:text-white">{action.title}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{action.description}</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
@@ -246,14 +246,14 @@ export default function AdminDashboard() {
           <CardContent>
             <div className="space-y-4">
               {recentActivity.map((activity) => (
-                <div key={activity.id} className="flex items-start space-x-3 p-3 border rounded-lg">
+                <div key={activity.id} className="flex items-start space-x-3 p-3 border dark:border-zinc-800 rounded-lg">
                   <div className="flex-shrink-0 mt-1">
                     {getActivityIcon(activity.type)}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-gray-900">{activity.message}</p>
+                    <p className="text-sm text-gray-900 dark:text-gray-100">{activity.message}</p>
                     <div className="flex items-center justify-between mt-1">
-                      <p className="text-xs text-gray-500">{activity.time}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{activity.time}</p>
                       {getStatusBadge(activity.status)}
                     </div>
                   </div>

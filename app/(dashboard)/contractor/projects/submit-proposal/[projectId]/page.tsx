@@ -22,6 +22,7 @@ import { generateProposalPDFBlob } from '@/utils/helpers/pdfPreviewGenerator'
 import PDFPreviewModal from '@/components/shared/PDFPreviewModal'
 import toast from 'react-hot-toast'
 import Breadcrumbs from '@/components/shared/Breadcrumbs'
+import { LoadingSpinner } from '@/components/shared'
 
 export default function SubmitProposalPage() {
   const { user, userRole, loading } = useAuth()
@@ -730,32 +731,32 @@ export default function SubmitProposalPage() {
 
   if (loading || projectLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Loading...</div>
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <LoadingSpinner size="lg" text="Loading project details..." />
       </div>
     )
   }
 
   if (error && !project) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg text-red-600">{error}</div>
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="text-lg text-red-600 dark:text-red-400">{error}</div>
       </div>
     )
   }
 
-      if (!user || userRole !== USER_ROLES.CONTRACTOR) {
+  if (!user || userRole !== USER_ROLES.CONTRACTOR) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Access denied. Only contractors can submit proposals.</div>
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="text-lg text-gray-900 dark:text-white">Access denied. Only contractors can submit proposals.</div>
       </div>
     )
   }
 
   if (!project) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Project not found or no longer accepting proposals.</div>
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="text-lg text-gray-900 dark:text-white">Project not found or no longer accepting proposals.</div>
       </div>
     )
   }

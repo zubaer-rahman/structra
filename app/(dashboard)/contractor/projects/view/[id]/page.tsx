@@ -258,12 +258,12 @@ export default function ContractorProjectViewPage() {
   // Show payment success message
   if (showPaymentSuccess) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-white p-4">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-white dark:bg-[#0A0A0A] p-4 text-gray-900 dark:text-gray-100">
         <div className="w-full max-w-md">
           <div className="text-center">
             <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold mb-3">Payment Successful!</h2>
-            <p className="text-sm text-gray-600 mb-4">
+            <h2 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Payment Successful!</h2>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
               {paymentProcessing 
                 ? 'Processing your access to this project...'
                 : 'You now have access to this project.'}

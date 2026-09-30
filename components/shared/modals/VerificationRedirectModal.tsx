@@ -50,11 +50,11 @@ export function VerificationRedirectModal({ isOpen, onClose, user }: Verificatio
 
         <div className="space-y-5">
           {/* Value Proposition */}
-          <div className="bg-gradient-to-r from-orange-50 to-amber-50 p-5 rounded-lg border border-orange-200">
-            <h3 className="text-base font-semibold text-orange-900 mb-3">
+          <div className="bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/20 p-5 rounded-lg border border-orange-200 dark:border-orange-900/40">
+            <h3 className="text-base font-semibold text-orange-900 dark:text-orange-300 mb-3">
               Verification Required for Project Access
             </h3>
-            <p className="text-orange-800 text-sm leading-relaxed">
+            <p className="text-orange-800 dark:text-orange-200/90 text-sm leading-relaxed">
               You need to be a verified contractor to view project details and submit proposals. Complete your verification on your profile page to unlock all contractor features.
             </p>
           </div>
@@ -63,14 +63,14 @@ export function VerificationRedirectModal({ isOpen, onClose, user }: Verificatio
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {/* Benefits */}
             <div>
-              <h4 className="text-sm font-semibold mb-3 flex items-center gap-2">
+              <h4 className="text-sm font-semibold mb-3 flex items-center gap-2 text-foreground">
                 <Star className="h-4 w-4 text-orange-500" />
                 Benefits
               </h4>
               <div className="space-y-2">
                 {requirements.benefits.slice(0, 4).map((benefit, index) => (
-                  <div key={index} className="flex items-center gap-2 text-xs">
-                    <CheckCircle className="h-3 w-3 text-green-600 flex-shrink-0" />
+                  <div key={index} className="flex items-center gap-2 text-xs text-foreground">
+                    <CheckCircle className="h-3 w-3 text-green-600 dark:text-green-400 flex-shrink-0" />
                     <span>{benefit}</span>
                   </div>
                 ))}
@@ -79,14 +79,14 @@ export function VerificationRedirectModal({ isOpen, onClose, user }: Verificatio
 
             {/* Requirements */}
             <div>
-              <h4 className="text-sm font-semibold mb-3 flex items-center gap-2">
+              <h4 className="text-sm font-semibold mb-3 flex items-center gap-2 text-foreground">
                 <FileCheck className="h-4 w-4 text-orange-500" />
                 Requirements
               </h4>
               <div className="space-y-2">
                 {requirements.requirements.map((requirement, index) => (
-                  <div key={index} className="flex items-center gap-2 text-xs text-gray-600">
-                    <Building2 className="h-3 w-3 text-gray-400 flex-shrink-0" />
+                  <div key={index} className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Building2 className="h-3 w-3 text-muted-foreground flex-shrink-0" />
                     <span>{requirement}</span>
                   </div>
                 ))}
@@ -95,26 +95,26 @@ export function VerificationRedirectModal({ isOpen, onClose, user }: Verificatio
           </div>
 
           {/* Pricing */}
-          <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="bg-muted/50 border border-border p-4 rounded-lg">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Annual Verification Fee</p>
-                <p className="text-2xl font-bold text-gray-900 mb-1">{requirements.annualFee} {requirements.currency}</p>
-                <p className="text-sm text-gray-500">Billed annually • Cancel anytime</p>
+                <p className="text-sm text-muted-foreground mb-1">Annual Verification Fee</p>
+                <p className="text-2xl font-bold text-foreground mb-1">{requirements.annualFee} {requirements.currency}</p>
+                <p className="text-sm text-muted-foreground">Billed annually • Cancel anytime</p>
               </div>
-              <Award className="h-10 w-10 text-orange-600" />
+              <Award className="h-10 w-10 text-orange-600 dark:text-orange-500" />
             </div>
           </div>
 
           {/* Redirect Message */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 rounded-lg p-4">
             <div className="flex items-start gap-3">
-              <AlertCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+              <AlertCircle className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <h4 className="text-sm font-semibold text-blue-900 mb-2">
+                <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-2">
                   Complete Verification on Profile Page
                 </h4>
-                <p className="text-sm text-blue-800 mb-3">
+                <p className="text-sm text-blue-800 dark:text-blue-200/90 mb-3">
                   To proceed with project access, please complete your contractor verification on your profile page. This ensures all your business information is properly documented.
                 </p>
               </div>
@@ -142,7 +142,7 @@ export function VerificationRedirectModal({ isOpen, onClose, user }: Verificatio
           </div>
 
           {/* Status Info */}
-          <div className="text-center text-xs text-gray-600 pt-2">
+          <div className="text-center text-xs text-muted-foreground pt-2">
             <p>🔒 Verification required to access project details and submit proposals</p>
             <p>Complete verification once to unlock all contractor features</p>
           </div>

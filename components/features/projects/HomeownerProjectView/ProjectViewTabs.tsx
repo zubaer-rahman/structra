@@ -61,7 +61,7 @@ export function ProjectViewTabs({ activeTab, onTabChange, userRole, availableTab
       case 'proposals':
         if (userRole === USER_ROLES.HOMEOWNER && proposalCount > 0) {
           return (
-            <Badge variant="secondary" className="ml-2 px-2 py-0.5 text-xs font-semibold bg-orange-100 text-orange-800">
+            <Badge variant="secondary" className="ml-2 px-2 py-0.5 text-xs font-semibold bg-orange-100 text-orange-800 dark:bg-orange-950/50 dark:text-orange-300 dark:border-orange-800">
               {proposalCount}
             </Badge>
           )

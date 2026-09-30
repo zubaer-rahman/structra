@@ -80,11 +80,11 @@ export function ProjectPaymentModal({
         
         <div className="space-y-4">
           {/* Project Info */}
-          <div className="p-3 bg-gray-50 rounded">
-            <h3 className="font-medium text-gray-900 text-sm">
+          <div className="p-3 bg-muted/50 border border-border rounded">
+            <h3 className="font-medium text-foreground text-sm">
               {project.project_title}
             </h3>
-            <p className="text-xs text-gray-600">
+            <p className="text-xs text-muted-foreground">
               {typeof project.location === 'object' && project.location ? 
                 `${project.location.city}, ${project.location.province}` : 
                 project.location || 'Location not specified'
@@ -94,17 +94,17 @@ export function ProjectPaymentModal({
 
           {/* Payment Details */}
           <div className="space-y-3">
-            <p className="text-sm text-gray-600 text-center">
+            <p className="text-sm text-muted-foreground text-center">
               To view this project&apos;s details and submit a proposal, you need to purchase project access.
             </p>
 
             {/* Pricing */}
             <div className="text-center">
-              <div className="text-2xl font-bold text-gray-900">
+              <div className="text-2xl font-bold text-foreground">
                 ${projectPrice.toFixed(2)} CAD
               </div>
               {!isVerified && (
-                <div className="text-xs text-gray-500 mt-1">
+                <div className="text-xs text-muted-foreground mt-1">
                   Includes verification + project access
                 </div>
               )}

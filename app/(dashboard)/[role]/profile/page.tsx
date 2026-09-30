@@ -37,8 +37,8 @@ export default function ProfilePage({ params }: ProfilePageProps) {
     return (
       <div className="min-h-[50vh] flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">Authentication Required</h2>
-          <p className="text-gray-600">Please sign in to view your profile.</p>
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">Authentication Required</h2>
+          <p className="text-gray-600 dark:text-gray-400">Please sign in to view your profile.</p>
         </div>
       </div>
     );

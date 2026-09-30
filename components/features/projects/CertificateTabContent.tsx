@@ -115,8 +115,8 @@ export function CertificateTabContent({ project, user, userRole }: CertificateTa
           </CardHeader>
           <CardContent>
             <div className="text-center py-8">
-              <Loader2 className="h-16 w-16 text-gray-300 mx-auto mb-4 animate-spin" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Checking Access...</h3>
+              <Loader2 className="h-16 w-16 text-muted-foreground mx-auto mb-4 animate-spin" />
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Checking Access...</h3>
             </div>
           </CardContent>
         </Card>
@@ -136,18 +136,18 @@ export function CertificateTabContent({ project, user, userRole }: CertificateTa
           <CardContent>
             <div className="text-center py-8">
               <div className="relative">
-                <div className="bg-gray-200 rounded-lg p-8 mb-4 opacity-50 blur-sm">
+                <div className="bg-gray-200 dark:bg-white/10 rounded-lg p-8 mb-4 opacity-50 blur-sm">
                   <FileText className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-600 mb-2">Certificate Preview</h3>
-                  <p className="text-gray-500">PDF Document Available</p>
+                  <h3 className="text-lg font-medium text-gray-600 dark:text-gray-300 mb-2">Certificate Preview</h3>
+                  <p className="text-gray-500 dark:text-gray-400">PDF Document Available</p>
                 </div>
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <Badge variant="secondary" className="bg-white/90 text-gray-700">
+                  <Badge variant="secondary" className="bg-white/90 dark:bg-zinc-800/90 text-gray-700 dark:text-gray-200">
                     Preview Only
                   </Badge>
                 </div>
               </div>
-              <p className="text-gray-500 text-sm">
+              <p className="text-gray-500 dark:text-gray-400 text-sm">
                 Only the awarded contractor can view and download the full certificate.
               </p>
             </div>
@@ -169,18 +169,18 @@ export function CertificateTabContent({ project, user, userRole }: CertificateTa
           <CardContent>
             <div className="text-center py-8">
               <div className="relative">
-                <div className="bg-gray-200 rounded-lg p-8 mb-4 opacity-50 blur-sm">
+                <div className="bg-gray-200 dark:bg-white/10 rounded-lg p-8 mb-4 opacity-50 blur-sm">
                   <FileText className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-600 mb-2">Certificate Preview</h3>
-                  <p className="text-gray-500">PDF Document Available</p>
+                  <h3 className="text-lg font-medium text-gray-600 dark:text-gray-300 mb-2">Certificate Preview</h3>
+                  <p className="text-gray-500 dark:text-gray-400">PDF Document Available</p>
                 </div>
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <Badge variant="secondary" className="bg-white/90 text-gray-700">
+                  <Badge variant="secondary" className="bg-white/90 dark:bg-zinc-800/90 text-gray-700 dark:text-gray-200">
                     Contract Reviews Pending
                   </Badge>
                 </div>
               </div>
-              <p className="text-gray-500 text-sm">
+              <p className="text-gray-500 dark:text-gray-400 text-sm">
                 Both homeowner and contractor need to review the contract to have access to the certificate of title.
               </p>
             </div>
@@ -200,13 +200,13 @@ export function CertificateTabContent({ project, user, userRole }: CertificateTa
           </CardHeader>
           <CardContent>
             <div className="text-center py-8">
-              <Award className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No Certificate Available</h3>
-              <p className="text-gray-500 mb-4">
+              <Award className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No Certificate Available</h3>
+              <p className="text-gray-500 dark:text-gray-400 mb-4">
                 A certificate of title will become available once the project has been verified and published.
               </p>
               {project.title_awarded && (
-                <Badge variant="outline" className="text-orange-600 border-orange-200">
+                <Badge variant="outline" className="text-orange-600 dark:text-orange-400 border-orange-200 dark:border-orange-900/50">
                   Title Awarded
                 </Badge>
               )}
@@ -231,9 +231,9 @@ export function CertificateTabContent({ project, user, userRole }: CertificateTa
           </CardHeader>
           <CardContent>
             <div className="text-center py-8">
-              <Award className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Access Restricted</h3>
-              <p className="text-gray-500 mb-4">
+              <Award className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Access Restricted</h3>
+              <p className="text-gray-500 dark:text-gray-400 mb-4">
                 Certificate access is restricted based on your role and project status.
               </p>
             </div>
@@ -254,12 +254,12 @@ export function CertificateTabContent({ project, user, userRole }: CertificateTa
           {/* Certificate Status */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Badge variant="default" className="bg-green-100 text-green-800 border-green-200">
+              <Badge variant="default" className="bg-green-100 text-green-800 border-green-200 dark:bg-green-950/50 dark:text-green-300 dark:border-green-800">
                 <Award className="h-3 w-3 mr-1" />
                 Certificate Available
               </Badge>
               {project.title_awarded && (
-                <Badge variant="outline" className="text-orange-600 border-orange-200">
+                <Badge variant="outline" className="text-orange-600 dark:text-orange-400 border-orange-200 dark:border-orange-900/50">
                   Title Awarded
                 </Badge>
               )}
@@ -270,25 +270,25 @@ export function CertificateTabContent({ project, user, userRole }: CertificateTa
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div>
-                <h4 className="font-medium text-gray-900 mb-2">Certificate Details</h4>
+                <h4 className="font-medium text-gray-900 dark:text-white mb-2">Certificate Details</h4>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm">
                     <FileText className="h-4 w-4 text-gray-400" />
-                    <span className="text-gray-600">File:</span>
-                    <span className="font-medium">{certificate.filename}</span>
+                    <span className="text-gray-600 dark:text-gray-400">File:</span>
+                    <span className="font-medium text-gray-900 dark:text-white">{certificate.filename}</span>
                   </div>
                   {certificate.size && (
                     <div className="flex items-center gap-2 text-sm">
-                      <span className="text-gray-600">Size:</span>
-                      <span className="font-medium">
+                      <span className="text-gray-600 dark:text-gray-400">Size:</span>
+                      <span className="font-medium text-gray-900 dark:text-white">
                         {(certificate.size / 1024 / 1024).toFixed(2)} MB
                       </span>
                     </div>
                   )}
                   {certificate.mimeType && (
                     <div className="flex items-center gap-2 text-sm">
-                      <span className="text-gray-600">Type:</span>
-                      <span className="font-medium">{certificate.mimeType}</span>
+                      <span className="text-gray-600 dark:text-gray-400">Type:</span>
+                      <span className="font-medium text-gray-900 dark:text-white">{certificate.mimeType}</span>
                     </div>
                   )}
                 </div>
@@ -297,23 +297,23 @@ export function CertificateTabContent({ project, user, userRole }: CertificateTa
 
             <div className="space-y-4">
               <div>
-                <h4 className="font-medium text-gray-900 mb-2">Project Information</h4>
+                <h4 className="font-medium text-gray-900 dark:text-white mb-2">Project Information</h4>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm">
                     <Calendar className="h-4 w-4 text-gray-400" />
-                    <span className="text-gray-600">Parcel Identifier:</span>
-                    <span className="font-medium font-mono">{project.pid}</span>
+                    <span className="text-gray-600 dark:text-gray-400">Parcel Identifier:</span>
+                    <span className="font-medium font-mono text-gray-900 dark:text-white">{project.pid}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <UserIcon className="h-4 w-4 text-gray-400" />
-                    <span className="text-gray-600">Project Owner:</span>
-                    <span className="font-medium">{user.full_name}</span>
+                    <span className="text-gray-600 dark:text-gray-400">Project Owner:</span>
+                    <span className="font-medium text-gray-900 dark:text-white">{user.full_name}</span>
                   </div>
                   {project.substantial_completion && (
                     <div className="flex items-center gap-2 text-sm">
                       <Calendar className="h-4 w-4 text-gray-400" />
-                      <span className="text-gray-600">Completed:</span>
-                      <span className="font-medium">
+                      <span className="text-gray-600 dark:text-gray-400">Completed:</span>
+                      <span className="font-medium text-gray-900 dark:text-white">
                         {format(new Date(project.substantial_completion), 'MMM dd, yyyy')}
                       </span>
                     </div>
@@ -324,7 +324,7 @@ export function CertificateTabContent({ project, user, userRole }: CertificateTa
           </div>
 
           {/* Download Button */}
-          <div className="pt-4 border-t">
+          <div className="pt-4 border-t border-border">
             <Button
               onClick={handleDownloadCertificate}
               disabled={downloading}

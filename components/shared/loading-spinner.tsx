@@ -29,19 +29,19 @@ export default function LoadingSpinner({
 
   const variantClasses = {
     default: {
-      spinner: 'border-orange-600',
-      text: 'text-gray-800',
-      subtitle: 'text-gray-600'
+      spinner: 'border-orange-600 dark:border-orange-500',
+      text: 'text-gray-800 dark:text-gray-100',
+      subtitle: 'text-gray-600 dark:text-gray-400'
     },
     warning: {
-      spinner: 'border-yellow-500',
-      text: 'text-yellow-800',
-      subtitle: 'text-gray-700'
+      spinner: 'border-yellow-500 dark:border-yellow-400',
+      text: 'text-yellow-800 dark:text-yellow-300',
+      subtitle: 'text-gray-700 dark:text-gray-400'
     },
     error: {
-      spinner: 'border-red-500',
-      text: 'text-red-700',
-      subtitle: 'text-gray-700'
+      spinner: 'border-red-500 dark:border-red-400',
+      text: 'text-red-700 dark:text-red-400',
+      subtitle: 'text-gray-700 dark:text-gray-400'
     },
     white: {
       spinner: 'border-white',
@@ -51,7 +51,7 @@ export default function LoadingSpinner({
     dark: {
       spinner: 'border-orange-500',
       text: 'text-white',
-      subtitle: 'text-gray-500'
+      subtitle: 'text-gray-400'
     }
   }
 

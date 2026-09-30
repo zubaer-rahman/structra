@@ -183,7 +183,7 @@ export function ProposalsTabContent({
 
   if (loading) {
     return (
-      <div className="text-center py-12 bg-white">
+      <div className="text-center py-12">
         <LoadingSpinner size="lg" text="Loading proposals..." />
       </div>
     );
@@ -191,13 +191,13 @@ export function ProposalsTabContent({
 
   if (proposals.length === 0) {
     return (
-      <Card className="bg-white border-gray-200">
+      <Card className="bg-card text-card-foreground border-border">
         <CardContent className="text-center py-12">
-          <FileText className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-black mb-2">
+          <FileText className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-foreground mb-2">
             No Proposals Yet
           </h3>
-          <p className="text-gray-600 mb-4">
+          <p className="text-muted-foreground mb-4">
             {userRole === "homeowner"
               ? "No contractors have submitted proposals for this project yet."
               : "You haven't submitted any proposals for this project yet."}
@@ -207,7 +207,7 @@ export function ProposalsTabContent({
             project.status === PROJECT_STATUSES.OPEN_FOR_PROPOSALS && (
               <Button
                 onClick={() => onSubmitProposal && onSubmitProposal({})}
-                className="bg-black hover:bg-gray-800 text-white border-0"
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
               >
                 Submit Your First Proposal
               </Button>
@@ -218,7 +218,7 @@ export function ProposalsTabContent({
   }
 
   return (
-    <div className="space-y-6 bg-white dark:bg-transparent transition-colors">
+    <div className="space-y-6">
       {/* Header with Filters and Actions */}
       <Card className="bg-white dark:bg-[#141414] border-gray-200 dark:border-white/10">
         <CardHeader>
@@ -374,7 +374,7 @@ export function ProposalsTabContent({
               {proposal.attached_files &&
                 proposal.attached_files.length > 0 && (
                   <div>
-                    <Label className="text-sm font-medium text-gray-600">
+                    <Label className="text-sm font-medium text-gray-600 dark:text-gray-400">
                       Attached Files
                     </Label>
                     <div className="mt-2 flex flex-wrap gap-2">
@@ -470,9 +470,9 @@ export function ProposalsTabContent({
                 {userRole === USER_ROLES.CONTRACTOR && (
                   <Button
                     variant="outline"
-                    className="border-gray-300 text-black hover:bg-gray-100 bg-white"
+                    className="border-gray-300 dark:border-white/15 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 bg-white dark:bg-[#161616]"
                   >
-                    <Edit className="h-4 w-4 mr-2 text-gray-600" />
+                    <Edit className="h-4 w-4 mr-2 text-gray-600 dark:text-gray-400" />
                     Edit Proposal
                   </Button>
                 )}
@@ -480,15 +480,15 @@ export function ProposalsTabContent({
 
               {/* Status-specific Messages */}
               {proposal.status === "accepted" && (
-                <div className="pt-4 border-t">
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <CheckCircle className="h-5 w-5" />
+                <div className="pt-4 border-t border-border">
+                  <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
+                    <CheckCircle className="h-5 w-5 text-green-500" />
                     <span className="font-medium">
                       This proposal has been accepted
                     </span>
                   </div>
                   {proposal.accepted_date && (
-                    <p className="text-sm text-gray-600 mt-1">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                       Accepted on {formatDate(proposal.accepted_date)}
                     </p>
                   )}
@@ -496,20 +496,20 @@ export function ProposalsTabContent({
               )}
 
               {proposal.status === "rejected" && (
-                <div className="pt-4 border-t">
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <AlertCircle className="h-5 w-5" />
+                <div className="pt-4 border-t border-border">
+                  <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
+                    <AlertCircle className="h-5 w-5 text-red-500" />
                     <span className="font-medium">
                       This proposal has been rejected
                     </span>
                   </div>
                   {proposal.rejected_date && (
-                    <p className="text-sm text-gray-600 mt-1">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                       Rejected on {formatDate(proposal.rejected_date)}
                     </p>
                   )}
                   {proposal.rejection_reason_notes && (
-                    <p className="text-sm text-gray-600 mt-1">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                       Reason: {proposal.rejection_reason_notes}
                     </p>
                   )}
