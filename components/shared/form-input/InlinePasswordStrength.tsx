@@ -18,14 +18,14 @@ export function InlinePasswordStrength({ password, className = '' }: InlinePassw
           <div
             key={req.key}
             className={`w-2 h-2 rounded-full transition-colors duration-200 ${
-              req.met ? 'bg-green-500' : 'bg-gray-300'
+              req.met ? 'bg-green-500' : 'bg-gray-300 dark:bg-white/20'
             }`}
           />
         ))}
       </div>
       
       {/* Right: Message */}
-      <span className="text-xs text-gray-500">
+      <span className="text-xs text-gray-500 dark:text-gray-400">
         {strengthMessage}
       </span>
     </div>

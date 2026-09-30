@@ -47,7 +47,7 @@ export function ResetPasswordForm({
           <CardTitle className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-orange-700 bg-clip-text text-transparent">
             Reset Password
           </CardTitle>
-          <CardDescription className="text-base text-gray-600">
+          <CardDescription className="text-base text-muted-foreground">
             Enter your email to receive reset instructions
           </CardDescription>
         </CardHeader>
@@ -55,13 +55,13 @@ export function ResetPasswordForm({
         <CardContent className="px-6 pb-6">
           <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-5">
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+              <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg text-sm">
                 {error}
               </div>
             )}
 
             {successMessage && (
-              <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm">
+              <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900/50 text-green-700 dark:text-green-400 px-4 py-3 rounded-lg text-sm">
                 {successMessage}
               </div>
             )}

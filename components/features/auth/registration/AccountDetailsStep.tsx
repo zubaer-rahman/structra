@@ -42,7 +42,7 @@ export function AccountDetailsStep({ form, onBack, isLoading }: AccountDetailsSt
 
       {/* Email Field with Real-time Validation */}
       <div className="space-y-2">
-        <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+        <Label htmlFor="email" className="text-sm font-medium text-foreground">
           Email Address
         </Label>
         <div className="relative">
@@ -52,10 +52,10 @@ export function AccountDetailsStep({ form, onBack, isLoading }: AccountDetailsSt
             {...form.register('email')}
             className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-colors ${
               form.formState.errors.email || emailValidation.shouldShowError
-                ? 'border-red-300 bg-red-50'
+                ? 'border-red-300 dark:border-red-500/50 bg-red-50 dark:bg-red-950/30 text-foreground'
                 : emailValidation.isEmailAvailable
-                ? 'border-green-300 bg-green-50'
-                : 'border-gray-300 bg-white'
+                ? 'border-green-300 dark:border-green-500/50 bg-green-50 dark:bg-green-950/30 text-foreground'
+                : 'border-gray-300 dark:border-white/15 bg-white dark:bg-[#161616] text-foreground'
             }`}
             placeholder="Enter your email address"
           />
@@ -76,28 +76,28 @@ export function AccountDetailsStep({ form, onBack, isLoading }: AccountDetailsSt
         
         {/* Email validation messages */}
         {emailValidation.shouldShowError && (
-          <p className="text-red-600 text-xs flex items-center gap-1">
+          <p className="text-red-600 dark:text-red-400 text-xs flex items-center gap-1">
             <X className="h-3 w-3" />
             {emailValidation.error}
           </p>
         )}
         
         {emailValidation.isEmailAvailable && (
-          <p className="text-green-600 text-xs flex items-center gap-1">
+          <p className="text-green-600 dark:text-green-400 text-xs flex items-center gap-1">
             <Check className="h-3 w-3" />
             Email is available
           </p>
         )}
         
         {!emailValidation.shouldShowError && !emailValidation.isEmailAvailable && email && email.length > 2 && (
-          <p className="text-gray-500 text-xs">
+          <p className="text-gray-500 dark:text-gray-400 text-xs">
             Verification email will be sent here
           </p>
         )}
         
         {/* Show form validation error if present */}
         {form.formState.errors.email && (
-          <p className="text-red-600 text-xs">{form.formState.errors.email.message}</p>
+          <p className="text-red-600 dark:text-red-400 text-xs">{form.formState.errors.email.message}</p>
         )}
       </div>
 
@@ -132,10 +132,10 @@ export function AccountDetailsStep({ form, onBack, isLoading }: AccountDetailsSt
           type="checkbox"
           id="user_agreed_to_terms"
           {...form.register('user_agreed_to_terms')}
-          className="mt-1 h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded"
+          className="mt-1 h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300 dark:border-white/20 bg-background rounded"
         />
         <div className="space-y-1 leading-none">
-          <Label htmlFor="user_agreed_to_terms" className="text-sm font-normal text-gray-700">
+          <Label htmlFor="user_agreed_to_terms" className="text-sm font-normal text-foreground">
             I agree to{' '}
             <TermsDialog>
               <button type="button" className="text-orange-600 hover:text-orange-700 font-medium underline">
@@ -144,7 +144,7 @@ export function AccountDetailsStep({ form, onBack, isLoading }: AccountDetailsSt
             </TermsDialog>
           </Label>
           {form.formState.errors.user_agreed_to_terms && (
-            <p className="text-red-600 text-xs">{form.formState.errors.user_agreed_to_terms.message}</p>
+            <p className="text-red-600 dark:text-red-400 text-xs">{form.formState.errors.user_agreed_to_terms.message}</p>
           )}
         </div>
       </div>
@@ -155,7 +155,7 @@ export function AccountDetailsStep({ form, onBack, isLoading }: AccountDetailsSt
           type="button" 
           variant="outline" 
           onClick={onBack}
-          className="flex-1 h-10 text-sm border-gray-200 text-gray-700 hover:bg-gray-50"
+          className="flex-1 h-10 text-sm border-border text-foreground hover:bg-muted"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back

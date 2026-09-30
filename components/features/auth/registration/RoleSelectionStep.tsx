@@ -16,7 +16,7 @@ export function RoleSelectionStep({ form, onNext }: RoleSelectionStepProps) {
   return (
     <div className="space-y-5">
       <div className="space-y-3">
-        <Label className="text-base font-semibold text-center block text-gray-700">
+        <Label className="text-base font-semibold text-center block text-foreground">
           I&apos;m a
         </Label>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -30,17 +30,17 @@ export function RoleSelectionStep({ form, onNext }: RoleSelectionStepProps) {
             />
             <Label
               htmlFor="homeowner"
-              className="flex flex-col items-center justify-between rounded-lg border-2 border-gray-200 bg-white p-6 hover:bg-gray-50 hover:border-gray-300 peer-checked:border-orange-500 peer-checked:bg-orange-50 cursor-pointer transition-all duration-200 hover:shadow-md group h-full"
+              className="flex flex-col items-center justify-between rounded-lg border-2 border-gray-200 dark:border-white/10 bg-white dark:bg-[#141414] p-6 hover:bg-gray-50 dark:hover:bg-white/5 hover:border-gray-300 dark:hover:border-white/20 peer-checked:border-orange-500 dark:peer-checked:border-orange-500 peer-checked:bg-orange-50 dark:peer-checked:bg-orange-950/20 cursor-pointer transition-all duration-200 hover:shadow-md group h-full"
             >
-              <div className="mb-3 p-3 rounded-full bg-gray-100 group-hover:bg-gray-200 transition-colors">
-                <Home className="h-8 w-8 text-gray-900" />
+              <div className="mb-3 p-3 rounded-full bg-gray-100 dark:bg-white/10 group-hover:bg-gray-200 dark:group-hover:bg-white/15 transition-colors">
+                <Home className="h-8 w-8 text-gray-900 dark:text-white" />
               </div>
               <div className="space-y-2 text-center flex-1 flex flex-col justify-center">
-                <h3 className="text-lg font-semibold leading-none text-gray-900">Homeowner</h3>
-                <p className="text-sm text-gray-600 max-w-xs">
+                <h3 className="text-lg font-semibold leading-none text-gray-900 dark:text-white">Homeowner</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 max-w-xs">
                   Find and hire contractors
                 </p>
-                <div className="pt-2 text-xs text-gray-500">
+                <div className="pt-2 text-xs text-gray-500 dark:text-gray-400">
                   ✓ Post projects ✓ Get quotes ✓ Manage
                 </div>
               </div>
@@ -57,17 +57,17 @@ export function RoleSelectionStep({ form, onNext }: RoleSelectionStepProps) {
             />
             <Label
               htmlFor="contractor"
-              className="flex flex-col items-center justify-between rounded-lg border-2 border-gray-200 bg-white p-6 hover:bg-gray-50 hover:border-gray-300 peer-checked:border-orange-500 peer-checked:bg-orange-50 cursor-pointer transition-all duration-200 hover:shadow-md group h-full"
+              className="flex flex-col items-center justify-between rounded-lg border-2 border-gray-200 dark:border-white/10 bg-white dark:bg-[#141414] p-6 hover:bg-gray-50 dark:hover:bg-white/5 hover:border-gray-300 dark:hover:border-white/20 peer-checked:border-orange-500 dark:peer-checked:border-orange-500 peer-checked:bg-orange-50 dark:peer-checked:bg-orange-950/20 cursor-pointer transition-all duration-200 hover:shadow-md group h-full"
             >
-              <div className="mb-3 p-3 rounded-full bg-gray-100 group-hover:bg-gray-200 transition-colors">
-                <Building2 className="h-8 w-8 text-gray-900" />
+              <div className="mb-3 p-3 rounded-full bg-gray-100 dark:bg-white/10 group-hover:bg-gray-200 dark:group-hover:bg-white/15 transition-colors">
+                <Building2 className="h-8 w-8 text-gray-900 dark:text-white" />
               </div>
               <div className="space-y-2 text-center flex-1 flex flex-col justify-center">
-                <h3 className="text-lg font-semibold leading-none text-gray-900">Contractor</h3>
-                <p className="text-sm text-gray-600 max-w-xs">
+                <h3 className="text-lg font-semibold leading-none text-gray-900 dark:text-white">Contractor</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 max-w-xs">
                   Grow your business
                 </p>
-                <div className="pt-2 text-xs text-gray-500">
+                <div className="pt-2 text-xs text-gray-500 dark:text-gray-400">
                   ✓ Get notifications ✓ Showcase ✓ Build
                 </div>
               </div>
@@ -75,7 +75,7 @@ export function RoleSelectionStep({ form, onNext }: RoleSelectionStepProps) {
           </div>
         </div>
         {form.formState.errors.user_role && (
-          <p className="text-red-600 text-sm text-center">{form.formState.errors.user_role.message}</p>
+          <p className="text-red-600 dark:text-red-400 text-sm text-center">{form.formState.errors.user_role.message}</p>
         )}
       </div>
 
