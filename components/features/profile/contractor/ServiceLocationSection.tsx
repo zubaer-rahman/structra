@@ -22,57 +22,20 @@ export function ServiceLocationSection({ formData, onInputChange, missingFields 
   };
 
   return (
-    <div className="space-y-4">
-      <div className="border-b pb-4">
-        <div className="flex items-center space-x-3">
-          <div className="w-6 h-6 bg-gray-600 rounded flex items-center justify-center">
-            <MapPin className="h-4 w-4 text-white" />
+    <div className="space-y-6">
+      <div className="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-white/10">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-950/40 border border-orange-100 dark:border-orange-500/20 flex items-center justify-center text-orange-600 dark:text-orange-400 flex-shrink-0">
+            <MapPin className="h-5 w-5" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">Business Address</h3>
-            <p className="text-sm text-gray-600">Your business address details</p>
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white">Business Address</h3>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Your registered business address and operating location</p>
           </div>
         </div>
       </div>
       
-      <div className="space-y-6">
-        {/* Service Location - REMOVED: Field requires exact address, doesn't work with city/province only */}
-        {/* 
-        <div>
-          <LocationInput
-            value={typeof formData.service_location === 'string' 
-              ? {
-                  address: formData.service_location,
-                  city: null,
-                  province: null,
-                  postalCode: null,
-                  latitude: null,
-                  longitude: null,
-                  country: "",
-                }
-              : formData.service_location || {
-                  address: "",
-                  city: null,
-                  province: null,
-                  postalCode: null,
-                  latitude: null,
-                  longitude: null,
-                  country: "",
-                }
-            }
-            onChange={handleServiceLocationChange}
-            label="Service Location"
-            placeholder="Search for your primary service area"
-            helperText="Start typing to search"
-            error={isFieldInvalid("service_location") ? getValidationMessage("service_location") : undefined}
-            showMap={false}
-            showSelectedLocation={false}
-            className="w-full"
-          />
-        </div>
-        */}
-
-        {/* Business Address */}
+      <div className="space-y-4">
         <div>
           <LocationInput
             value={formData.address || {
@@ -87,10 +50,10 @@ export function ServiceLocationSection({ formData, onInputChange, missingFields 
             onChange={handleAddressChange}
             label="Business Address"
             placeholder="Search for your business address"
-            helperText="Start typing to search"
+            helperText="Enter your street address, city, or postal code"
             error={isFieldInvalid("address") ? getValidationMessage("address") : undefined}
             showMap={false}
-            showSelectedLocation={false}
+            showSelectedLocation={true}
             className="w-full"
           />
         </div>

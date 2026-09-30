@@ -42,17 +42,17 @@ const FormSwitch = React.forwardRef<HTMLButtonElement, FormSwitchProps>(
             )}
           />
           {label && (
-            <Label htmlFor={switchId} className="text-sm font-medium text-gray-700 cursor-pointer">
+            <Label htmlFor={switchId} className="text-sm font-medium text-gray-700 dark:text-gray-200 cursor-pointer">
               {label}
               {required && <span className="text-red-500 ml-1">*</span>}
             </Label>
           )}
         </div>
         {helperText && (
-          <p className="text-xs text-gray-500 leading-relaxed ml-11">{helperText}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed ml-11">{helperText}</p>
         )}
         {error && (
-          <p className="text-sm text-red-500 font-medium ml-11">{error}</p>
+          <p className="text-sm text-red-500 dark:text-red-400 font-medium ml-11">{error}</p>
         )}
       </div>
     )

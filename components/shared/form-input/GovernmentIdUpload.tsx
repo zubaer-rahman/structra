@@ -152,19 +152,19 @@ export function GovernmentIdUpload({
 
       {/* Loading State */}
       {isUploading && (
-        <div className="rounded-xl border border-gray-200 p-8 text-center bg-gray-50/70 space-y-3">
+        <div className="rounded-xl border border-gray-200 dark:border-white/10 p-8 text-center bg-gray-50/70 dark:bg-white/[0.03] space-y-3">
           <LoadingSpinner text="Uploading government ID..." size="md" variant="default" />
-          <p className="text-xs text-gray-500">Please wait while your document is being securely uploaded.</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">Please wait while your document is being securely uploaded.</p>
         </div>
       )}
 
       {/* When file is uploaded: single file preview card with Replace and Remove actions */}
       {!isUploading && currentIdFile && (
-        <div className="rounded-xl border border-gray-200 p-4 bg-gray-50/70">
+        <div className="rounded-xl border border-gray-200 dark:border-white/10 p-4 bg-gray-50/70 dark:bg-white/[0.03]">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center space-x-3 min-w-0">
               {/* File preview */}
-              <div className="w-14 h-12 bg-white rounded-lg border border-gray-200 flex items-center justify-center flex-shrink-0 overflow-hidden shadow-xs">
+              <div className="w-14 h-12 bg-white dark:bg-[#141414] rounded-lg border border-gray-200 dark:border-white/10 flex items-center justify-center flex-shrink-0 overflow-hidden shadow-xs">
                 {isImageFile ? (
                   <Image
                     src={currentIdFile.url}
@@ -177,20 +177,20 @@ export function GovernmentIdUpload({
                     }}
                   />
                 ) : (
-                  <FileText className="w-6 h-6 text-gray-400" />
+                  <FileText className="w-6 h-6 text-gray-400 dark:text-gray-500" />
                 )}
               </div>
               
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-gray-900 truncate">
+                <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
                   {currentIdFile.filename}
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   {currentIdFile.size ? formatFileSize(currentIdFile.size) : 'Unknown size'} • {currentIdFile.mimeType || 'Document'}
                 </p>
                 <button
                   type="button"
-                  className="text-xs text-orange-600 hover:text-orange-700 font-medium hover:underline inline-block mt-0.5 cursor-pointer"
+                  className="text-xs text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 font-medium hover:underline inline-block mt-0.5 cursor-pointer"
                   onClick={() => window.open(currentIdFile.url, '_blank')}
                 >
                   View uploaded document ↗
@@ -206,16 +206,16 @@ export function GovernmentIdUpload({
                   variant="outline"
                   size="sm"
                   onClick={handleClick}
-                  className="h-8 text-xs font-medium border-gray-200 hover:bg-white text-gray-700 hover:text-orange-600 shadow-2xs"
+                  className="h-8 text-xs font-medium border-gray-200 dark:border-white/10 bg-white dark:bg-[#141414] hover:bg-gray-50 dark:hover:bg-white/10 text-gray-700 dark:text-gray-200 hover:text-orange-600 dark:hover:text-orange-400 shadow-2xs"
                 >
-                  <Upload className="w-3.5 h-3.5 mr-1 text-gray-500" />
+                  <Upload className="w-3.5 h-3.5 mr-1 text-gray-500 dark:text-gray-400" />
                   Replace
                 </Button>
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="h-8 text-xs font-medium text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg px-2.5"
+                  className="h-8 text-xs font-medium text-red-500 hover:text-red-700 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg px-2.5"
                   onClick={handleRemoveFile}
                   title="Remove government ID"
                 >
@@ -234,8 +234,8 @@ export function GovernmentIdUpload({
           className={cn(
             "w-full border-2 border-dashed rounded-xl p-6 text-center transition-all duration-200 cursor-pointer",
             dragActive
-              ? "border-orange-500 bg-orange-50/50"
-              : "border-gray-200 hover:border-orange-400 hover:bg-orange-50/10",
+              ? "border-orange-500 bg-orange-50/50 dark:bg-orange-950/30"
+              : "border-gray-200 dark:border-white/10 hover:border-orange-400 dark:hover:border-orange-500/50 hover:bg-orange-50/10 dark:hover:bg-orange-950/10",
             disabled && "opacity-50 cursor-not-allowed"
           )}
           onDragEnter={handleDrag}
@@ -252,17 +252,17 @@ export function GovernmentIdUpload({
           onClick={handleClick}
         >
           <div className="flex flex-col items-center space-y-2.5">
-            <div className="w-10 h-10 rounded-full bg-orange-50 border border-orange-100 flex items-center justify-center text-orange-600">
+            <div className="w-10 h-10 rounded-full bg-orange-50 dark:bg-orange-950/40 border border-orange-100 dark:border-orange-900/50 flex items-center justify-center text-orange-600 dark:text-orange-400">
               <Shield className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-gray-800">
+              <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">
                 Upload government-issued photo ID
               </p>
-              <p className="text-xs text-gray-500 mt-0.5">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                 Drag and drop your file here, or click to browse
               </p>
-              <p className="text-[11px] text-gray-400 mt-1">
+              <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1">
                 JPG, PNG, or PDF up to 10MB
               </p>
             </div>
@@ -275,7 +275,7 @@ export function GovernmentIdUpload({
       )}
 
       {/* Help Text */}
-      <div className="text-[11px] text-gray-500 space-y-0.5 pt-1">
+      <div className="text-[11px] text-gray-500 dark:text-gray-400 space-y-0.5 pt-1">
         <p>• Acceptable documents: Driver&apos;s license, passport, or government photo ID</p>
         <p>• File formats: JPG, PNG, or PDF (up to 10MB)</p>
       </div>

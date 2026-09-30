@@ -34,7 +34,7 @@ const FormBadge = React.forwardRef<HTMLDivElement, FormBadgeProps>(
             <button
               type="button"
               onClick={onRemove}
-              className="ml-1 rounded-full p-0.5 hover:bg-gray-200 transition-colors"
+              className="ml-1 rounded-full p-0.5 hover:bg-gray-200 dark:hover:bg-white/20 transition-colors"
             >
               <X className="h-3 w-3" />
             </button>

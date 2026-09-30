@@ -396,7 +396,7 @@ export function LocationInput({
     <div className={`space-y-2 ${className}`}>
       {/* Label */}
       {label && (
-        <Label htmlFor="location-input" className="text-sm font-medium text-gray-700">
+        <Label htmlFor="location-input" className="text-sm font-medium text-gray-700 dark:text-gray-300">
           {label}
           {required && <span className="text-red-500 ml-1 font-semibold">*</span>}
         </Label>
@@ -420,7 +420,7 @@ export function LocationInput({
               }
             }}
             placeholder={placeholder}
-            className={`pl-10 pr-10 ${error ? "border-red-500 focus-visible:ring-red-400 bg-red-50/10" : "border-gray-200"}`}
+            className={`pl-10 pr-10 dark:bg-[#161616] dark:text-white ${error ? "border-red-500 focus-visible:ring-red-400 bg-red-50/10 dark:bg-red-950/20" : "border-gray-200 dark:border-white/10"}`}
             disabled={disabled}
           />
           {searchQuery && !disabled && (
@@ -429,7 +429,7 @@ export function LocationInput({
               variant="ghost"
               size="sm"
               onClick={handleClearLocation}
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0 hover:bg-gray-100 text-gray-400 hover:text-gray-600"
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0 hover:bg-gray-100 dark:hover:bg-white/10 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
             >
               <X className="h-3.5 w-3.5" />
             </Button>
@@ -440,7 +440,7 @@ export function LocationInput({
         {showResults && searchResults.length > 0 && !disabled && (
           <div
             ref={resultsRef}
-            className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-xl max-h-64 overflow-y-auto divide-y divide-gray-100"
+            className="absolute z-50 w-full mt-1 bg-white dark:bg-[#161616] border border-gray-200 dark:border-white/10 rounded-xl shadow-xl max-h-64 overflow-y-auto divide-y divide-gray-100 dark:divide-white/10"
           >
             {searchResults.map((result, index) => (
               <button
@@ -452,16 +452,16 @@ export function LocationInput({
                 }}
                 onMouseEnter={() => setHighlightedIndex(index)}
                 className={`w-full px-4 py-2.5 text-left transition-colors flex items-start space-x-3 ${
-                  highlightedIndex === index ? "bg-orange-50/70" : "hover:bg-gray-50"
+                  highlightedIndex === index ? "bg-orange-50/70 dark:bg-orange-950/40" : "hover:bg-gray-50 dark:hover:bg-white/5"
                 }`}
               >
                 <MapPin className="h-4 w-4 text-orange-500 mt-1 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium text-gray-900 truncate">
+                  <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
                     {result.mainText}
                   </div>
                   {result.secondaryText && (
-                    <div className="text-xs text-gray-500 truncate">
+                    <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
                       {result.secondaryText}
                     </div>
                   )}
@@ -483,18 +483,18 @@ export function LocationInput({
       {error ? (
         <p className="text-xs text-red-500 mt-1">{error}</p>
       ) : helperText ? (
-        <p className="text-xs text-gray-500">{helperText}</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400">{helperText}</p>
       ) : null}
 
       {/* Selected Location Pill */}
       {selectedLocation && showSelectedLocation && selectedLocation.address && (
-        <div className="bg-orange-50/60 border border-orange-200/80 rounded-lg p-3 text-xs text-orange-950 flex items-start justify-between gap-2">
+        <div className="bg-orange-50/60 dark:bg-orange-950/20 border border-orange-200/80 dark:border-orange-500/30 rounded-lg p-3 text-xs text-orange-950 dark:text-orange-200 flex items-start justify-between gap-2">
           <div className="flex items-start gap-2">
-            <MapPin className="h-4 w-4 text-orange-600 mt-0.5 flex-shrink-0" />
+            <MapPin className="h-4 w-4 text-orange-600 dark:text-orange-400 mt-0.5 flex-shrink-0" />
             <div>
-              <div className="font-semibold text-gray-900">{selectedLocation.address}</div>
+              <div className="font-semibold text-gray-900 dark:text-white">{selectedLocation.address}</div>
               {(selectedLocation.city || selectedLocation.province || selectedLocation.postalCode) && (
-                <div className="text-gray-600 mt-0.5">
+                <div className="text-gray-600 dark:text-gray-400 mt-0.5">
                   {[selectedLocation.city, selectedLocation.province, selectedLocation.postalCode]
                     .filter(Boolean)
                     .join(", ")}

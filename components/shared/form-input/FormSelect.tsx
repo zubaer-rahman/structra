@@ -53,7 +53,7 @@ const FormSelect = React.forwardRef<HTMLButtonElement, FormSelectProps>(
         {label && (
           <Label htmlFor={selectId} className={cn(
             "text-sm font-medium block",
-            isInvalid ? "text-red-600" : "text-gray-700"
+            isInvalid ? "text-red-600 dark:text-red-400" : "text-gray-700 dark:text-gray-200"
           )}>
             {label}
             {required && <span className="text-red-500 ml-1">*</span>}
@@ -71,30 +71,34 @@ const FormSelect = React.forwardRef<HTMLButtonElement, FormSelectProps>(
             ref={ref}
             className={cn(
               "w-full transition-colors duration-200",
-              "border-gray-300 focus:border-blue-500 focus:ring-0 focus:ring-offset-0 focus-visible:ring-offset-0 focus-visible:ring-0",
-              "bg-white hover:bg-gray-50",
-              (error || isInvalid) && "border-red-500 focus:border-red-500 focus:ring-0 focus:ring-offset-0 focus-visible:ring-offset-0 focus-visible:ring-0 bg-red-50",
-              disabled && "bg-gray-50 text-gray-500 cursor-not-allowed"
+              "border-gray-300 dark:border-white/10 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-0 focus:ring-offset-0 focus-visible:ring-offset-0 focus-visible:ring-0",
+              "bg-white dark:bg-[#141414] text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-white/5",
+              (error || isInvalid) && "border-red-500 dark:border-red-500 focus:border-red-500 focus:ring-0 focus:ring-offset-0 focus-visible:ring-offset-0 focus-visible:ring-0 bg-red-50 dark:bg-red-950/20",
+              disabled && "bg-gray-50 dark:bg-zinc-900 text-gray-500 dark:text-gray-400 cursor-not-allowed"
             )}
           >
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-white dark:bg-[#141414] border-gray-200 dark:border-white/10 text-gray-900 dark:text-gray-100 shadow-xl">
             {options.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
+              <SelectItem 
+                key={option.value} 
+                value={option.value}
+                className="text-gray-900 dark:text-gray-100 focus:bg-gray-100 dark:focus:bg-white/10 focus:text-gray-900 dark:focus:text-white cursor-pointer"
+              >
                 {option.label}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
         {helperText && (
-          <p className="text-xs text-gray-500 leading-relaxed">{helperText}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">{helperText}</p>
         )}
         {error && (
-          <p className="text-sm text-red-500 font-medium">{error}</p>
+          <p className="text-sm text-red-500 dark:text-red-400 font-medium">{error}</p>
         )}
         {isInvalid && !error && validationMessage && (
-          <p className="text-sm text-red-500 font-medium">{validationMessage}</p>
+          <p className="text-sm text-red-500 dark:text-red-400 font-medium">{validationMessage}</p>
         )}
       </div>
     )
