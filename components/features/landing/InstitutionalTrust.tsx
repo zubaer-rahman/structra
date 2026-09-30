@@ -14,14 +14,14 @@ const partners = [
 
 export function InstitutionalTrust() {
   return (
-    <section className="py-24 bg-[#0A0A0A] border-y border-white/5 overflow-hidden">
+    <section className="py-24 bg-transparent dark:bg-[#0A0A0A] border-y border-gray-200/60 dark:border-white/5 overflow-hidden">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <p className="text-[10px] font-black text-gray-500 uppercase tracking-[0.4em] mb-4">Institutional Network Partners</p>
+          <p className="text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-[0.4em] mb-4">Institutional Network Partners</p>
           <div className="h-px w-20 bg-orange-500/50 mx-auto" />
         </div>
         
-        <div className="flex flex-wrap justify-center items-center gap-12 md:gap-20 opacity-30 hover:opacity-100 transition-opacity duration-700">
+        <div className="flex flex-wrap justify-center items-center gap-12 md:gap-20 opacity-40 hover:opacity-100 transition-opacity duration-700">
           {partners.map((partner, index) => (
             <motion.div
               key={partner.name}
@@ -31,7 +31,7 @@ export function InstitutionalTrust() {
               viewport={{ once: true }}
               className="flex items-center justify-center"
             >
-              <span className="text-2xl md:text-3xl font-black text-white tracking-tighter italic uppercase">
+              <span className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white tracking-tighter italic uppercase">
                 {partner.logo}
               </span>
             </motion.div>

@@ -39,11 +39,11 @@ export function DetailsTabContent({ project, user }: DetailsTabContentProps) {
       {project.statement_of_work && (
         <div>
           <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-            <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
-            <h3 className="text-base sm:text-lg font-semibold text-gray-900">Project Description</h3>
+            <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 dark:text-gray-400" />
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">Project Description</h3>
           </div>
-          <div className="border-l-4 border-gray-200 pl-3 sm:pl-6">
-            <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
+          <div className="border-l-4 border-gray-200 dark:border-l-white/20 pl-3 sm:pl-6">
+            <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
               {project.statement_of_work}
             </p>
           </div>
@@ -54,34 +54,34 @@ export function DetailsTabContent({ project, user }: DetailsTabContentProps) {
       {/* Location Information */}
       <div>
         <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-          <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
-          <h3 className="text-base sm:text-lg font-semibold text-gray-900">Location Details</h3>
+          <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 dark:text-gray-400" />
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">Location Details</h3>
         </div>
         
         {/* Address Details */}
         <div className="space-y-3">
           {project.location.address && (
-            <div className="flex flex-col sm:flex-row sm:justify-between py-2 border-b border-gray-100">
-              <span className="text-sm sm:text-base text-gray-600 font-medium mb-1 sm:mb-0">Address</span>
-              <span className="text-sm sm:text-base text-gray-900">{project.location.address}</span>
+            <div className="flex flex-col sm:flex-row sm:justify-between py-2 border-b border-gray-100 dark:border-white/10">
+              <span className="text-sm sm:text-base text-gray-600 dark:text-gray-400 font-medium mb-1 sm:mb-0">Address</span>
+              <span className="text-sm sm:text-base text-gray-900 dark:text-white">{project.location.address}</span>
             </div>
           )}
           {project.location.city && (
-            <div className="flex flex-col sm:flex-row sm:justify-between py-2 border-b border-gray-100">
-              <span className="text-sm sm:text-base text-gray-600 font-medium mb-1 sm:mb-0">City</span>
-              <span className="text-sm sm:text-base text-gray-900">{project.location.city}</span>
+            <div className="flex flex-col sm:flex-row sm:justify-between py-2 border-b border-gray-100 dark:border-white/10">
+              <span className="text-sm sm:text-base text-gray-600 dark:text-gray-400 font-medium mb-1 sm:mb-0">City</span>
+              <span className="text-sm sm:text-base text-gray-900 dark:text-white">{project.location.city}</span>
             </div>
           )}
           {project.location.province && (
-            <div className="flex flex-col sm:flex-row sm:justify-between py-2 border-b border-gray-100">
-              <span className="text-sm sm:text-base text-gray-600 font-medium mb-1 sm:mb-0">Province</span>
-              <span className="text-sm sm:text-base text-gray-900">{project.location.province}</span>
+            <div className="flex flex-col sm:flex-row sm:justify-between py-2 border-b border-gray-100 dark:border-white/10">
+              <span className="text-sm sm:text-base text-gray-600 dark:text-gray-400 font-medium mb-1 sm:mb-0">Province</span>
+              <span className="text-sm sm:text-base text-gray-900 dark:text-white">{project.location.province}</span>
             </div>
           )}
           {project.location.postalCode && (
-            <div className="flex flex-col sm:flex-row sm:justify-between py-2 border-b border-gray-100">
-              <span className="text-sm sm:text-base text-gray-600 font-medium mb-1 sm:mb-0">Postal Code</span>
-              <span className="text-sm sm:text-base text-gray-900">{project.location.postalCode}</span>
+            <div className="flex flex-col sm:flex-row sm:justify-between py-2 border-b border-gray-100 dark:border-white/10">
+              <span className="text-sm sm:text-base text-gray-600 dark:text-gray-400 font-medium mb-1 sm:mb-0">Postal Code</span>
+              <span className="text-sm sm:text-base text-gray-900 dark:text-white">{project.location.postalCode}</span>
             </div>
           )}
         </div>
@@ -91,12 +91,12 @@ export function DetailsTabContent({ project, user }: DetailsTabContentProps) {
       {project.category && project.category.length > 0 && (
         <div>
           <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-            <Building2 className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
-            <h3 className="text-base sm:text-lg font-semibold text-gray-900">Trade Categories</h3>
+            <Building2 className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 dark:text-gray-400" />
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">Trade Categories</h3>
           </div>
           <div className="flex flex-wrap gap-2">
             {project.category.map((cat, index) => (
-              <span key={index} className="px-2 sm:px-3 py-1 text-xs sm:text-sm font-medium text-gray-700 bg-gray-100 border border-gray-200 rounded-md">
+              <span key={index} className="px-2 sm:px-3 py-1 text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-white/10 border border-gray-200 dark:border-white/10 rounded-md">
                 {cat}
               </span>
             ))}

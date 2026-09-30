@@ -10,8 +10,8 @@ interface BasicInformationSectionProps {
 export function BasicInformationSection({ disabled = false }: BasicInformationSectionProps) {
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-6">Basic Information</h3>
+    <div className="bg-white dark:bg-[#141414] rounded-lg border border-gray-200 dark:border-white/10 p-6">
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Basic Information</h3>
       <div className="space-y-6">
         {/* Project Title - Full Width */}
         <FormField name="project_title">

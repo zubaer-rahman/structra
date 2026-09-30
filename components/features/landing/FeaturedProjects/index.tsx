@@ -106,7 +106,7 @@ export default function FeaturedProjects({
   }
 
   return (
-    <section className={`py-40 bg-[#0A0A0A] ${className}`}>
+    <section className={`py-40 bg-transparent dark:bg-[#0A0A0A] ${className}`}>
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex flex-col items-center text-center mb-20">
@@ -114,28 +114,28 @@ export default function FeaturedProjects({
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-3 py-1 mb-6 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500"
+            className="inline-flex items-center gap-2 px-3 py-1 mb-6 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-600 dark:text-orange-500"
           >
             <Star className="w-3.5 h-3.5" />
             <span className="text-[10px] font-black uppercase tracking-[0.2em]">Curated Portfolio</span>
           </motion.div>
           
-          <h2 className="text-4xl sm:text-5xl font-black text-white mb-6 tracking-tighter">
-            Featured <span className="text-orange-500">Showcases</span>
+          <h2 className="text-4xl sm:text-5xl font-black text-gray-900 dark:text-white mb-6 tracking-tighter">
+            Featured <span className="text-orange-600 dark:text-orange-500">Showcases</span>
           </h2>
-          <p className="text-lg text-gray-400 max-w-2xl mx-auto font-medium">
+          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto font-medium">
             A selection of architectural landmarks and high-precision builds managed through the Structra ecosystem.
           </p>
         </div>
 
         {featuredProjects.length === 0 ? (
-          <div className="flex items-center justify-center h-96 rounded-[2.5rem] border border-white/5 bg-white/5 backdrop-blur-3xl">
+          <div className="flex items-center justify-center h-96 rounded-[2.5rem] border border-gray-200 dark:border-white/5 bg-white dark:bg-white/5 backdrop-blur-3xl shadow-sm">
             <div className="text-center">
-              <Building2 className="h-20 w-20 text-gray-700 mx-auto mb-6" />
-              <p className="text-2xl font-bold text-white mb-2 tracking-tight">
+              <Building2 className="h-20 w-20 text-gray-400 dark:text-gray-700 mx-auto mb-6" />
+              <p className="text-2xl font-bold text-gray-900 dark:text-white mb-2 tracking-tight">
                 Refining our latest showcases
               </p>
-              <p className="text-gray-500 font-medium max-w-sm mx-auto">
+              <p className="text-gray-500 dark:text-gray-400 font-medium max-w-sm mx-auto">
                 Premium projects are currently being onboarded. Review our live grid for active opportunities.
               </p>
             </div>

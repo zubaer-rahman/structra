@@ -113,10 +113,10 @@ export default function RecentProposals({ proposals }: RecentProposalsProps) {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6">
           <div className="space-y-2 w-full sm:w-auto">
             <div className="text-center sm:text-left">
-              <h2 className="text-lg sm:text-xl font-bold text-gray-900">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
                 Recent Proposals
               </h2>
-              <p className="text-xs text-gray-600 mt-1">
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                 Track your latest proposal submissions and their status
               </p>
             </div>
@@ -127,13 +127,13 @@ export default function RecentProposals({ proposals }: RecentProposalsProps) {
       {/* Content */}
       {displayProposals.length === 0 ? (
         <div className="text-center py-12 px-4 sm:px-6 lg:px-8">
-          <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-            <FileText className="h-10 w-10 text-gray-600" />
+          <div className="w-20 h-20 bg-gray-100 dark:bg-white/5 rounded-lg flex items-center justify-center mx-auto mb-4">
+            <FileText className="h-10 w-10 text-gray-600 dark:text-gray-400" />
           </div>
-          <h3 className="text-xl font-bold text-gray-900 mb-2">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
             {validProposals.length === 0 ? 'No proposals yet' : 'No valid proposals to display'}
           </h3>
-          <p className="text-gray-600 mb-6 max-w-md mx-auto text-base leading-relaxed">
+          <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto text-base leading-relaxed">
             {validProposals.length === 0 
               ? "You haven't submitted any proposals yet. Start browsing projects to find opportunities!"
               : "Some proposals may have incomplete project data and cannot be displayed."
@@ -242,32 +242,32 @@ export default function RecentProposals({ proposals }: RecentProposalsProps) {
 
           {/* Enhanced Table for Desktop */}
           <div className="hidden lg:block">
-            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <div className="bg-white dark:bg-[#141414] rounded-lg border border-gray-200 dark:border-white/10 overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
+                <table className="min-w-full divide-y divide-gray-200 dark:divide-white/10">
+                  <thead className="bg-gray-50 dark:bg-[#181818]">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Project
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Your Bid
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Timeline
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Status
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Submitted
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="bg-white dark:bg-[#141414] divide-y divide-gray-200 dark:divide-white/10">
                     {displayProposals.map((proposal) => {
                       const StatusIcon = getStatusIcon(proposal.status)
                       const project = proposal.project
@@ -281,21 +281,21 @@ export default function RecentProposals({ proposals }: RecentProposalsProps) {
                       return (
                         <tr 
                           key={proposal.id} 
-                          className="hover:bg-gray-50 cursor-pointer"
+                          className="hover:bg-gray-50 dark:hover:bg-white/5 cursor-pointer transition-colors"
                           onClick={(e) => handleRowClick(proposal.id, e)}
                         >
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
                               <div className="flex-shrink-0 h-10 w-10">
-                                <div className="h-10 w-10 rounded-lg bg-gray-100 flex items-center justify-center">
-                                  <Building2 className="h-5 w-5 text-gray-600" />
+                                <div className="h-10 w-10 rounded-lg bg-gray-100 dark:bg-white/10 flex items-center justify-center">
+                                  <Building2 className="h-5 w-5 text-gray-600 dark:text-gray-300" />
                                 </div>
                               </div>
                               <div className="ml-4">
-                                <div className="text-sm font-medium text-gray-900">
+                                <div className="text-sm font-medium text-gray-900 dark:text-white">
                                   {project.project_title}
                                 </div>
-                                <div className="text-sm text-gray-500">
+                                <div className="text-sm text-gray-500 dark:text-gray-400">
                                   {project.location && typeof project.location === 'object' && 'city' in project.location && 'province' in project.location
                                     ? `${project.location.city}, ${project.location.province}` 
                                     : typeof project.location === 'string' ? project.location : 'Location not specified'}
@@ -304,12 +304,12 @@ export default function RecentProposals({ proposals }: RecentProposalsProps) {
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm font-medium text-gray-900">
+                            <div className="text-sm font-medium text-gray-900 dark:text-white">
                               {formatCurrency(proposal.total_amount || proposal.subtotal_amount || 0)}
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-900">
+                            <div className="text-sm text-gray-900 dark:text-gray-300">
                               {proposal.proposed_start_date && proposal.proposed_end_date ? `${proposal.proposed_start_date} - ${proposal.proposed_end_date}` : 'Not specified'}
                             </div>
                           </td>

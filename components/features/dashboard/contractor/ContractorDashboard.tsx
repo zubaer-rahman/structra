@@ -148,7 +148,7 @@ export default function ContractorDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-transparent text-gray-900 dark:text-gray-100">
       <div className="container mx-auto px-4 py-6">
         {/* Dashboard Content */}
         <div className="space-y-6">
@@ -157,10 +157,10 @@ export default function ContractorDashboard() {
 
           {/* Greeting */}
           <div className="mb-4">
-            <h1 className="text-sm font-medium text-gray-800">
+            <h1 className="text-sm font-medium text-gray-800 dark:text-gray-100">
               Hello, {user?.user_metadata?.full_name ? capitalizeWords(user.user_metadata.full_name) : user?.email?.split('@')[0] ? capitalizeWords(user.email.split('@')[0]) : 'There'}
             </h1>
-            <p className="text-xs text-gray-600 mt-1">Welcome to your contractor dashboard</p>
+            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Welcome to your contractor dashboard</p>
           </div>
 
           {/* Contractor Statistics */}

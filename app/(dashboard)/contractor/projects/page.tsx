@@ -178,10 +178,10 @@ export default function ContractorProjectsPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
               Access Denied
             </h3>
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-400">
               Only contractors can view available projects.
             </p>
           </div>

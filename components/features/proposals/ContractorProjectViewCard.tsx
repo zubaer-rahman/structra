@@ -88,14 +88,14 @@ export default function ContractorProjectViewCard({
   }
   return (
     <>
-    <Card className="hover:shadow-lg transition-all duration-200 border border-gray-200 h-full flex flex-col">
+    <Card className="hover:shadow-md transition-all duration-200 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.03] h-full flex flex-col">
       <CardHeader className="pb-4 flex-shrink-0">
         {/* Access Type and Proposal Status Indicators */}
         {!hideBadges && project.hasAccess && project.accessType && (
           <div className="mb-3 flex flex-wrap gap-2">
             <Badge 
               variant="outline" 
-              className="border-gray-300 text-gray-700 bg-gray-50 px-3 py-1 text-xs font-medium flex items-center gap-1 w-fit"
+              className="border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-white/5 px-3 py-1 text-xs font-medium flex items-center gap-1 w-fit"
             >
               <CheckCircle className="h-3 w-3" />
               {project.accessType === 'accepted_proposal' ? 'Accepted Proposal' : 'Paid Access'}
@@ -106,17 +106,15 @@ export default function ContractorProjectViewCard({
               <Badge 
                 variant="outline" 
                 className={`${
-                  project.proposalStatus === 'accepted' 
-                    ? 'border-green-300 text-green-700 bg-green-50'
+                  project.proposalStatus === 'accepted'
+                    ? 'border-green-300 dark:border-green-500/40 text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-500/10'
                     : project.proposalStatus === 'submitted'
-                    ? 'border-blue-300 text-blue-700 bg-blue-50'
+                    ? 'border-blue-300 dark:border-blue-500/40 text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10'
                     : project.proposalStatus === 'rejected'
-                    ? 'border-red-300 text-red-700 bg-red-50'
+                    ? 'border-red-300 dark:border-red-500/40 text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-500/10'
                     : project.proposalStatus === 'expired'
-                    ? 'border-orange-300 text-orange-700 bg-orange-50'
-                    : project.proposalStatus === 'withdrawn'
-                    ? 'border-gray-300 text-gray-700 bg-gray-50'
-                    : 'border-gray-300 text-gray-700 bg-gray-50'
+                    ? 'border-orange-300 dark:border-orange-500/40 text-orange-700 dark:text-orange-400 bg-orange-50 dark:bg-orange-500/10'
+                    : 'border-gray-300 dark:border-white/10 text-gray-700 dark:text-gray-400 bg-gray-50 dark:bg-white/5'
                 } px-3 py-1 text-xs font-medium w-fit`}
               >
                 {project.proposalStatus === 'accepted' && 'Proposal Accepted'}
@@ -131,7 +129,7 @@ export default function ContractorProjectViewCard({
         
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
-            <CardTitle className="text-lg font-semibold text-gray-900 mb-2 truncate">
+            <CardTitle className="text-lg font-semibold text-gray-900 dark:text-white mb-2 truncate">
               {capitalizeFirst(project.project_title)}
             </CardTitle>
           </div>
@@ -147,7 +145,7 @@ export default function ContractorProjectViewCard({
         
         {/* Statement of work - Full width with max 2 lines */}
         <div className="mt-3">
-          <div className="text-sm text-gray-600 leading-relaxed overflow-hidden" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+          <div className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed overflow-hidden" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
             {project.statement_of_work || 'No description provided'}
           </div>
         </div>
@@ -157,30 +155,30 @@ export default function ContractorProjectViewCard({
         {/* Metadata Grid */}
         <div className="space-y-3 mb-4">
           <div className="flex items-center gap-2">
-            <MapPin className="h-4 w-4 text-gray-500" />
-            <span className="text-sm text-gray-700">
+            <MapPin className="h-4 w-4 text-gray-400 dark:text-gray-500 shrink-0" />
+            <span className="text-sm text-gray-700 dark:text-gray-300">
               {project.location?.city || 'Not specified'}
             </span>
           </div>
-          
+
           <div className="flex items-center gap-2">
-            <DollarSign className="h-4 w-4 text-gray-500" />
-            <span className="text-sm font-medium text-gray-900">
+            <DollarSign className="h-4 w-4 text-gray-400 dark:text-gray-500 shrink-0" />
+            <span className="text-sm font-medium text-gray-900 dark:text-white">
               {project.budget ? formatCurrency(project.budget) : 'TBD'}
             </span>
           </div>
-          
+
           <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-gray-500" />
-            <span className="text-sm text-gray-700">
+            <Calendar className="h-4 w-4 text-gray-400 dark:text-gray-500 shrink-0" />
+            <span className="text-sm text-gray-700 dark:text-gray-300">
               Posted {formatDate(project.created_at)}
             </span>
           </div>
-          
+
           {project.expiry_date && (
             <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-gray-500" />
-              <span className="text-sm text-gray-700">
+              <Calendar className="h-4 w-4 text-gray-400 dark:text-gray-500 shrink-0" />
+              <span className="text-sm text-gray-700 dark:text-gray-300">
                 Expires {formatDate(project.expiry_date)}
               </span>
             </div>
@@ -189,9 +187,9 @@ export default function ContractorProjectViewCard({
         
         {/* Categories */}
         {project.category && project.category.length > 0 && (
-          <div className="mb-5 p-3 bg-gray-50 rounded-lg">
-            <div className="text-sm text-gray-600">
-              <span className="font-medium text-gray-700">Categories:</span> {project.category.join(', ')}
+          <div className="mb-5 p-3 bg-gray-50 dark:bg-white/5 rounded-lg border border-gray-100 dark:border-white/10">
+            <div className="text-sm text-gray-600 dark:text-gray-400">
+              <span className="font-medium text-gray-700 dark:text-gray-300">Categories:</span> {project.category.join(', ')}
             </div>
           </div>
         )}
@@ -203,9 +201,9 @@ export default function ContractorProjectViewCard({
             onClick={handleViewDetailsClick}
             disabled={userProfileLoading || contractorProfileLoading || verificationLoading}
             className={`w-full disabled:opacity-50 ${
-              project.hasAccess 
-                ? 'border-green-300 text-green-700 hover:bg-green-50 hover:border-green-400' 
-                : 'border-orange-300 text-orange-700 hover:bg-orange-50 hover:border-orange-400'
+              project.hasAccess
+                ? 'border-green-300 dark:border-green-500/40 text-green-700 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-500/10 hover:border-green-400'
+                : 'border-orange-300 dark:border-orange-500/40 text-orange-700 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-500/10 hover:border-orange-400'
             }`}
           >
             <Eye className="h-4 w-4 mr-2" />

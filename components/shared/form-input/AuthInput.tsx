@@ -63,7 +63,7 @@ export const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
 
     return (
       <div className="space-y-2">
-        <Label htmlFor={type} className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+        <Label htmlFor={type} className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-200">
           {icon && <IconComponent className="h-4 w-4" />}
           {label || config.label}
         </Label>
@@ -75,9 +75,9 @@ export const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
             type={inputType}
             placeholder={config.placeholder}
             className={cn(
-              "h-10 text-sm border-gray-200 focus:border-orange-500 focus:ring-orange-500 rounded-lg",
+              "h-10 text-sm border-gray-200 dark:border-white/15 dark:bg-[#161616] dark:text-gray-100 focus:border-orange-500 focus:ring-orange-500 rounded-lg",
               shouldShowToggle && "pr-10",
-              error && "border-red-300 focus:border-red-500 focus:ring-red-500",
+              error && "border-red-300 dark:border-red-500 focus:border-red-500 focus:ring-red-500",
               className
             )}
             {...props}

@@ -10,7 +10,6 @@ import {
   Calendar, 
   DollarSign,
   ChevronRight,
-  Grid3X3,
   CheckCircle,
   Building2
 } from "lucide-react";
@@ -47,7 +46,7 @@ export default function ProjectViewPage() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   // Fetch contractor reviews (reviews about the contractor across all projects)
-  const { data: contractorReviewsData = [], isLoading: contractorReviewsLoading, error: contractorReviewsError } = trpc.reviews.getByContractorPublic.useQuery({
+  const { data: contractorReviewsData = [], isLoading: contractorReviewsLoading } = trpc.reviews.getByContractorPublic.useQuery({
     contractorId: project?.contractor?.id || '',
   }, {
     enabled: !!project?.contractor?.id
@@ -58,19 +57,6 @@ export default function ProjectViewPage() {
     ...review,
     author_user: Array.isArray(review.author_user) ? review.author_user[0] : review.author_user
   }));
-
-  // Debug logging for reviews
-  useEffect(() => {
-    if (project?.id) {
-      console.log('🔍 Reviews Debug:', {
-        projectId: project.id,
-        contractorReviews,
-        contractorReviewsLoading,
-        contractorReviewsError,
-        contractorReviewsCount: contractorReviews?.length || 0
-      });
-    }
-  }, [project?.id, contractorReviews, contractorReviewsLoading, contractorReviewsError]);
 
 
   useEffect(() => {
@@ -98,25 +84,26 @@ export default function ProjectViewPage() {
         return;
       }
 
-      // Get contractor data if project has a selected proposal
+      // Get contractor data if project has an accepted proposal
       const { data: proposal } = await supabase
         .from("proposals")
-        .select("contractor")
-        .eq("project", projectData.id)
-        .eq("is_selected", "yes")
-        .single();
+        .select("contractor_id")
+        .eq("project_id", projectData.id)
+        .eq("status", "accepted")
+        .limit(1)
+        .maybeSingle();
 
       let contractor = null;
-      if (proposal?.contractor) {
+      if (proposal?.contractor_id) {
         const { data: contractorData } = await supabase
           .from("users")
           .select(`
             id,
             full_name,
             profile_photo,
-            contractor_profile(*)
+            contractor_profiles(*)
           `)
-          .eq("id", proposal.contractor)
+          .eq("id", proposal.contractor_id)
           .single();
         
         contractor = contractorData;
@@ -177,7 +164,7 @@ export default function ProjectViewPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-white dark:bg-[#0A0A0A] flex items-center justify-center">
         <LoadingSpinner />
       </div>
     );
@@ -185,9 +172,9 @@ export default function ProjectViewPage() {
 
   if (!project) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-white dark:bg-[#0A0A0A] flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Project Not Found</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Project Not Found</h1>
           <Link href="/new-landing">
             <Button>Back to Home</Button>
           </Link>
@@ -200,18 +187,18 @@ export default function ProjectViewPage() {
   const mainImage = images[currentImageIndex] || "/images/placeholder-image.png";
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-[#0A0A0A] text-gray-900 dark:text-gray-100">
       <Navbar />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-8">
         {/* Breadcrumb Navigation */}
         <nav className="flex items-center space-x-2 text-sm mb-6">
-          <Link href="/new-landing" className="text-gray-500 hover:text-gray-700">
+          <Link href="/new-landing" className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
             Home
           </Link>
           <ChevronRight className="w-4 h-4 text-gray-400" />
-          <span className="text-gray-900 font-medium truncate">
+          <span className="text-gray-900 dark:text-white font-medium truncate">
             {project.project_title}
           </span>
         </nav>
@@ -228,6 +215,11 @@ export default function ProjectViewPage() {
                   fill
                   className="object-cover cursor-pointer hover:scale-105 transition-transform duration-300"
                   onClick={() => setCurrentImageIndex((currentImageIndex + 1) % images.length)}
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = '/images/placeholder-image.png';
+                    target.onerror = null;
+                  }}
                 />
               </div>
               
@@ -246,6 +238,11 @@ export default function ProjectViewPage() {
                       alt={`${project.project_title} ${index + 2}`}
                       fill
                       className="object-cover hover:scale-105 transition-transform duration-300"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = '/images/placeholder-image.png';
+                        target.onerror = null;
+                      }}
                     />
                   </div>
                 ))}
@@ -261,10 +258,10 @@ export default function ProjectViewPage() {
             <div className="space-y-6">
               {/* Basic Info */}
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
                   {project.project_title}
                 </h1>
-                <div className="flex items-center text-gray-600 mb-4">
+                <div className="flex items-center text-gray-600 dark:text-gray-400 mb-4">
                   <MapPin className="w-4 h-4 mr-2" />
                   <span>
                     {project.location?.city && project.location?.province 
@@ -274,7 +271,7 @@ export default function ProjectViewPage() {
                   </span>
                 </div>
                 
-                <div className="flex items-center space-x-6 text-sm text-gray-600 mb-4">
+                <div className="flex items-center space-x-6 text-sm text-gray-600 dark:text-gray-400 mb-4">
                   <div className="flex items-center">
                     <DollarSign className="w-4 h-4 mr-1" />
                     <span>{formatBudget(project.budget)}</span>
@@ -290,19 +287,19 @@ export default function ProjectViewPage() {
                 </div>
 
                 <div className="flex items-center space-x-2">
-                  <span className="text-gray-600">Completed project</span>
+                  <span className="text-gray-600 dark:text-gray-400">Completed project</span>
                 </div>
               </div>
 
               {/* Contractor Information */}
               {project.contractor && (
-                <div className="border-t border-gray-200 pt-6">
+                <div className="border-t border-gray-200 dark:border-white/10 pt-6">
                   <div className="mb-4">
-                    <h3 className="text-xl font-semibold text-gray-900">Contractor</h3>
-                    <p className="text-sm text-gray-600 mt-1">Overall rating from all projects</p>
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Contractor</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Overall rating from all projects</p>
                   </div>
                   <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200">
+                    <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 dark:bg-white/10">
                       <Image
                         src={project.contractor.profile_photo || "/images/placeholder-image.png"}
                         alt={project.contractor.full_name}
@@ -312,10 +309,10 @@ export default function ProjectViewPage() {
                       />
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-semibold text-gray-900">
+                      <h4 className="font-semibold text-gray-900 dark:text-white">
                         {project.contractor.contractor_profile?.business_name || project.contractor.full_name}
                       </h4>
-                      <p className="text-gray-600 text-sm">
+                      <p className="text-gray-600 dark:text-gray-400 text-sm">
                         {project.contractor.contractor_profile?.trade_category || 'General Contractor'}
                       </p>
                       <div className="flex items-center mt-2">
@@ -329,44 +326,44 @@ export default function ProjectViewPage() {
                             }
                           </span>
                         </div>
-                        <span className="mx-2 text-gray-400">·</span>
-                        <span className="text-sm text-gray-600">Verified contractor</span>
+                        <span className="mx-2 text-gray-400 dark:text-gray-500">·</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">Verified contractor</span>
                       </div>
-                      <p className="text-xs text-gray-500 mt-1">Rated by homeowners across all projects</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Rated by homeowners across all projects</p>
                     </div>
                   </div>
                 </div>
               )}
 
               {/* Project Description */}
-              <div className="border-t border-gray-200 pt-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">About this project</h3>
-                <div className="prose prose-gray max-w-none">
-                  <p className="text-gray-700 leading-relaxed">
+              <div className="border-t border-gray-200 dark:border-white/10 pt-6">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">About this project</h3>
+                <div className="prose prose-gray dark:prose-invert max-w-none">
+                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                     {project.statement_of_work || 'No description available for this project.'}
                   </p>
                 </div>
               </div>
 
               {/* Project Timeline */}
-              <div className="border-t border-gray-200 pt-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">Project Timeline</h3>
+              <div className="border-t border-gray-200 dark:border-white/10 pt-6">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Project Timeline</h3>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Start Date</span>
-                    <span className="font-medium">
+                    <span className="text-gray-600 dark:text-gray-400">Start Date</span>
+                    <span className="font-medium text-gray-900 dark:text-white">
                       {project.start_date ? formatDate(project.start_date.toString()) : 'Not specified'}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Completion Date</span>
-                    <span className="font-medium">
+                    <span className="text-gray-600 dark:text-gray-400">Completion Date</span>
+                    <span className="font-medium text-gray-900 dark:text-white">
                       {project.substantial_completion ? formatDate(project.substantial_completion.toString()) : 'Not specified'}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Status</span>
-                    <span className="flex items-center text-green-600">
+                    <span className="text-gray-600 dark:text-gray-400">Status</span>
+                    <span className="flex items-center text-green-600 dark:text-green-400">
                       <CheckCircle className="w-4 h-4 mr-1" />
                       {project.status}
                     </span>
@@ -376,7 +373,7 @@ export default function ProjectViewPage() {
 
               {/* Site Amenities */}
               {project.site_amenities && (
-                <div className="border-t border-gray-200 pt-6">
+                <div className="border-t border-gray-200 dark:border-white/10 pt-6">
                   <SiteAmenitiesDisplay 
                     amenities={project.site_amenities || {
                       power: [],
@@ -396,8 +393,8 @@ export default function ProjectViewPage() {
 
               {/* Map View */}
               {project.location && (
-                <div className="border-t border-gray-200 pt-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-4">Project Location</h3>
+                <div className="border-t border-gray-200 dark:border-white/10 pt-6">
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Project Location</h3>
                   <GoogleMap
                     location={{
                       latitude: project.location.latitude,
@@ -420,10 +417,10 @@ export default function ProjectViewPage() {
           <div className="lg:col-span-1">
             <div className="sticky top-24 space-y-6">
               {/* Action Card */}
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
+              <div className="bg-white dark:bg-[#141414] rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-white/10">
                 <div className="text-center mb-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Get Started</h3>
-                  <p className="text-sm text-gray-600">Join our platform to connect and build</p>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Get Started</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Join our platform to connect and build</p>
                 </div>
 
                 <div className="flex flex-col gap-4">
@@ -434,7 +431,7 @@ export default function ProjectViewPage() {
                   </Link>
                   
                   <Link href="/register?role=homeowner">
-                    <Button variant="outline" className="w-full h-11 font-medium rounded-lg border-gray-300 text-gray-700 hover:bg-gray-50">
+                    <Button variant="outline" className="w-full h-11 font-medium rounded-lg border-gray-300 dark:border-white/20 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-white/5">
                       Start Your Project
                     </Button>
                   </Link>
@@ -442,56 +439,56 @@ export default function ProjectViewPage() {
               </div>
 
               {/* Quick Actions */}
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+              <div className="bg-white dark:bg-[#141414] rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-white/10">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h3>
                 <div className="space-y-3">
-                  <Link href="/new-landing" className="flex items-center p-3 rounded-xl hover:bg-gray-50 transition-colors group">
-                    <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-orange-100 transition-colors">
-                      <ChevronRight className="w-5 h-5 text-gray-600 group-hover:text-orange-600" />
+                  <Link href="/new-landing" className="flex items-center p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group">
+                    <div className="w-10 h-10 bg-gray-100 dark:bg-white/10 rounded-lg flex items-center justify-center mr-3 group-hover:bg-orange-100 dark:group-hover:bg-orange-950/40 transition-colors">
+                      <ChevronRight className="w-5 h-5 text-gray-600 dark:text-gray-400 group-hover:text-orange-600 dark:group-hover:text-orange-400" />
                     </div>
                     <div>
-                      <div className="font-medium text-gray-900">Back to Projects</div>
-                      <div className="text-sm text-gray-600">View all projects</div>
+                      <div className="font-medium text-gray-900 dark:text-white">Back to Projects</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">View all projects</div>
                     </div>
                   </Link>
 
-                  <Link href="/search" className="flex items-center p-3 rounded-xl hover:bg-gray-50 transition-colors group">
-                    <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-orange-100 transition-colors">
-                      <Building2 className="w-5 h-5 text-gray-600 group-hover:text-orange-600" />
+                  <Link href="/search" className="flex items-center p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group">
+                    <div className="w-10 h-10 bg-gray-100 dark:bg-white/10 rounded-lg flex items-center justify-center mr-3 group-hover:bg-orange-100 dark:group-hover:bg-orange-950/40 transition-colors">
+                      <Building2 className="w-5 h-5 text-gray-600 dark:text-gray-400 group-hover:text-orange-600 dark:group-hover:text-orange-400" />
                     </div>
                     <div>
-                      <div className="font-medium text-gray-900">Browse More</div>
-                      <div className="text-sm text-gray-600">Discover similar projects</div>
+                      <div className="font-medium text-gray-900 dark:text-white">Browse More</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">Discover similar projects</div>
                     </div>
                   </Link>
                 </div>
               </div>
 
               {/* Project Stats */}
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Project Details</h3>
+              <div className="bg-white dark:bg-[#141414] rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-white/10">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Project Details</h3>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Status</span>
-                    <span className="flex items-center text-green-600 font-medium">
+                    <span className="text-gray-600 dark:text-gray-400">Status</span>
+                    <span className="flex items-center text-green-600 dark:text-green-400 font-medium">
                       <CheckCircle className="w-4 h-4 mr-1" />
                       {project.status}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Location</span>
-                    <span className="text-gray-900 font-medium text-right max-w-32 truncate">
+                    <span className="text-gray-600 dark:text-gray-400">Location</span>
+                    <span className="text-gray-900 dark:text-white font-medium text-right max-w-32 truncate">
                       {project.location?.city || 'Unknown'}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
-                      <span className="text-gray-600">Contractor Rating</span>
-                      <p className="text-xs text-gray-500">From all projects</p>
+                      <span className="text-gray-600 dark:text-gray-400">Contractor Rating</span>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">From all projects</p>
                     </div>
                     <div className="flex items-center">
                       <Star className="w-4 h-4 fill-yellow-400 text-yellow-400 mr-1" />
-                      <span className="font-medium">
+                      <span className="font-medium text-gray-900 dark:text-white">
                         {contractorReviewsLoading ? '...' : 
                          contractorReviews.length > 0 ? 
                            (contractorReviews.reduce((acc, review) => acc + review.rating, 0) / contractorReviews.length).toFixed(1) : 

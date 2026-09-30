@@ -23,20 +23,20 @@ export function ProjectPhotosTab({ project }: ProjectPhotosTabProps) {
       {(beforePhoto || afterPhoto) ? (
         <div>
           <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-            <Camera className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
-            <h3 className="text-base sm:text-lg font-semibold text-gray-900">Project Photos</h3>
+            <Camera className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 dark:text-gray-400" />
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">Project Photos</h3>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             {/* Before Photo - from first project_photo */}
             {beforePhoto && (
               <div className="space-y-2">
-                <h4 className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
                   <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
                   Before (Project Start)
                 </h4>
-                <div className="border border-gray-200 rounded-lg overflow-hidden">
-                  <div className="aspect-video bg-gray-100">
+                <div className="border border-gray-200 dark:border-white/10 rounded-lg overflow-hidden bg-white dark:bg-[#141414]">
+                  <div className="aspect-video bg-gray-100 dark:bg-white/5">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={beforePhoto.url}
@@ -44,8 +44,8 @@ export function ProjectPhotosTab({ project }: ProjectPhotosTabProps) {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <div className="p-3 bg-gray-50">
-                    <p className="text-xs text-gray-600 truncate">
+                  <div className="p-3 bg-gray-50 dark:bg-white/5">
+                    <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
                       {beforePhoto.filename}
                     </p>
                   </div>
@@ -56,12 +56,12 @@ export function ProjectPhotosTab({ project }: ProjectPhotosTabProps) {
             {/* After Photo */}
             {afterPhoto && (
               <div className="space-y-2">
-                <h4 className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
                   <span className="w-2 h-2 bg-green-500 rounded-full"></span>
                   After (Project Complete)
                 </h4>
-                <div className="border border-gray-200 rounded-lg overflow-hidden">
-                  <div className="aspect-video bg-gray-100">
+                <div className="border border-gray-200 dark:border-white/10 rounded-lg overflow-hidden bg-white dark:bg-[#141414]">
+                  <div className="aspect-video bg-gray-100 dark:bg-white/5">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={afterPhoto.url}
@@ -69,8 +69,8 @@ export function ProjectPhotosTab({ project }: ProjectPhotosTabProps) {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <div className="p-3 bg-gray-50">
-                    <p className="text-xs text-gray-600 truncate">
+                  <div className="p-3 bg-gray-50 dark:bg-white/5">
+                    <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
                       {afterPhoto.filename}
                     </p>
                   </div>

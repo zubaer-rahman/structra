@@ -83,25 +83,26 @@ export default function ProjectViewPage() {
         return;
       }
 
-      // Get contractor data if project has a selected proposal
+      // Get contractor data if project has an accepted proposal
       const { data: proposal } = await supabase
         .from("proposals")
-        .select("contractor")
-        .eq("project", projectData.id)
-        .eq("is_selected", "yes")
-        .single();
+        .select("contractor_id")
+        .eq("project_id", projectData.id)
+        .eq("status", "accepted")
+        .limit(1)
+        .maybeSingle();
 
       let contractor = null;
-      if (proposal?.contractor) {
+      if (proposal?.contractor_id) {
         const { data: contractorData } = await supabase
           .from("users")
           .select(`
             id,
             full_name,
             profile_photo,
-            contractor_profile(*)
+            contractor_profiles(*)
           `)
-          .eq("id", proposal.contractor)
+          .eq("id", proposal.contractor_id)
           .single();
         
         contractor = contractorData;
@@ -181,7 +182,7 @@ export default function ProjectViewPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white dark:bg-[#0A0A0A]">
         <Navbar />
         <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] pt-16">
           <LoadingSpinner />
@@ -192,11 +193,11 @@ export default function ProjectViewPage() {
 
   if (!project) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white dark:bg-[#0A0A0A]">
         <Navbar />
         <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] pt-16 px-4">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">Project Not Found</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Project Not Found</h1>
             <Link href="/new-landing">
               <Button>Back to Home</Button>
             </Link>
@@ -210,19 +211,19 @@ export default function ProjectViewPage() {
   const mainImage = images[currentImageIndex] || "/images/placeholder-image.png";
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-[#0A0A0A] text-gray-900 dark:text-gray-100">
       <Navbar backUrl="/new-landing" backText="Back" />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-8">
         {/* Project Header */}
-        <div className="flex items-center justify-between mb-8 pb-4 border-b border-gray-100">
-          <h1 className="text-xl font-semibold text-gray-900 truncate">
+        <div className="flex items-center justify-between mb-8 pb-4 border-b border-gray-100 dark:border-white/10">
+          <h1 className="text-xl font-semibold text-gray-900 dark:text-white truncate">
             {project.project_title}
           </h1>
           
           <div className="flex items-center space-x-2">
-            <Button variant="ghost" size="sm" className="flex items-center space-x-2 text-gray-600">
+            <Button variant="ghost" size="sm" className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
               <Share2 className="w-4 h-4" />
               <span className="hidden sm:inline">Share</span>
             </Button>
@@ -230,7 +231,7 @@ export default function ProjectViewPage() {
               variant="ghost" 
               size="sm" 
               className={`flex items-center space-x-2 ${
-                isFavorited ? 'text-red-500 hover:text-red-600' : 'text-gray-600'
+                isFavorited ? 'text-red-500 hover:text-red-600' : 'text-gray-600 dark:text-gray-400'
               }`}
               onClick={() => setIsFavorited(!isFavorited)}
             >
@@ -275,10 +276,10 @@ export default function ProjectViewPage() {
                     </div>
                   ))}
                   {images.length > 4 && (
-                    <div className="relative overflow-hidden rounded-lg cursor-pointer bg-gray-100 flex items-center justify-center">
+                    <div className="relative overflow-hidden rounded-lg cursor-pointer bg-gray-100 dark:bg-white/10 flex items-center justify-center">
                       <div className="text-center">
-                        <Grid3X3 className="w-6 h-6 text-gray-600 mx-auto mb-1" />
-                        <span className="text-xs text-gray-600">Show all {images.length} photos</span>
+                        <Grid3X3 className="w-6 h-6 text-gray-600 dark:text-gray-400 mx-auto mb-1" />
+                        <span className="text-xs text-gray-600 dark:text-gray-400">Show all {images.length} photos</span>
                       </div>
                     </div>
                   )}
@@ -290,15 +291,15 @@ export default function ProjectViewPage() {
             <div className="space-y-6">
               {/* Basic Info */}
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
                   {project.project_title}
                 </h1>
-                <div className="flex items-center text-gray-600 mb-4">
+                <div className="flex items-center text-gray-600 dark:text-gray-400 mb-4">
                   <MapPin className="w-4 h-4 mr-2" />
                   <span>{project.location?.address || 'Location not specified'}</span>
                 </div>
                 
-                <div className="flex items-center space-x-6 text-sm text-gray-600 mb-4">
+                <div className="flex items-center space-x-6 text-sm text-gray-600 dark:text-gray-400 mb-4">
                   <div className="flex items-center">
                     <DollarSign className="w-4 h-4 mr-1" />
                     <span>{formatBudget(project.budget)}</span>
@@ -316,7 +317,7 @@ export default function ProjectViewPage() {
                 <div className="flex items-center space-x-2">
                   <div className="flex items-center">
                     <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    <span className="ml-1 font-medium">
+                    <span className="ml-1 font-medium text-gray-900 dark:text-white">
                       {reviewsLoading ? 'Loading...' : 
                        reviews.length > 0 ? 
                          (reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length).toFixed(1) : 
@@ -324,17 +325,17 @@ export default function ProjectViewPage() {
                       }
                     </span>
                   </div>
-                  <span className="text-gray-600">·</span>
-                  <span className="text-gray-600">Completed project</span>
+                  <span className="text-gray-600 dark:text-gray-400">·</span>
+                  <span className="text-gray-600 dark:text-gray-400">Completed project</span>
                 </div>
               </div>
 
               {/* Contractor Information */}
               {project.contractor && (
-                <div className="border-t border-gray-200 pt-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-4">Contractor</h3>
+                <div className="border-t border-gray-200 dark:border-white/10 pt-6">
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Contractor</h3>
                   <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200">
+                    <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 dark:bg-white/10">
                       <Image
                         src={project.contractor.profile_photo || "/images/placeholder-image.png"}
                         alt={project.contractor.full_name}
@@ -344,19 +345,19 @@ export default function ProjectViewPage() {
                       />
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-semibold text-gray-900">
+                      <h4 className="font-semibold text-gray-900 dark:text-white">
                         {project.contractor.contractor_profile?.business_name || project.contractor.full_name}
                       </h4>
-                      <p className="text-gray-600 text-sm">
+                      <p className="text-gray-600 dark:text-gray-400 text-sm">
                         {project.contractor.contractor_profile?.trade_category || 'General Contractor'}
                       </p>
                       <div className="flex items-center mt-2">
                         <div className="flex items-center">
                           <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                          <span className="ml-1 text-sm font-medium">4.8</span>
+                          <span className="ml-1 text-sm font-medium text-gray-900 dark:text-white">4.8</span>
                         </div>
-                        <span className="mx-2 text-gray-400">·</span>
-                        <span className="text-sm text-gray-600">Verified contractor</span>
+                        <span className="mx-2 text-gray-400 dark:text-gray-500">·</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">Verified contractor</span>
                       </div>
                     </div>
                   </div>
@@ -364,34 +365,34 @@ export default function ProjectViewPage() {
               )}
 
               {/* Project Description */}
-              <div className="border-t border-gray-200 pt-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">About this project</h3>
-                <div className="prose prose-gray max-w-none">
-                  <p className="text-gray-700 leading-relaxed">
+              <div className="border-t border-gray-200 dark:border-white/10 pt-6">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">About this project</h3>
+                <div className="prose prose-gray dark:prose-invert max-w-none">
+                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                     {project.statement_of_work || 'No description available for this project.'}
                   </p>
                 </div>
               </div>
 
               {/* Project Timeline */}
-              <div className="border-t border-gray-200 pt-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">Project Timeline</h3>
+              <div className="border-t border-gray-200 dark:border-white/10 pt-6">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Project Timeline</h3>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Start Date</span>
-                    <span className="font-medium">
+                    <span className="text-gray-600 dark:text-gray-400">Start Date</span>
+                    <span className="font-medium text-gray-900 dark:text-white">
                       {project.start_date ? formatDate(project.start_date.toString()) : 'Not specified'}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Completion Date</span>
-                    <span className="font-medium">
+                    <span className="text-gray-600 dark:text-gray-400">Completion Date</span>
+                    <span className="font-medium text-gray-900 dark:text-white">
                       {project.substantial_completion ? formatDate(project.substantial_completion.toString()) : 'Not specified'}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Status</span>
-                    <span className="flex items-center text-green-600">
+                    <span className="text-gray-600 dark:text-gray-400">Status</span>
+                    <span className="flex items-center text-green-600 dark:text-green-400">
                       <CheckCircle className="w-4 h-4 mr-1" />
                       {project.status}
                     </span>
@@ -404,12 +405,12 @@ export default function ProjectViewPage() {
           {/* Right Column - Action Widget */}
           <div className="lg:col-span-1">
             <div className="sticky top-24">
-              <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+              <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-white/10 rounded-2xl p-6 shadow-sm">
                 <div className="text-center mb-6">
-                  <div className="text-2xl font-bold text-gray-900 mb-2">
+                  <div className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
                     {formatBudget(project.budget)}
                   </div>
-                  <div className="text-gray-600">Project Budget</div>
+                  <div className="text-gray-600 dark:text-gray-400">Project Budget</div>
                 </div>
 
                 <div className="space-y-4">
@@ -417,20 +418,20 @@ export default function ProjectViewPage() {
                     Contact Contractor
                   </Button>
                   
-                  <Button variant="outline" className="w-full">
+                  <Button variant="outline" className="w-full border-gray-300 dark:border-white/20 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-white/5">
                     Request Similar Quote
                   </Button>
                 </div>
 
-                <div className="mt-6 pt-6 border-t border-gray-200">
-                  <div className="text-center text-sm text-gray-600">
+                <div className="mt-6 pt-6 border-t border-gray-200 dark:border-white/10">
+                  <div className="text-center text-sm text-gray-600 dark:text-gray-400">
                     <p className="mb-2">Interested in a similar project?</p>
                     <p>Get quotes from verified contractors in your area.</p>
                   </div>
                 </div>
 
                 <div className="mt-6">
-                  <Link href="/new-landing" className="text-sm text-gray-500 hover:text-gray-700">
+                  <Link href="/new-landing" className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
                     Report this project
                   </Link>
                 </div>

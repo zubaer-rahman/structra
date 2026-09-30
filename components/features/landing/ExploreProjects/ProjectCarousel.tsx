@@ -34,7 +34,7 @@ export default function ProjectCarousel({
           <Button
             variant="outline"
             size="icon"
-            className="h-10 w-10 rounded-full bg-white/5 border-white/10 text-white hover:bg-white/10 transition-all swiper-button-prev-custom"
+            className="h-10 w-10 rounded-full bg-white dark:bg-white/5 border-gray-200 dark:border-white/10 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-all swiper-button-prev-custom"
           >
             <ChevronLeft className="h-5 w-5" />
           </Button>
@@ -42,7 +42,7 @@ export default function ProjectCarousel({
           <Button
             variant="outline"
             size="icon"
-            className="h-10 w-10 rounded-full bg-white/5 border-white/10 text-white hover:bg-white/10 transition-all swiper-button-next-custom"
+            className="h-10 w-10 rounded-full bg-white dark:bg-white/5 border-gray-200 dark:border-white/10 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-all swiper-button-next-custom"
           >
             <ChevronRight className="h-5 w-5" />
           </Button>

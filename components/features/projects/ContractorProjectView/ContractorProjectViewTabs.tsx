@@ -64,7 +64,7 @@ export function ContractorProjectViewTabs({
   }
 
   return (
-    <nav className="flex space-x-8 my-6 border-b border-gray-200" aria-label="Tabs">
+    <nav className="flex space-x-8 my-6 border-b border-gray-200 dark:border-white/10" aria-label="Tabs">
       {availableTabs.map((tab) => (
         <button
           key={tab}
@@ -72,8 +72,8 @@ export function ContractorProjectViewTabs({
           className={cn(
             "flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap transition-colors duration-200",
             activeTab === tab
-              ? "border-orange-500 text-orange-600"
-              : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              ? "border-orange-500 text-orange-600 dark:text-orange-400"
+              : "border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-white/20"
           )}
         >
           {getTabIcon(tab)}

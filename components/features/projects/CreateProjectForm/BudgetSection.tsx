@@ -20,9 +20,9 @@ export function BudgetSection({ form }: BudgetSectionProps) {
   }, [delayPenalty, setValue]);
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-6">
-      <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2 mb-6">
-        <DollarSign className="h-5 w-5 text-blue-600" />
+    <div className="bg-white dark:bg-[#141414] rounded-lg border border-gray-200 dark:border-white/10 p-6">
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center space-x-2 mb-6">
+        <DollarSign className="h-5 w-5 text-blue-600 dark:text-blue-400" />
         <span>Budget & Financial Details</span>
       </h3>
 

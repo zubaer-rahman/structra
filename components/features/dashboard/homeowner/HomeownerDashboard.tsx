@@ -150,7 +150,7 @@ export default function HomeownerDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white relative">
+      <div className="min-h-screen bg-transparent relative">
         <div className="relative flex items-center justify-center min-h-screen">
           <LoadingSpinner 
             text="Loading Your Dashboard"
@@ -165,7 +165,7 @@ export default function HomeownerDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-transparent text-gray-900 dark:text-gray-100">
       <div className="container mx-auto px-4 py-8">
         {/* Error Display */}
         {/* Error Display */}
@@ -177,10 +177,10 @@ export default function HomeownerDashboard() {
 
           {/* Greeting */}
           <div className="mb-6">
-            <h1 className="text-sm font-medium text-gray-800">
+            <h1 className="text-sm font-medium text-gray-800 dark:text-gray-100">
               Hello, {user?.user_metadata?.full_name ? capitalizeWords(user.user_metadata.full_name) : user?.email?.split('@')[0] ? capitalizeWords(user.email.split('@')[0]) : 'There'}
             </h1>
-            <p className="text-xs text-gray-600 mt-1">Welcome to your project dashboard</p>
+            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Welcome to your project dashboard</p>
           </div>
 
           {/* Project Statistics */}

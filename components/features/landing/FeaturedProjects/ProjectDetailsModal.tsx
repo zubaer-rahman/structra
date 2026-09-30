@@ -81,7 +81,7 @@ export default function ProjectDetailsModal({
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3 pr-4">
               <div>
-                <DialogTitle className="text-3xl font-bold text-gray-900">
+                <DialogTitle className="text-3xl font-bold text-gray-900 dark:text-white">
                   {project.project_title}
                 </DialogTitle>
                 {/* Contractor Name - Display prominently below title */}
@@ -100,13 +100,13 @@ export default function ProjectDetailsModal({
                         }}
                       />
                     </div>
-                    <p className="text-lg font-semibold text-blue-600">
+                    <p className="text-lg font-semibold text-blue-600 dark:text-blue-400">
                       {project.contractor.contractor_profile?.business_name || project.contractor.full_name}
                     </p>
                   </div>
                 )}
               </div>
-              <div className="flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+              <div className="flex items-center gap-1 px-3 py-1 bg-green-100 dark:bg-green-500/10 text-green-700 dark:text-green-400 rounded-full text-sm font-medium">
                 <CheckCircle className="h-4 w-4" />
                 <span>Completed</span>
               </div>
@@ -126,12 +126,12 @@ export default function ProjectDetailsModal({
           {/* Featured Badges */}
           <div className="flex gap-3">
             {isFeaturedProject && (
-              <span className="px-4 py-2 text-sm bg-orange-100 text-orange-700 rounded-full font-medium">
+              <span className="px-4 py-2 text-sm bg-orange-100 dark:bg-orange-500/10 text-orange-700 dark:text-orange-400 rounded-full font-medium">
                 Featured Project
               </span>
             )}
             {isFeaturedContractor && (
-              <span className="px-4 py-2 text-sm bg-blue-100 text-blue-700 rounded-full font-medium">
+              <span className="px-4 py-2 text-sm bg-blue-100 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 rounded-full font-medium">
                 Featured Contractor
               </span>
             )}
@@ -139,7 +139,7 @@ export default function ProjectDetailsModal({
 
           {/* Contractor Badge */}
           {project.contractor && (
-            <div className="flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-lg border border-blue-200">
+            <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-500/10 px-4 py-2 rounded-lg border border-blue-200 dark:border-blue-500/20">
               <div className="relative">
                 <Image
                   src={project.contractor.profile_photo || project.contractor.contractor_profile?.logo || "/assets/avatar.png"}
@@ -157,10 +157,10 @@ export default function ProjectDetailsModal({
                 </div>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-900">
+                <p className="text-sm font-medium text-gray-900 dark:text-white">
                   {project.contractor.contractor_profile?.business_name || project.contractor.full_name}
                 </p>
-                <p className="text-xs text-blue-600">Featured Contractor</p>
+                <p className="text-xs text-blue-600 dark:text-blue-400">Featured Contractor</p>
               </div>
             </div>
           )}
@@ -175,7 +175,7 @@ export default function ProjectDetailsModal({
 
             return (
               <div className="space-y-4">
-                <h3 className="text-xl font-semibold text-gray-900">Project Gallery</h3>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Project Gallery</h3>
                 
                 {/* Before and After Comparison */}
                 {beforePhoto && afterPhoto ? (
@@ -183,8 +183,8 @@ export default function ProjectDetailsModal({
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {/* Before Photo */}
                       <div className="space-y-3">
-                        <h4 className="text-sm font-medium text-gray-700 text-center bg-gray-100 px-3 py-1 rounded-full">Before</h4>
-                        <div className="relative h-80 rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg">
+                        <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 text-center bg-gray-100 dark:bg-white/5 px-3 py-1 rounded-full">Before</h4>
+                        <div className="relative h-80 rounded-xl overflow-hidden border-2 border-gray-200 dark:border-white/10 shadow-lg">
                           <Image
                             src={beforePhoto.url || "/images/placeholder-image.png"}
                             alt={`${project.project_title || "Project"} - Before`}
@@ -200,8 +200,8 @@ export default function ProjectDetailsModal({
                       
                       {/* After Photo */}
                       <div className="space-y-3">
-                        <h4 className="text-sm font-medium text-gray-700 text-center bg-green-100 px-3 py-1 rounded-full">After</h4>
-                        <div className="relative h-80 rounded-xl overflow-hidden border-2 border-green-200 shadow-lg">
+                        <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 text-center bg-green-100 dark:bg-green-500/10 px-3 py-1 rounded-full">After</h4>
+                        <div className="relative h-80 rounded-xl overflow-hidden border-2 border-green-200 dark:border-green-500/20 shadow-lg">
                           <Image
                             src={afterPhoto.url || "/images/placeholder-image.png"}
                             alt={`${project.project_title || "Project"} - After`}
@@ -240,28 +240,28 @@ export default function ProjectDetailsModal({
           })()}
 
           {/* Project Details */}
-          <div className="bg-white border border-gray-200 p-6 rounded-xl">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Project Details</h3>
+          <div className="bg-white dark:bg-white/[0.03] border border-gray-200 dark:border-white/5 p-6 rounded-xl">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Project Details</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                  <DollarSign className="h-5 w-5 text-green-600" />
+                <div className="w-10 h-10 bg-green-100 dark:bg-green-500/10 rounded-full flex items-center justify-center">
+                  <DollarSign className="h-5 w-5 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <span className="text-sm text-gray-500">Budget</span>
-                  <p className="font-semibold text-gray-900 text-lg">
+                  <span className="text-sm text-gray-500 dark:text-gray-400">Budget</span>
+                  <p className="font-semibold text-gray-900 dark:text-white text-lg">
                     {formatBudget(project.budget)}
                   </p>
                 </div>
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                  <Building2 className="h-5 w-5 text-blue-600" />
+                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-500/10 rounded-full flex items-center justify-center">
+                  <Building2 className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <span className="text-sm text-gray-500">Project Type</span>
-                  <p className="font-semibold text-gray-900 capitalize">
+                  <span className="text-sm text-gray-500 dark:text-gray-400">Project Type</span>
+                  <p className="font-semibold text-gray-900 dark:text-white capitalize">
                     {project.project_type?.replace(/_/g, ' ')}
                   </p>
                 </div>
@@ -269,12 +269,12 @@ export default function ProjectDetailsModal({
 
               {project.location?.city && project.location?.province && (
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                    <MapPin className="h-5 w-5 text-red-600" />
+                  <div className="w-10 h-10 bg-red-100 dark:bg-red-500/10 rounded-full flex items-center justify-center">
+                    <MapPin className="h-5 w-5 text-red-600 dark:text-red-400" />
                   </div>
                   <div>
-                    <span className="text-sm text-gray-500">Location</span>
-                    <p className="font-semibold text-gray-900">
+                    <span className="text-sm text-gray-500 dark:text-gray-400">Location</span>
+                    <p className="font-semibold text-gray-900 dark:text-white">
                       {project.location.city}, {project.location.province}
                     </p>
                   </div>
@@ -282,12 +282,12 @@ export default function ProjectDetailsModal({
               )}
 
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                  <Calendar className="h-5 w-5 text-purple-600" />
+                <div className="w-10 h-10 bg-purple-100 dark:bg-purple-500/10 rounded-full flex items-center justify-center">
+                  <Calendar className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div>
-                  <span className="text-sm text-gray-500">Timeline</span>
-                  <p className="font-semibold text-gray-900">
+                  <span className="text-sm text-gray-500 dark:text-gray-400">Timeline</span>
+                  <p className="font-semibold text-gray-900 dark:text-white">
                     {formatDate(project.start_date?.toString() || '')} - {formatDate(project.end_date?.toString() || '')}
                   </p>
                 </div>
@@ -295,12 +295,12 @@ export default function ProjectDetailsModal({
 
               {project.substantial_completion && (
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                    <CheckCircle className="h-5 w-5 text-green-600" />
+                  <div className="w-10 h-10 bg-green-100 dark:bg-green-500/10 rounded-full flex items-center justify-center">
+                    <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
                   </div>
                   <div>
-                    <span className="text-sm text-gray-500">Completed</span>
-                    <p className="font-semibold text-gray-900">
+                    <span className="text-sm text-gray-500 dark:text-gray-400">Completed</span>
+                    <p className="font-semibold text-gray-900 dark:text-white">
                       {formatDate(project.substantial_completion?.toString() || '')}
                     </p>
                   </div>
@@ -310,7 +310,7 @@ export default function ProjectDetailsModal({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex justify-center pt-6 border-t border-gray-200">
+          <div className="flex justify-center pt-6 border-t border-gray-200 dark:border-white/5">
             <Button 
               onClick={() => {
                 if (project.slug) {

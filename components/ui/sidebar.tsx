@@ -117,26 +117,26 @@ export function Sidebar({
 
       <div
         className={`
-        fixed top-16 left-0 h-[calc(100vh-4rem)] bg-white border-r border-gray-200 z-40 transition-all duration-300 ease-in-out
+        fixed top-16 left-0 h-[calc(100vh-4rem)] bg-white dark:bg-[#0D0D0D] border-r border-gray-200 dark:border-white/10 z-40 transition-all duration-300 ease-in-out
         ${isOpen ? "translate-x-0" : "-translate-x-full"}
         w-64
         lg:translate-x-0 lg:z-50 lg:h-[calc(100vh-4rem)] lg:top-16 lg:w-64
         overflow-hidden
-        shadow-2xl lg:shadow-lg
+        shadow-2xl lg:shadow-none
         `}
         role="navigation"
         aria-label="Main navigation"
       >
-        <div className="flex flex-col h-full bg-white overflow-hidden">
+        <div className="flex flex-col h-full bg-white dark:bg-[#0D0D0D] overflow-hidden">
           <div className="relative py-2 px-4 flex-shrink-0">
             <Button
               variant="ghost"
               size="sm"
               onClick={onClose}
-              className="lg:hidden absolute top-1 right-1 cursor-pointer p-1 h-7 w-7 rounded-full hover:bg-gray-100"
+              className="lg:hidden absolute top-1 right-1 cursor-pointer p-1 h-7 w-7 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 text-gray-600 dark:text-gray-400"
               aria-label="Close sidebar"
             >
-              <X className="h-4 w-4 text-gray-600" />
+              <X className="h-4 w-4" />
             </Button>
           </div>
 
@@ -151,8 +151,8 @@ export function Sidebar({
                       w-full transition-all duration-200 overflow-hidden cursor-pointer
                       ${
                         isActive(item.href)
-                          ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700 shadow-lg"
-                          : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                          ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700 shadow-md shadow-orange-500/20"
+                          : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white"
                       }
                       justify-start px-3 py-3
                     `}
@@ -164,11 +164,11 @@ export function Sidebar({
                   >
                     {item.iconType === "lucide" ? (
                       <item.icon className={`h-5 w-5 transition-all duration-300 flex-shrink-0 mr-3 ${
-                        isActive(item.href) ? "text-white" : "text-gray-700"
+                        isActive(item.href) ? "text-white" : "text-gray-700 dark:text-gray-300"
                       }`} />
                     ) : (
                       <div className={`mr-3 transition-all duration-300 ${
-                        isActive(item.href) ? "brightness-0 invert" : "brightness-0"
+                        isActive(item.href) ? "brightness-0 invert" : "brightness-0 dark:invert dark:opacity-80"
                       }`}>
                         <DashboardIcon 
                           iconType={item.icon as 'dashboard' | 'projects' | 'proposals' | 'profile'}

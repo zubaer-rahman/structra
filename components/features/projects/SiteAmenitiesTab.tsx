@@ -137,16 +137,16 @@ export default function SiteAmenitiesTab({
           
           {/* Show not included amenities for default categories */}
           {notIncluded.length > 0 && (
-            <div className="mt-4 pt-4 border-t">
+            <div className="mt-4 pt-4 border-t border-border">
               <div className="flex items-center gap-2 mb-2">
                 <XCircle className="h-4 w-4 text-red-500" />
-                <span className="text-sm font-medium text-red-700">&quot;Not Included&quot;</span>
+                <span className="text-sm font-medium text-red-700 dark:text-red-400">&quot;Not Included&quot;</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {notIncluded.map((amenity) => {
                   const label = AMENITY_LABELS[amenity as keyof typeof AMENITY_LABELS] || amenity;
                   return (
-                    <Badge key={amenity} variant="outline" className="text-red-600 border-red-200">
+                    <Badge key={amenity} variant="outline" className="text-red-600 dark:text-red-400 border-red-200 dark:border-red-900/50">
                       {label}
                     </Badge>
                   );
@@ -172,20 +172,20 @@ export default function SiteAmenitiesTab({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Site Amenities</h2>
-          <p className="text-gray-600 mt-1">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Site Amenities</h2>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
             Configure what amenities are available at your project site. This helps contractors understand what to expect.
           </p>
         </div>
       </div>
 
       {/* Important Notice */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 rounded-lg p-4">
         <div className="flex items-start gap-3">
-          <AlertTriangle className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+          <AlertTriangle className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
           <div>
-            <h3 className="font-medium text-blue-900">Important for Contractors</h3>
-            <p className="text-sm text-blue-700 mt-1">
+            <h3 className="font-medium text-blue-900 dark:text-blue-300">Important for Contractors</h3>
+            <p className="text-sm text-blue-700 dark:text-blue-400 mt-1">
               Contractors will see what amenities are available and what&apos;s not included. 
               Make sure to accurately represent your site&apos;s amenities, especially sanitation facilities.
             </p>
@@ -202,9 +202,9 @@ export default function SiteAmenitiesTab({
 
       {/* Save Button (if there are changes) */}
       {hasChanges && (
-        <div className="sticky bottom-0 bg-white border-t pt-4">
+        <div className="sticky bottom-0 bg-white dark:bg-[#141414] border-t border-gray-200 dark:border-white/10 pt-4 pb-2 z-10">
           <div className="flex items-center justify-between">
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-gray-600 dark:text-gray-400">
               You have unsaved changes
             </div>
             <Button 

@@ -52,21 +52,22 @@ export async function GET() {
         // Get the selected proposal for this project (if any)
         const { data: proposal, error: proposalError } = await supabase
           .from("proposals")
-          .select("contractor")
-          .eq("project", project.id)
-          .eq("is_selected", "yes")
-          .single();
+          .select("contractor_id")
+          .eq("project_id", project.id)
+          .eq("status", "accepted")
+          .limit(1)
+          .maybeSingle();
 
         let contractor = null;
         let averageRating = 0;
         let reviewCount = 0;
 
-        if (!proposalError && proposal?.contractor) {
+        if (!proposalError && proposal?.contractor_id) {
           // Get contractor user data
           const { data: contractorUser, error: contractorError } = await supabase
             .from("users")
             .select("id, full_name, profile_photo")
-            .eq("id", proposal.contractor)
+            .eq("id", proposal.contractor_id)
             .single();
 
           if (!contractorError && contractorUser) {
@@ -80,8 +81,8 @@ export async function GET() {
             const { data: reviews, error: reviewsError } = await supabase
               .from("reviews")
               .select("rating")
-              .eq("project", project.id)
-              .eq("is_verified", "yes");
+              .eq("project_id", project.id)
+              .eq("is_public", true);
 
             if (!reviewsError && reviews && reviews.length > 0) {
               const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);

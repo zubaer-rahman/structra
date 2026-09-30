@@ -186,25 +186,26 @@ export default function PublicProjectViewPage() {
             return
           }
 
-          // Get contractor data if project has a selected proposal
+          // Get contractor data if project has an accepted proposal
           const { data: proposal } = await supabase
             .from("proposals")
-            .select("contractor")
-            .eq("project", projectData.id)
-            .eq("is_selected", "yes")
-            .single()
+            .select("contractor_id")
+            .eq("project_id", projectData.id)
+            .eq("status", "accepted")
+            .limit(1)
+            .maybeSingle()
 
           let contractor = null
-          if (proposal?.contractor) {
+          if (proposal?.contractor_id) {
             const { data: contractorData } = await supabase
               .from("users")
               .select(`
                 id,
                 full_name,
                 profile_photo,
-                contractor_profile(*)
+                contractor_profiles(*)
               `)
-              .eq("id", proposal.contractor)
+              .eq("id", proposal.contractor_id)
               .single()
             
             contractor = contractorData
@@ -251,25 +252,26 @@ export default function PublicProjectViewPage() {
         return
       }
 
-      // Get contractor data if project has a selected proposal
+      // Get contractor data if project has an accepted proposal
       const { data: proposal } = await supabase
         .from("proposals")
-        .select("contractor")
-        .eq("project", projectData.id)
-        .eq("is_selected", "yes")
-        .single()
+        .select("contractor_id")
+        .eq("project_id", projectData.id)
+        .eq("status", "accepted")
+        .limit(1)
+        .maybeSingle()
 
       let contractor = null
-      if (proposal?.contractor) {
+      if (proposal?.contractor_id) {
         const { data: contractorData } = await supabase
           .from("users")
           .select(`
             id,
             full_name,
             profile_photo,
-            contractor_profile(*)
+            contractor_profiles(*)
           `)
-          .eq("id", proposal.contractor)
+          .eq("id", proposal.contractor_id)
           .single()
         
         contractor = contractorData
@@ -289,7 +291,7 @@ export default function PublicProjectViewPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-[#0A0A0A]">
         <Navbar />
         <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] pt-16">
           <LoadingSpinner size="lg" text="Loading project details..." />
@@ -300,11 +302,11 @@ export default function PublicProjectViewPage() {
 
   if (error || !project) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-[#0A0A0A]">
         <Navbar />
         <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] pt-16 px-4">
           <div className="text-center">
-            <div className="text-red-600 text-xl mb-4">
+            <div className="text-red-600 dark:text-red-400 text-xl mb-4">
               {error || 'Project not found'}
             </div>
             <Link href="/">
@@ -335,7 +337,7 @@ export default function PublicProjectViewPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-[#0A0A0A] text-gray-900 dark:text-gray-100">
       <Navbar />
 
       <main className="pt-24 pb-20">
@@ -351,7 +353,7 @@ export default function PublicProjectViewPage() {
               <motion.button
                 whileHover={{ x: -4, backgroundColor: "rgba(255, 247, 237, 0.8)" }}
                 whileTap={{ scale: 0.95 }}
-                className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-white/60 backdrop-blur-md border border-orange-100 shadow-sm text-orange-600 hover:text-orange-700 font-bold text-sm cursor-pointer transition-all duration-300"
+                className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-white/60 dark:bg-white/10 backdrop-blur-md border border-orange-100 dark:border-orange-500/20 shadow-sm text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 font-bold text-sm cursor-pointer transition-all duration-300"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Back</span>
@@ -366,29 +368,29 @@ export default function PublicProjectViewPage() {
             transition={{ duration: 0.5 }}
             className="mb-12 text-center"
           >
-            <h1 className="text-4xl font-bold text-gray-900 mb-4 tracking-tight">
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4 tracking-tight">
               {project.project_title}
             </h1>
             
             {/* Contractor Section */}
             {project.contractor && (
               <div className="flex items-center justify-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-200">
+                <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-200 dark:border-white/10">
                   <Image
                     src={project.contractor.profile_photo || project.contractor.contractor_profile?.logo || "/assets/avatar.png"}
                     alt="Contractor" width={40} height={40} className="w-full h-full object-cover"
                   />
                 </div>
                 <div className="text-left">
-                  <p className="text-lg font-semibold text-blue-600 leading-tight">
+                  <p className="text-lg font-semibold text-blue-600 dark:text-blue-400 leading-tight">
                     {project.contractor.contractor_profile?.business_name || project.contractor.full_name}
                   </p>
-                  <p className="text-xs text-gray-500 font-medium">Verified Contractor</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Verified Contractor</p>
                 </div>
               </div>
             )}
 
-            <div className="flex flex-wrap justify-center items-center gap-4 text-gray-600 text-sm">
+            <div className="flex flex-wrap justify-center items-center gap-4 text-gray-600 dark:text-gray-400 text-sm">
               <div className="flex items-center">
                 <MapPin className="w-4 h-4 mr-1.5 text-gray-400" />
                 <span>{project.location?.city}, {project.location?.province}</span>
@@ -401,7 +403,7 @@ export default function PublicProjectViewPage() {
                 <Tag className="w-4 h-4 mr-1.5 text-gray-400" />
                 <span>{project.project_type}</span>
               </div>
-              <div className="flex items-center text-green-600 font-semibold">
+              <div className="flex items-center text-green-600 dark:text-green-400 font-semibold">
                 <CheckCircle className="w-4 h-4 mr-1.5" />
                 <span>{formatCurrency(project.budget)}</span>
               </div>
@@ -412,12 +414,12 @@ export default function PublicProjectViewPage() {
             {/* Project Photos */}
             {((project.project_photos && project.project_photos.length > 0) || project.after_photo) && (
               <section className="space-y-6">
-                <h2 className="text-2xl font-bold text-gray-900">Project Photos</h2>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Project Photos</h2>
                 {project.project_photos && project.project_photos.length > 0 && project.after_photo ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <h4 className="text-sm font-medium text-gray-500 text-center uppercase tracking-wider">Before</h4>
-                      <div className="aspect-[4/3] relative rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
+                      <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400 text-center uppercase tracking-wider">Before</h4>
+                      <div className="aspect-[4/3] relative rounded-2xl overflow-hidden border border-gray-100 dark:border-white/10 shadow-sm">
                         <Image
                           src={typeof project.project_photos[0] === 'string' ? project.project_photos[0] : project.project_photos[0]?.url || "/images/placeholder-image.png"}
                           alt="Before" fill className="object-cover"
@@ -425,8 +427,8 @@ export default function PublicProjectViewPage() {
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <h4 className="text-sm font-medium text-gray-500 text-center uppercase tracking-wider">After</h4>
-                      <div className="aspect-[4/3] relative rounded-2xl overflow-hidden border border-green-100 shadow-md">
+                      <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400 text-center uppercase tracking-wider">After</h4>
+                      <div className="aspect-[4/3] relative rounded-2xl overflow-hidden border border-green-100 dark:border-green-900/40 shadow-md">
                         <Image
                           src={typeof project.after_photo === 'string' ? project.after_photo : project.after_photo?.url || "/images/placeholder-image.png"}
                           alt="After" fill className="object-cover"
@@ -437,7 +439,7 @@ export default function PublicProjectViewPage() {
                 ) : (
                   <div className="grid grid-cols-2 gap-6">
                     {project.project_photos?.map((photo, i) => (
-                      <div key={i} className="aspect-video relative rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
+                      <div key={i} className="aspect-video relative rounded-2xl overflow-hidden border border-gray-100 dark:border-white/10 shadow-sm">
                         <Image
                           src={typeof photo === 'string' ? photo : photo.url || "/images/placeholder-image.png"}
                           alt={`Photo ${i + 1}`} fill className="object-cover"
@@ -451,8 +453,8 @@ export default function PublicProjectViewPage() {
 
             {/* Description */}
             <section className="space-y-4">
-              <h2 className="text-2xl font-bold text-gray-900">Project Description</h2>
-              <p className="text-gray-700 leading-relaxed text-lg whitespace-pre-line">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Project Description</h2>
+              <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-lg whitespace-pre-line">
                 {project.statement_of_work}
               </p>
             </section>
@@ -460,7 +462,7 @@ export default function PublicProjectViewPage() {
             {/* Site Amenities */}
             {project.site_amenities && Object.values(project.site_amenities).some(a => a.length > 0) && (
               <section className="space-y-6">
-                <h2 className="text-2xl font-bold text-gray-900">Site Amenities</h2>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Site Amenities</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
                   {Object.entries(project.site_amenities).map(([category, amenities]) => {
                     if (!amenities || amenities.length === 0) return null;
@@ -469,7 +471,7 @@ export default function PublicProjectViewPage() {
                         <h4 className="text-sm font-bold text-gray-400 uppercase tracking-widest">{category.replace(/_/g, ' ')}</h4>
                         <div className="flex flex-wrap gap-2">
                           {amenities.map((amenity, index) => (
-                            <span key={index} className="px-3 py-1.5 bg-gray-50 text-gray-700 text-sm font-medium rounded-lg border border-gray-100">
+                            <span key={index} className="px-3 py-1.5 bg-gray-50 dark:bg-white/5 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg border border-gray-100 dark:border-white/10">
                               {amenity.replace(/_/g, ' ')}
                             </span>
                           ))}
@@ -483,34 +485,34 @@ export default function PublicProjectViewPage() {
 
             {/* Project Details */}
             <section className="space-y-6">
-              <h2 className="text-2xl font-bold text-gray-900">Project Details</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-6 px-8 bg-gray-50 rounded-3xl border border-gray-100">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Project Details</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-6 px-8 bg-gray-50 dark:bg-white/5 rounded-3xl border border-gray-100 dark:border-white/10">
                 <div className="space-y-4">
                   <div className="flex justify-between items-center py-1">
-                    <span className="text-gray-500 font-medium">Type</span>
-                    <span className="text-gray-900 font-bold">{project.project_type}</span>
+                    <span className="text-gray-500 dark:text-gray-400 font-medium">Type</span>
+                    <span className="text-gray-900 dark:text-white font-bold">{project.project_type}</span>
                   </div>
                   <div className="flex justify-between items-center py-1">
-                    <span className="text-gray-500 font-medium">Category</span>
-                    <span className="text-gray-900 font-bold">{project.category}</span>
+                    <span className="text-gray-500 dark:text-gray-400 font-medium">Category</span>
+                    <span className="text-gray-900 dark:text-white font-bold">{project.category}</span>
                   </div>
                   <div className="flex justify-between items-center py-1">
-                    <span className="text-gray-500 font-medium">Permit Required</span>
-                    <span className="text-gray-900 font-bold">{project.permit_required ? 'Yes' : 'No'}</span>
+                    <span className="text-gray-500 dark:text-gray-400 font-medium">Permit Required</span>
+                    <span className="text-gray-900 dark:text-white font-bold">{project.permit_required ? 'Yes' : 'No'}</span>
                   </div>
                 </div>
                 <div className="space-y-4">
                   <div className="flex justify-between items-center py-1">
-                    <span className="text-gray-500 font-medium">Start Date</span>
-                    <span className="text-gray-900 font-bold">{formatDate(project.start_date)}</span>
+                    <span className="text-gray-500 dark:text-gray-400 font-medium">Start Date</span>
+                    <span className="text-gray-900 dark:text-white font-bold">{formatDate(project.start_date)}</span>
                   </div>
                   <div className="flex justify-between items-center py-1">
-                    <span className="text-gray-500 font-medium">End Date</span>
-                    <span className="text-gray-900 font-bold">{formatDate(project.end_date)}</span>
+                    <span className="text-gray-500 dark:text-gray-400 font-medium">End Date</span>
+                    <span className="text-gray-900 dark:text-white font-bold">{formatDate(project.end_date)}</span>
                   </div>
                   <div className="flex justify-between items-center py-1">
-                    <span className="text-gray-500 font-medium">Budget</span>
-                    <span className="text-gray-900 font-bold text-blue-600">{formatCurrency(project.budget)}</span>
+                    <span className="text-gray-500 dark:text-gray-400 font-medium">Budget</span>
+                    <span className="text-gray-900 dark:text-white font-bold text-blue-600 dark:text-blue-400">{formatCurrency(project.budget)}</span>
                   </div>
                 </div>
               </div>
@@ -518,19 +520,19 @@ export default function PublicProjectViewPage() {
 
             {/* 360 Tours - Restored as requested */}
             <section className="space-y-6">
-              <h2 className="text-2xl font-bold text-gray-900">360 Tours</h2>
-              <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-2xl p-10 text-center">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">360 Tours</h2>
+              <div className="bg-gray-50 dark:bg-white/5 border-2 border-dashed border-gray-300 dark:border-white/20 rounded-2xl p-10 text-center">
                 <div className="max-w-md mx-auto">
-                  <div className="w-16 h-16 mx-auto mb-4 bg-gray-200 rounded-full flex items-center justify-center">
+                  <div className="w-16 h-16 mx-auto mb-4 bg-gray-200 dark:bg-white/10 rounded-full flex items-center justify-center">
                     <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                     </svg>
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">360° Virtual Tours</h3>
-                  <p className="text-gray-600 mb-6">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">360° Virtual Tours</h3>
+                  <p className="text-gray-600 dark:text-gray-400 mb-6">
                     Immersive 360° virtual tours coming soon! Experience this project through interactive panoramic views and virtual walkthroughs.
                   </p>
-                  <div className="inline-flex items-center px-4 py-2 bg-orange-100 text-orange-800 rounded-full text-sm font-medium">
+                  <div className="inline-flex items-center px-4 py-2 bg-orange-100 dark:bg-orange-950/40 text-orange-800 dark:text-orange-300 rounded-full text-sm font-medium">
                     <span className="w-2 h-2 bg-orange-400 rounded-full mr-2 animate-pulse"></span>
                     Coming Soon
                   </div>
@@ -540,7 +542,7 @@ export default function PublicProjectViewPage() {
 
             {/* Bottom CTA */}
             <div className="text-center pt-8">
-              <Button className="h-14 px-10 bg-orange-600 hover:bg-orange-700 text-white rounded-xl font-bold shadow-lg shadow-orange-100 transition-all hover:scale-105">
+              <Button className="h-14 px-10 bg-orange-600 hover:bg-orange-700 text-white rounded-xl font-bold shadow-lg shadow-orange-100 dark:shadow-none transition-all hover:scale-105">
                 Inquire Similar Project
               </Button>
             </div>

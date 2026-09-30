@@ -532,11 +532,11 @@ export default function CreateProjectForm({
     return (
       <div className={`space-y-6 ${className} ${isProcessingPaymentSuccess ? 'relative' : ''}`}>
         {isProcessingPaymentSuccess && (
-          <div className="absolute inset-0 bg-white/50 backdrop-blur-sm z-10 flex items-center justify-center">
-            <div className="bg-white rounded-lg shadow-lg p-6 text-center">
+          <div className="absolute inset-0 bg-white/50 dark:bg-black/50 backdrop-blur-sm z-10 flex items-center justify-center">
+            <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-white/10 rounded-lg shadow-lg p-6 text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600 mx-auto mb-4"></div>
-              <p className="text-gray-700 font-medium">Publishing your project...</p>
-              <p className="text-gray-500 text-sm mt-2">Please wait while we process your payment and publish your project.</p>
+              <p className="text-gray-700 dark:text-gray-200 font-medium">Publishing your project...</p>
+              <p className="text-gray-500 dark:text-gray-400 text-sm mt-2">Please wait while we process your payment and publish your project.</p>
             </div>
           </div>
         )}
@@ -575,11 +575,11 @@ export default function CreateProjectForm({
   return (
     <div className={`space-y-6 ${className} ${isProcessingPaymentSuccess ? 'relative' : ''}`}>
       {isProcessingPaymentSuccess && (
-        <div className="absolute inset-0 bg-white/50 backdrop-blur-sm z-10 flex items-center justify-center">
-          <div className="bg-white rounded-lg shadow-lg p-6 text-center">
+        <div className="absolute inset-0 bg-white/50 dark:bg-black/50 backdrop-blur-sm z-10 flex items-center justify-center">
+          <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-white/10 rounded-lg shadow-lg p-6 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600 mx-auto mb-4"></div>
-            <p className="text-gray-700 font-medium">Publishing your project...</p>
-            <p className="text-gray-500 text-sm mt-2">Please wait while we process your payment and publish your project.</p>
+            <p className="text-gray-700 dark:text-gray-200 font-medium">Publishing your project...</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm mt-2">Please wait while we process your payment and publish your project.</p>
           </div>
         </div>
       )}

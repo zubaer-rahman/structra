@@ -186,13 +186,13 @@ export default function PaymentWall({ user, onClose, open = true, useDialog = tr
       <Dialog open={open} onOpenChange={onClose}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader className="text-center">
-            <div className="mx-auto h-16 w-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
-              <DollarSign className="h-8 w-8 text-orange-600" />
+            <div className="mx-auto h-16 w-16 bg-orange-100 dark:bg-orange-950/40 rounded-full flex items-center justify-center mb-4">
+              <DollarSign className="h-8 w-8 text-orange-600 dark:text-orange-400" />
             </div>
-            <DialogTitle className="text-2xl font-bold text-gray-900">
+            <DialogTitle className="text-2xl font-bold text-gray-900 dark:text-white">
               {isVerified ? 'Create New Project' : 'Get Verified & Create Project'}
             </DialogTitle>
-            <p className="text-lg text-gray-600">
+            <p className="text-lg text-gray-600 dark:text-gray-400">
               {isVerified 
                 ? 'Pay $29.99 to create a new project and start receiving proposals'
                 : 'Pay $29.99 to verify your project and start receiving proposals'
@@ -217,25 +217,25 @@ export default function PaymentWall({ user, onClose, open = true, useDialog = tr
             </div>
 
             {/* Benefits */}
-            <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
-              <h3 className="text-sm font-semibold text-orange-900 mb-3">
+            <div className="bg-orange-50 dark:bg-orange-950/30 p-4 rounded-lg border border-orange-200 dark:border-orange-900/50">
+              <h3 className="text-sm font-semibold text-orange-900 dark:text-orange-300 mb-3">
                 What you get:
               </h3>
               <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm text-orange-800">
+                <div className="flex items-center gap-2 text-sm text-orange-800 dark:text-orange-200">
                   <CheckCircle className="h-4 w-4 text-green-600" />
                   <span>One project with &apos;Open for Proposals&apos; status</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-orange-800">
+                <div className="flex items-center gap-2 text-sm text-orange-800 dark:text-orange-200">
                   <CheckCircle className="h-4 w-4 text-green-600" />
                   <span>Access to qualified contractors</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-orange-800">
+                <div className="flex items-center gap-2 text-sm text-orange-800 dark:text-orange-200">
                   <CheckCircle className="h-4 w-4 text-green-600" />
                   <span>Proposal management system</span>
                 </div>
                 {!isVerified && (
-                  <div className="flex items-center gap-2 text-sm text-orange-800">
+                  <div className="flex items-center gap-2 text-sm text-orange-800 dark:text-orange-200">
                     <CheckCircle className="h-4 w-4 text-green-600" />
                     <span>Verified project status</span>
                   </div>
@@ -245,8 +245,8 @@ export default function PaymentWall({ user, onClose, open = true, useDialog = tr
 
             {/* Pricing */}
             <div className="text-center">
-              <div className="text-3xl font-bold text-gray-900 mb-1">$29.99</div>
-              <div className="text-sm text-gray-600">per project</div>
+              <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">$29.99</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">per project</div>
             </div>
 
             {/* Action Buttons */}
@@ -281,7 +281,7 @@ export default function PaymentWall({ user, onClose, open = true, useDialog = tr
             </div>
 
             {/* Additional Info */}
-            <div className="text-xs text-gray-500 text-center">
+            <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
               Secure payment processing powered by Stripe
             </div>
           </div>
@@ -299,9 +299,9 @@ export default function PaymentWall({ user, onClose, open = true, useDialog = tr
 
   // Card version (Alternative - Full page)
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-[#0A0A0A] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <Card className="shadow-lg">
+        <Card className="shadow-lg border border-gray-200 dark:border-white/10">
           <CardHeader className="text-center relative">
             {/* Close button for card version */}
             {onClose && (
@@ -309,19 +309,19 @@ export default function PaymentWall({ user, onClose, open = true, useDialog = tr
                 variant="ghost"
                 size="sm"
                 onClick={onClose}
-                className="absolute top-2 right-2 h-8 w-8 p-0 hover:bg-gray-100"
+                className="absolute top-2 right-2 h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-white/10"
               >
                 <X className="h-4 w-4" />
               </Button>
             )}
             
-            <div className="mx-auto h-16 w-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
-              <DollarSign className="h-8 w-8 text-orange-600" />
+            <div className="mx-auto h-16 w-16 bg-orange-100 dark:bg-orange-950/40 rounded-full flex items-center justify-center mb-4">
+              <DollarSign className="h-8 w-8 text-orange-600 dark:text-orange-400" />
             </div>
-            <CardTitle className="text-2xl font-bold text-gray-900">
+            <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
               {isVerified ? 'Create New Project' : 'Get Verified & Create Project'}
             </CardTitle>
-            <CardDescription className="text-lg">
+            <CardDescription className="text-lg text-gray-600 dark:text-gray-400">
               {isVerified 
                 ? 'Pay $29.99 to create a new project and start receiving proposals'
                 : 'Pay $29.99 to become a verified homeowner and create your first project'
@@ -346,25 +346,25 @@ export default function PaymentWall({ user, onClose, open = true, useDialog = tr
             </div>
 
             {/* Benefits */}
-            <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
-              <h3 className="text-sm font-semibold text-orange-900 mb-3">
+            <div className="bg-orange-50 dark:bg-orange-950/30 p-4 rounded-lg border border-orange-200 dark:border-orange-900/50">
+              <h3 className="text-sm font-semibold text-orange-900 dark:text-orange-300 mb-3">
                 What you get:
               </h3>
               <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm text-orange-800">
+                <div className="flex items-center gap-2 text-sm text-orange-800 dark:text-orange-200">
                   <CheckCircle className="h-4 w-4 text-green-600" />
                   <span>One project with &apos;Open for Proposals&apos; status</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-orange-800">
+                <div className="flex items-center gap-2 text-sm text-orange-800 dark:text-orange-200">
                   <CheckCircle className="h-4 w-4 text-green-600" />
                   <span>Access to qualified contractors</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-orange-800">
+                <div className="flex items-center gap-2 text-sm text-orange-800 dark:text-orange-200">
                   <CheckCircle className="h-4 w-4 text-green-600" />
                   <span>Proposal management system</span>
                 </div>
                 {!isVerified && (
-                  <div className="flex items-center gap-2 text-sm text-orange-800">
+                  <div className="flex items-center gap-2 text-sm text-orange-800 dark:text-orange-200">
                     <CheckCircle className="h-4 w-4 text-green-600" />
                     <span>Verified project status</span>
                   </div>
@@ -374,8 +374,8 @@ export default function PaymentWall({ user, onClose, open = true, useDialog = tr
 
             {/* Pricing */}
             <div className="text-center">
-              <div className="text-3xl font-bold text-gray-900 mb-1">$29.99</div>
-              <div className="text-sm text-gray-600">per project</div>
+              <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">$29.99</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">per project</div>
             </div>
 
             {/* Action Buttons */}
@@ -410,7 +410,7 @@ export default function PaymentWall({ user, onClose, open = true, useDialog = tr
             </div>
 
             {/* Additional Info */}
-            <div className="text-xs text-gray-500 text-center">
+            <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
               Secure payment processing powered by Stripe
             </div>
           </CardContent>

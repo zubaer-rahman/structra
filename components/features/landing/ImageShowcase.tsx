@@ -71,7 +71,7 @@ export function ImageShowcase() {
   };
 
   return (
-    <section className="py-40 bg-[#0A0A0A]">
+    <section className="py-40 bg-transparent dark:bg-[#0A0A0A]">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -79,15 +79,15 @@ export function ImageShowcase() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-6 tracking-tighter">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 dark:text-white mb-6 tracking-tighter">
             The Lifecycle of <span className="text-orange-500">Excellence</span>
           </h2>
-          <p className="text-lg sm:text-xl text-gray-400 max-w-3xl mx-auto font-medium">
+          <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto font-medium">
             Structra orchestrates every stage of your construction journey with the precision of a high-performance firm.
           </p>
         </motion.div>
 
-        <div className="relative h-[500px] sm:h-[600px] lg:h-[700px] w-full overflow-hidden rounded-[2.5rem] border border-white/5 shadow-2xl group">
+        <div className="relative h-[500px] sm:h-[600px] lg:h-[700px] w-full overflow-hidden rounded-[2.5rem] border border-gray-200 dark:border-white/5 shadow-sm group">
           <AnimatePresence initial={false} custom={direction}>
             <motion.div
               key={currentIndex}
@@ -151,7 +151,7 @@ export function ImageShowcase() {
                     <Link href="/register">
                       <Button 
                         size="lg" 
-                        className="h-16 px-10 bg-white text-black hover:bg-orange-500 hover:text-white transition-all duration-300 rounded-2xl font-bold group/btn shadow-2xl"
+                        className="h-16 px-10 bg-white text-black hover:bg-orange-500 hover:text-white transition-all duration-300 rounded-2xl font-bold group/btn shadow-sm"
                       >
                         {showcases[currentIndex].buttonText}
                         <ArrowRight className="w-5 h-5 ml-2 group-hover/btn:translate-x-1 transition-transform" />
