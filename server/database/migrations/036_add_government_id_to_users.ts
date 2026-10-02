@@ -8,7 +8,7 @@ export const migration_036_add_government_id_to_users: Migration = {
   up: async (db) => {
     await db.execute(`
       ALTER TABLE users 
-      ADD COLUMN government_id JSONB;
+      ADD COLUMN IF NOT EXISTS government_id JSONB;
     `);
   },
   down: async (db) => {

@@ -77,13 +77,13 @@ export function AfterPhotoUploadModal({
           {/* Before Photo Display */}
           {beforePhoto && (
             <div className="space-y-2">
-              <h4 className="text-sm font-medium text-gray-700 flex items-center gap-2">
+              <h4 className="text-sm font-medium text-foreground flex items-center gap-2">
                 <Camera className="h-4 w-4" />
                 Before Photo (Project Start)
               </h4>
-              <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+              <div className="p-4 bg-muted/40 border border-border rounded-lg">
                 <div className="flex items-center space-x-3">
-                  <div className="w-20 h-16 bg-white rounded border overflow-hidden flex-shrink-0">
+                  <div className="w-20 h-16 bg-muted rounded border border-border overflow-hidden flex-shrink-0">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={beforePhoto.url}
@@ -93,7 +93,7 @@ export function AfterPhotoUploadModal({
                   </div>
                   <div className="flex-1 min-w-0" style={{ maxWidth: '300px' }}>
                     <p 
-                      className="text-sm font-medium text-gray-900"
+                      className="text-sm font-medium text-foreground"
                       style={{ 
                         whiteSpace: 'nowrap',
                         overflow: 'hidden',
@@ -105,7 +105,7 @@ export function AfterPhotoUploadModal({
                       {beforePhoto.filename}
                     </p>
                     <p 
-                      className="text-xs text-gray-500"
+                      className="text-xs text-muted-foreground"
                       style={{ 
                         whiteSpace: 'nowrap',
                         overflow: 'hidden',
@@ -136,15 +136,15 @@ export function AfterPhotoUploadModal({
 
           {/* Error Display */}
           {error && (
-            <div className="flex items-center gap-2 p-3 bg-gray-50 border border-gray-200 rounded-lg">
-              <AlertCircle className="h-4 w-4 flex-shrink-0" />
-              <p className="text-sm">{error}</p>
+            <div className="flex items-center gap-2 p-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-lg">
+              <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400 flex-shrink-0" />
+              <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
             </div>
           )}
 
           {/* Help Text */}
-          <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
-            <p className="text-sm">
+          <div className="p-4 bg-muted/40 border border-border rounded-lg">
+            <p className="text-sm text-muted-foreground">
               <strong>Important:</strong> The after photo will be used to create a before/after comparison 
               showing the completed work. Make sure the photo clearly shows the finished project area.
             </p>

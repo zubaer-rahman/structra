@@ -54,6 +54,16 @@ const nextConfig: NextConfig = {
         destination: '/:path*',
         permanent: false,
       },
+      {
+        source: '/contractor/my-projects',
+        destination: '/contractor/proposals',
+        permanent: false,
+      },
+      {
+        source: '/contractor/my-projects/:id',
+        destination: '/contractor/proposals/:id',
+        permanent: false,
+      },
     ];
   },
   // React 19 compatibility

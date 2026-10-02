@@ -1,21 +1,21 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { 
-  Building2, 
-  MapPin, 
+import {
+  Building2,
+  MapPin,
   Calendar,
   DollarSign,
-  Star,
-  Shield,
   X,
-  Clock,
-  CheckCircle
+  ExternalLink,
+  Award,
+  ShieldCheck
 } from "lucide-react";
 import { Project } from "@/server/database/interfaces";
 import Image from "next/image";
+import Link from "next/link";
 import { normalizeFileReference, normalizeFileReferences } from "@/utils/helpers";
 
 interface FeaturedProjectWithContractor extends Omit<Project, 'homeowner'> {
@@ -34,6 +34,7 @@ interface FeaturedProjectWithContractor extends Omit<Project, 'homeowner'> {
       work_guarantee?: number;
       work_guarantee_statement?: string;
       portfolio?: string[];
+      slug?: string;
       address?: {
         address: string;
         latitude?: number | null;
@@ -68,262 +69,350 @@ export default function ProjectDetailsModal({
   formatBudget,
   formatDate
 }: ProjectDetailsModalProps) {
+  const normalizedPhotos = useMemo(() => {
+    return project ? normalizeFileReferences(project.project_photos, 'Project Photo') : [];
+  }, [project]);
+
+  const beforePhoto = normalizedPhotos[0];
+  const afterPhoto = project ? normalizeFileReference(project.after_photo, 'After Photo') : null;
+
+  const hasBothPhotos = !!(beforePhoto?.url && afterPhoto?.url);
+  const singlePhoto = beforePhoto || afterPhoto;
+  const singlePhotoUrl = singlePhoto?.url || "/images/placeholder-image.png";
+
+  const primaryCategory = project?.category && project.category.length > 0
+    ? project.category[0]
+    : (project?.project_type || "Renovation");
+
+  const locationCity = project?.location?.city || "Vancouver";
+  const locationProvince = project?.location?.province || "BC";
+
+  const contractorName = project?.contractor?.contractor_profile?.business_name || project?.contractor?.full_name;
+  const contractorPhoto = project?.contractor?.profile_photo || project?.contractor?.contractor_profile?.logo || "/assets/avatar.png";
+  const contractorSlug = project?.contractor?.contractor_profile?.slug || project?.contractor?.id;
+
   if (!project) return null;
-
-  const isFeaturedProject = project.is_featured_project;
-  const isFeaturedContractor = !!project.contractor;
-
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl max-h-[95vh] overflow-y-auto" showCloseButton={false}>
-        <DialogHeader>
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-3 pr-4">
-              <div>
-                <DialogTitle className="text-3xl font-bold text-gray-900 dark:text-white">
-                  {project.project_title}
-                </DialogTitle>
-                {/* Contractor Name - Display prominently below title */}
-                {project.contractor && (
-                  <div className="flex items-center gap-2 mt-2">
-                    <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
-                      <Image
-                        src={project.contractor.profile_photo || project.contractor.contractor_profile?.logo || "/assets/avatar.png"}
-                        alt={project.contractor.contractor_profile?.business_name || project.contractor.full_name || "Contractor"}
-                        width={24}
-                        height={24}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.src = "/assets/avatar.png";
-                        }}
-                      />
-                    </div>
-                    <p className="text-lg font-semibold text-blue-600 dark:text-blue-400">
-                      {project.contractor.contractor_profile?.business_name || project.contractor.full_name}
-                    </p>
-                  </div>
-                )}
+      <DialogContent
+        className="max-w-5xl max-h-[92vh] overflow-y-auto p-0 rounded-[2rem] border border-gray-200 dark:border-white/10 bg-white dark:bg-[#0E0E10] shadow-2xl"
+        showCloseButton={false}
+      >
+        {/* Sticky Header */}
+        <DialogHeader className="p-5 sm:p-6 pb-3 border-b border-gray-100 dark:border-white/[0.06] sticky top-0 bg-white/95 dark:bg-[#0E0E10]/95 backdrop-blur-xl z-20">
+          <div className="flex items-start justify-between gap-4">
+            <div className="space-y-1.5 flex-1 min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="px-2.5 py-0.5 text-[9px] font-black uppercase tracking-[0.2em] bg-orange-500/10 border border-orange-500/20 text-orange-600 dark:text-orange-400 rounded-full">
+                  {primaryCategory}
+                </span>
+                <span className="px-2.5 py-0.5 text-[9px] font-black uppercase tracking-[0.15em] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded-full flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  {project.status || "Completed"}
+                </span>
+                <span className="px-2.5 py-0.5 text-[9px] font-bold text-gray-500 dark:text-gray-400 rounded-full bg-gray-100 dark:bg-white/5 flex items-center gap-1">
+                  <MapPin className="w-3 h-3 text-orange-500/80" />
+                  {locationCity}, {locationProvince}
+                </span>
               </div>
-              <div className="flex items-center gap-1 px-3 py-1 bg-green-100 dark:bg-green-500/10 text-green-700 dark:text-green-400 rounded-full text-sm font-medium">
-                <CheckCircle className="h-4 w-4" />
-                <span>Completed</span>
-              </div>
+
+              <DialogTitle className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white tracking-tight leading-snug">
+                {project.project_title}
+              </DialogTitle>
             </div>
+
             <Button
               variant="ghost"
-              size="sm"
+              size="icon"
               onClick={onClose}
-              className="flex-shrink-0"
+              className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300 flex-shrink-0 transition-colors"
+              aria-label="Close modal"
             >
-              <X className="h-5 w-5" />
+              <X className="h-4 w-4" />
             </Button>
           </div>
         </DialogHeader>
 
-        <div className="space-y-8">
-          {/* Featured Badges */}
-          <div className="flex gap-3">
-            {isFeaturedProject && (
-              <span className="px-4 py-2 text-sm bg-orange-100 dark:bg-orange-500/10 text-orange-700 dark:text-orange-400 rounded-full font-medium">
-                Featured Project
-              </span>
-            )}
-            {isFeaturedContractor && (
-              <span className="px-4 py-2 text-sm bg-blue-100 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 rounded-full font-medium">
-                Featured Contractor
-              </span>
+        {/* Modal Body */}
+        <div className="p-5 sm:p-6 space-y-4">
+          {/* Photo Presentation: Side-by-Side if both exist, single image if only one */}
+          <div>
+            {hasBothPhotos ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {/* Before Image */}
+                <div className="relative w-full h-[220px] sm:h-[260px] md:h-[290px] rounded-xl overflow-hidden border border-gray-200 dark:border-white/10 bg-[#0A0A0C] shadow-md flex items-center justify-center group/img">
+                  <a
+                    href={beforePhoto.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="relative w-full h-full flex items-center justify-center cursor-pointer"
+                    title="Open before photo in new page"
+                  >
+                    <Image
+                      src={beforePhoto.url}
+                      alt={`${project.project_title} - Before`}
+                      fill
+                      priority
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-contain p-2 transition-transform duration-300 group-hover/img:scale-[1.01]"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = "/images/placeholder-image.png";
+                      }}
+                    />
+                  </a>
+
+                  {/* Before text on Top Left */}
+                  <div className="absolute top-2.5 left-2.5 z-10 pointer-events-none">
+                    <span className="px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest rounded-full bg-black/75 text-white/90 border border-white/20 backdrop-blur-md shadow-sm">
+                      Before
+                    </span>
+                  </div>
+
+                  {/* Link on Bottom Right */}
+                  <a
+                    href={beforePhoto.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="absolute bottom-2.5 right-2.5 z-10 w-8 h-8 rounded-full bg-black/60 hover:bg-orange-500 text-white border border-white/20 backdrop-blur-md transition-all duration-200 shadow-md hover:scale-110 flex items-center justify-center cursor-pointer"
+                    title="Open before photo in new page"
+                    aria-label="Open before photo in new page"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+
+                {/* After Image */}
+                <div className="relative w-full h-[220px] sm:h-[260px] md:h-[290px] rounded-xl overflow-hidden border border-gray-200 dark:border-white/10 bg-[#0A0A0C] shadow-md flex items-center justify-center group/img">
+                  <a
+                    href={afterPhoto.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="relative w-full h-full flex items-center justify-center cursor-pointer"
+                    title="Open after photo in new page"
+                  >
+                    <Image
+                      src={afterPhoto.url}
+                      alt={`${project.project_title} - After`}
+                      fill
+                      priority
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-contain p-2 transition-transform duration-300 group-hover/img:scale-[1.01]"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = "/images/placeholder-image.png";
+                      }}
+                    />
+                  </a>
+
+                  {/* After text on Top Left */}
+                  <div className="absolute top-2.5 left-2.5 z-10 pointer-events-none">
+                    <span className="px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest rounded-full bg-orange-500 text-white backdrop-blur-md shadow-sm">
+                      After
+                    </span>
+                  </div>
+
+                  {/* Link on Bottom Right */}
+                  <a
+                    href={afterPhoto.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="absolute bottom-2.5 right-2.5 z-10 w-8 h-8 rounded-full bg-black/60 hover:bg-orange-500 text-white border border-white/20 backdrop-blur-md transition-all duration-200 shadow-md hover:scale-110 flex items-center justify-center cursor-pointer"
+                    title="Open after photo in new page"
+                    aria-label="Open after photo in new page"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+              </div>
+            ) : (
+              <div className="relative w-full h-[260px] sm:h-[320px] md:h-[350px] rounded-xl overflow-hidden border border-gray-200 dark:border-white/10 bg-[#0A0A0C] shadow-md flex items-center justify-center group/img">
+                <a
+                  href={singlePhotoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="relative w-full h-full flex items-center justify-center cursor-pointer"
+                  title="Open image in new page"
+                >
+                  <Image
+                    src={singlePhotoUrl}
+                    alt={project.project_title || "Project photo"}
+                    fill
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 1024px"
+                    className="object-contain p-2.5 transition-transform duration-300 group-hover/img:scale-[1.01]"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = "/images/placeholder-image.png";
+                    }}
+                  />
+                </a>
+
+                {/* Link on Bottom Right */}
+                <a
+                  href={singlePhotoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="absolute bottom-2.5 right-2.5 z-10 w-8 h-8 rounded-full bg-black/60 hover:bg-orange-500 text-white border border-white/20 backdrop-blur-md transition-all duration-200 shadow-md hover:scale-110 flex items-center justify-center cursor-pointer"
+                  title="Open image in new page"
+                  aria-label="Open image in new page"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
             )}
           </div>
 
-          {/* Contractor Badge */}
-          {project.contractor && (
-            <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-500/10 px-4 py-2 rounded-lg border border-blue-200 dark:border-blue-500/20">
-              <div className="relative">
-                <Image
-                  src={project.contractor.profile_photo || project.contractor.contractor_profile?.logo || "/assets/avatar.png"}
-                  alt={project.contractor.contractor_profile?.business_name || project.contractor.full_name || "Contractor"}
-                  width={32}
-                  height={32}
-                  className="rounded-full object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = "/assets/avatar.png";
-                  }}
-                />
-                <div className="absolute -bottom-1 -right-1 bg-blue-500 rounded-full p-0.5">
-                  <Shield className="h-2 w-2 text-white" />
+          {/* Statement of Work / Scope */}
+          {project.statement_of_work && (
+            <div className="space-y-1.5">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500">
+                Statement of Work & Execution Scope
+              </h3>
+              <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 leading-relaxed font-normal bg-gray-50/70 dark:bg-white/[0.02] p-4 rounded-xl border border-gray-100 dark:border-white/[0.06]">
+                {project.statement_of_work}
+              </p>
+            </div>
+          )}
+
+          {/* Key Specifications Grid */}
+          <div className="space-y-1.5">
+            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500">
+              Project Parameters
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3">
+              {/* Budget */}
+              <div className="p-3 rounded-xl bg-gray-50/80 dark:bg-white/[0.02] border border-gray-100 dark:border-white/[0.06] space-y-0.5">
+                <div className="flex items-center gap-1 text-gray-400 dark:text-gray-500 text-[9px] font-black uppercase tracking-[0.15em]">
+                  <DollarSign className="w-3 h-3 text-orange-500" />
+                  Budget
                 </div>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-900 dark:text-white">
-                  {project.contractor.contractor_profile?.business_name || project.contractor.full_name}
+                <p className="text-sm sm:text-base font-black text-gray-900 dark:text-white">
+                  {formatBudget(project.budget)}
                 </p>
-                <p className="text-xs text-blue-600 dark:text-blue-400">Featured Contractor</p>
+              </div>
+
+              {/* Type */}
+              <div className="p-3 rounded-xl bg-gray-50/80 dark:bg-white/[0.02] border border-gray-100 dark:border-white/[0.06] space-y-0.5">
+                <div className="flex items-center gap-1 text-gray-400 dark:text-gray-500 text-[9px] font-black uppercase tracking-[0.15em]">
+                  <Building2 className="w-3 h-3 text-orange-500" />
+                  Type
+                </div>
+                <p className="text-sm sm:text-base font-black text-gray-900 dark:text-white capitalize truncate">
+                  {project.project_type?.replace(/_/g, ' ') || 'Renovation'}
+                </p>
+              </div>
+
+              {/* Location */}
+              <div className="p-3 rounded-xl bg-gray-50/80 dark:bg-white/[0.02] border border-gray-100 dark:border-white/[0.06] space-y-0.5">
+                <div className="flex items-center gap-1 text-gray-400 dark:text-gray-500 text-[9px] font-black uppercase tracking-[0.15em]">
+                  <MapPin className="w-3 h-3 text-orange-500" />
+                  Market
+                </div>
+                <p className="text-sm sm:text-base font-black text-gray-900 dark:text-white truncate">
+                  {locationCity}
+                </p>
+              </div>
+
+              {/* Completion / Timeline */}
+              <div className="p-3 rounded-xl bg-gray-50/80 dark:bg-white/[0.02] border border-gray-100 dark:border-white/[0.06] space-y-0.5">
+                <div className="flex items-center gap-1 text-gray-400 dark:text-gray-500 text-[9px] font-black uppercase tracking-[0.15em]">
+                  <Calendar className="w-3 h-3 text-orange-500" />
+                  Completion
+                </div>
+                <p className="text-sm sm:text-base font-black text-gray-900 dark:text-white truncate">
+                  {project.substantial_completion
+                    ? formatDate(project.substantial_completion.toString())
+                    : (project.end_date ? formatDate(project.end_date.toString()) : "Standard")}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Awarded Master Builder */}
+          {project.contractor && (
+            <div className="p-4 rounded-xl bg-orange-500/[0.03] border border-orange-500/20 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Award className="w-4 h-4 text-orange-500" />
+                  <span className="text-[9px] font-black uppercase tracking-[0.2em] text-orange-600 dark:text-orange-400">
+                    Awarded Master Builder
+                  </span>
+                </div>
+                {project.contractor.contractor_profile?.work_guarantee && (
+                  <span className="inline-flex items-center gap-1 text-[10px] font-bold text-gray-500 dark:text-gray-400">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+                    {project.contractor.contractor_profile.work_guarantee}-Year Guarantee
+                  </span>
+                )}
+              </div>
+
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="relative w-11 h-11 rounded-lg overflow-hidden bg-slate-900/10 dark:bg-white/5 border border-gray-200 dark:border-white/10 flex-shrink-0">
+                    <Image
+                      src={contractorPhoto}
+                      alt={contractorName || "Contractor"}
+                      fill
+                      className="object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = "/assets/avatar.png";
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <h4 className="font-black text-sm sm:text-base text-gray-900 dark:text-white">
+                      {contractorName}
+                    </h4>
+                    {project.contractor.contractor_profile?.trade_category && (
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {project.contractor.contractor_profile.trade_category.join(", ")}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {contractorSlug && (
+                  <Link
+                    href={`/contractors/${contractorSlug}`}
+                    target="_blank"
+                    className="flex-shrink-0"
+                  >
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="rounded-full text-xs font-bold gap-1.5 border-orange-500/30 hover:bg-orange-500/10 text-orange-600 dark:text-orange-400"
+                    >
+                      View Profile
+                      <ExternalLink className="w-3 h-3" />
+                    </Button>
+                  </Link>
+                )}
               </div>
             </div>
           )}
 
-          {/* Project Photos */}
-          {(() => {
-            const normalizedPhotos = normalizeFileReferences(project.project_photos, 'Project Photo');
-            const beforePhoto = normalizedPhotos[0];
-            const afterPhoto = normalizeFileReference(project.after_photo, 'After Photo');
-
-            if (!beforePhoto && !afterPhoto && normalizedPhotos.length === 0) return null;
-
-            return (
-              <div className="space-y-4">
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Project Gallery</h3>
-                
-                {/* Before and After Comparison */}
-                {beforePhoto && afterPhoto ? (
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {/* Before Photo */}
-                      <div className="space-y-3">
-                        <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 text-center bg-gray-100 dark:bg-white/5 px-3 py-1 rounded-full">Before</h4>
-                        <div className="relative h-80 rounded-xl overflow-hidden border-2 border-gray-200 dark:border-white/10 shadow-lg">
-                          <Image
-                            src={beforePhoto.url || "/images/placeholder-image.png"}
-                            alt={`${project.project_title || "Project"} - Before`}
-                            fill
-                            className="object-cover"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.src = "/images/placeholder-image.png";
-                            }}
-                          />
-                        </div>
-                      </div>
-                      
-                      {/* After Photo */}
-                      <div className="space-y-3">
-                        <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 text-center bg-green-100 dark:bg-green-500/10 px-3 py-1 rounded-full">After</h4>
-                        <div className="relative h-80 rounded-xl overflow-hidden border-2 border-green-200 dark:border-green-500/20 shadow-lg">
-                          <Image
-                            src={afterPhoto.url || "/images/placeholder-image.png"}
-                            alt={`${project.project_title || "Project"} - After`}
-                            fill
-                            className="object-cover"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.src = "/images/placeholder-image.png";
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  /* Fallback to regular photo grid if no before/after available */
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {normalizedPhotos.map((photo, index) => (
-                      <div key={`photo-${project.id}-${index}`} className="relative h-80 rounded-xl overflow-hidden shadow-lg">
-                        <Image
-                          src={photo.url || "/images/placeholder-image.png"}
-                          alt={`${project.project_title || "Project"} - Photo ${index + 1}`}
-                          fill
-                          className="object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.src = "/images/placeholder-image.png";
-                          }}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            );
-          })()}
-
-          {/* Project Details */}
-          <div className="bg-white dark:bg-white/[0.03] border border-gray-200 dark:border-white/5 p-6 rounded-xl">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Project Details</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-green-100 dark:bg-green-500/10 rounded-full flex items-center justify-center">
-                  <DollarSign className="h-5 w-5 text-green-600 dark:text-green-400" />
-                </div>
-                <div>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Budget</span>
-                  <p className="font-semibold text-gray-900 dark:text-white text-lg">
-                    {formatBudget(project.budget)}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-500/10 rounded-full flex items-center justify-center">
-                  <Building2 className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                </div>
-                <div>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Project Type</span>
-                  <p className="font-semibold text-gray-900 dark:text-white capitalize">
-                    {project.project_type?.replace(/_/g, ' ')}
-                  </p>
-                </div>
-              </div>
-
-              {project.location?.city && project.location?.province && (
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-red-100 dark:bg-red-500/10 rounded-full flex items-center justify-center">
-                    <MapPin className="h-5 w-5 text-red-600 dark:text-red-400" />
-                  </div>
-                  <div>
-                    <span className="text-sm text-gray-500 dark:text-gray-400">Location</span>
-                    <p className="font-semibold text-gray-900 dark:text-white">
-                      {project.location.city}, {project.location.province}
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-purple-100 dark:bg-purple-500/10 rounded-full flex items-center justify-center">
-                  <Calendar className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-                </div>
-                <div>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Timeline</span>
-                  <p className="font-semibold text-gray-900 dark:text-white">
-                    {formatDate(project.start_date?.toString() || '')} - {formatDate(project.end_date?.toString() || '')}
-                  </p>
-                </div>
-              </div>
-
-              {project.substantial_completion && (
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-green-100 dark:bg-green-500/10 rounded-full flex items-center justify-center">
-                    <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
-                  </div>
-                  <div>
-                    <span className="text-sm text-gray-500 dark:text-gray-400">Completed</span>
-                    <p className="font-semibold text-gray-900 dark:text-white">
-                      {formatDate(project.substantial_completion?.toString() || '')}
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex justify-center pt-6 border-t border-gray-200 dark:border-white/5">
-            <Button 
-              onClick={() => {
-                if (project.slug) {
-                  window.open(`/project/${project.slug}`, '_blank')
-                } else {
-                  // Fallback to project id if no slug available
-                  console.warn('No slug available for project:', project.project_title, 'using project id as fallback')
-                  window.open(`/project/${project.id}`, '_blank')
-                }
-              }}
-              className="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 text-lg font-medium rounded-lg"
+          {/* Footer Actions */}
+          <div className="pt-3 border-t border-gray-100 dark:border-white/[0.06] flex flex-col sm:flex-row items-center justify-end gap-3">
+            <Button
+              variant="outline"
+              onClick={onClose}
+              className="w-full sm:w-auto rounded-full px-6 text-xs font-bold"
             >
-              View Full Project Details
+              Close
+            </Button>
+
+            <Button
+              onClick={() => {
+                const targetSlug = project.slug || project.id;
+                window.open(`/projects/${targetSlug}`, '_blank');
+              }}
+              className="w-full sm:w-auto rounded-full px-6 text-xs font-bold bg-orange-600 hover:bg-orange-700 text-white gap-2 shadow-sm"
+            >
+              Explore Full Project
+              <ExternalLink className="w-3.5 h-3.5" />
             </Button>
           </div>
         </div>

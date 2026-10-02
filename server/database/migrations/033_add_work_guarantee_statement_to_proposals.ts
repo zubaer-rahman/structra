@@ -8,7 +8,7 @@ export const migration_033_add_work_guarantee_statement_to_proposals: Migration 
   up: async (db) => {
     await db.execute(`
       ALTER TABLE proposals 
-      ADD COLUMN work_guarantee_statement TEXT;
+      ADD COLUMN IF NOT EXISTS work_guarantee_statement TEXT;
     `);
     
     await db.execute(`

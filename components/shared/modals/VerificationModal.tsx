@@ -197,11 +197,11 @@ export function VerificationModal({ isOpen, onClose, onSuccess, user, returnUrl,
 
         <div className="space-y-5">
           {/* Value Proposition */}
-          <div className="bg-gradient-to-r from-orange-50 to-amber-50 p-5 rounded-lg border border-orange-200">
-            <h3 className="text-base font-semibold text-orange-900 mb-3">
+          <div className="bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/20 p-5 rounded-lg border border-orange-200 dark:border-orange-900/40">
+            <h3 className="text-base font-semibold text-orange-900 dark:text-orange-300 mb-3">
               Become a Verified Contractor
             </h3>
-            <p className="text-orange-800 text-sm leading-relaxed">
+            <p className="text-orange-800 dark:text-orange-200/90 text-sm leading-relaxed">
               {requirements.description}
             </p>
           </div>
@@ -210,14 +210,14 @@ export function VerificationModal({ isOpen, onClose, onSuccess, user, returnUrl,
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {/* Benefits */}
             <div>
-              <h4 className="text-sm font-semibold mb-3 flex items-center gap-2">
+              <h4 className="text-sm font-semibold mb-3 flex items-center gap-2 text-foreground">
                 <Star className="h-4 w-4 text-orange-500" />
                 Benefits
               </h4>
               <div className="space-y-2">
                 {requirements.benefits.slice(0, 4).map((benefit, index) => (
-                  <div key={index} className="flex items-center gap-2 text-xs">
-                    <CheckCircle className="h-3 w-3 text-green-600 flex-shrink-0" />
+                  <div key={index} className="flex items-center gap-2 text-xs text-foreground">
+                    <CheckCircle className="h-3 w-3 text-green-600 dark:text-green-400 flex-shrink-0" />
                     <span>{benefit}</span>
                   </div>
                 ))}
@@ -226,14 +226,14 @@ export function VerificationModal({ isOpen, onClose, onSuccess, user, returnUrl,
 
             {/* Requirements */}
             <div>
-              <h4 className="text-sm font-semibold mb-3 flex items-center gap-2">
+              <h4 className="text-sm font-semibold mb-3 flex items-center gap-2 text-foreground">
                 <FileCheck className="h-4 w-4 text-orange-500" />
                 Requirements
               </h4>
               <div className="space-y-2">
                 {requirements.requirements.map((requirement, index) => (
-                  <div key={index} className="flex items-center gap-2 text-xs text-gray-600">
-                    <Building2 className="h-3 w-3 text-gray-400 flex-shrink-0" />
+                  <div key={index} className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Building2 className="h-3 w-3 text-muted-foreground flex-shrink-0" />
                     <span>{requirement}</span>
                   </div>
                 ))}
@@ -242,27 +242,27 @@ export function VerificationModal({ isOpen, onClose, onSuccess, user, returnUrl,
           </div>
 
           {/* Pricing */}
-          <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="bg-muted/50 border border-border p-4 rounded-lg">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Annual Verification Fee</p>
-                <p className="text-2xl font-bold text-gray-900 mb-1">{requirements.annualFee} {requirements.currency}</p>
-                <p className="text-sm text-gray-500">Billed annually • Cancel anytime</p>
+                <p className="text-sm text-muted-foreground mb-1">Annual Verification Fee</p>
+                <p className="text-2xl font-bold text-foreground mb-1">{requirements.annualFee} {requirements.currency}</p>
+                <p className="text-sm text-muted-foreground">Billed annually • Cancel anytime</p>
               </div>
-              <Award className="h-10 w-10 text-orange-600" />
+              <Award className="h-10 w-10 text-orange-600 dark:text-orange-500" />
             </div>
           </div>
 
           {/* Profile Incomplete Warning */}
           {!profileValidation.isComplete && (
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+            <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 rounded-lg p-4">
               <div className="flex items-start gap-3">
-                <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
                 <div className="flex-1">
-                  <h4 className="text-sm font-semibold text-amber-900 mb-2">
+                  <h4 className="text-sm font-semibold text-amber-900 dark:text-amber-300 mb-2">
                     Complete Your Profile First
                   </h4>
-                  <p className="text-sm text-amber-800 mb-3">
+                  <p className="text-sm text-amber-800 dark:text-amber-200/90 mb-3">
                     {getProfileCompletionMessage(profileValidation)}
                   </p>
                   
@@ -270,26 +270,26 @@ export function VerificationModal({ isOpen, onClose, onSuccess, user, returnUrl,
                   <div className="space-y-2">
                     {missingFieldsBySection.personal.length > 0 && (
                       <div className="text-xs">
-                        <span className="font-medium text-amber-900">Personal Info:</span>
-                        <span className="text-amber-700 ml-1">{missingFieldsBySection.personal.join(', ')}</span>
+                        <span className="font-medium text-amber-900 dark:text-amber-300">Personal Info:</span>
+                        <span className="text-amber-700 dark:text-amber-400 ml-1">{missingFieldsBySection.personal.join(', ')}</span>
                       </div>
                     )}
                     {missingFieldsBySection.business.length > 0 && (
                       <div className="text-xs">
-                        <span className="font-medium text-amber-900">Business Info:</span>
-                        <span className="text-amber-700 ml-1">{missingFieldsBySection.business.join(', ')}</span>
+                        <span className="font-medium text-amber-900 dark:text-amber-300">Business Info:</span>
+                        <span className="text-amber-700 dark:text-amber-400 ml-1">{missingFieldsBySection.business.join(', ')}</span>
                       </div>
                     )}
                     {missingFieldsBySection.compliance.length > 0 && (
                       <div className="text-xs">
-                        <span className="font-medium text-amber-900">Compliance:</span>
-                        <span className="text-amber-700 ml-1">{missingFieldsBySection.compliance.join(', ')}</span>
+                        <span className="font-medium text-amber-900 dark:text-amber-300">Compliance:</span>
+                        <span className="text-amber-700 dark:text-amber-400 ml-1">{missingFieldsBySection.compliance.join(', ')}</span>
                       </div>
                     )}
                     {missingFieldsBySection.insurance.length > 0 && (
                       <div className="text-xs">
-                        <span className="font-medium text-amber-900">Insurance:</span>
-                        <span className="text-amber-700 ml-1">{missingFieldsBySection.insurance.join(', ')}</span>
+                        <span className="font-medium text-amber-900 dark:text-amber-300">Insurance:</span>
+                        <span className="text-amber-700 dark:text-amber-400 ml-1">{missingFieldsBySection.insurance.join(', ')}</span>
                       </div>
                     )}
                   </div>
@@ -314,8 +314,8 @@ export function VerificationModal({ isOpen, onClose, onSuccess, user, returnUrl,
 
           {/* Error Display */}
           {stripeError && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-              <p className="text-red-800 text-xs">{stripeError}</p>
+            <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-lg p-3">
+              <p className="text-red-800 dark:text-red-300 text-xs">{stripeError}</p>
             </div>
           )}
 
@@ -345,7 +345,7 @@ export function VerificationModal({ isOpen, onClose, onSuccess, user, returnUrl,
                 className={`flex-1 text-sm py-2 ${
                   canProceedWithVerification 
                     ? 'bg-orange-600 hover:bg-orange-700' 
-                    : 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-muted text-muted-foreground cursor-not-allowed hover:bg-muted'
                 }`}
               >
                 {isLoading ? (
@@ -367,7 +367,7 @@ export function VerificationModal({ isOpen, onClose, onSuccess, user, returnUrl,
 
           {/* Status Info */}
           {verificationStatus?.isVerified && (
-            <div className="text-center text-xs text-gray-600 pt-2">
+            <div className="text-center text-xs text-muted-foreground pt-2">
               <p>✅ You are already a verified contractor</p>
               <p>Your verification expires annually and will be renewed automatically</p>
             </div>

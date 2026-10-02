@@ -26,6 +26,7 @@ import {
 import { trpc } from '@/utils/trpc'
 import { createClient } from '@/lib/supabase'
 import toast from 'react-hot-toast'
+import { LoadingSpinner } from '@/components/shared'
 
 interface ContractorProfile {
   id: string
@@ -608,21 +609,18 @@ export default function ContractorVerificationDetailPage() {
 
   if (loading || isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="flex items-center space-x-2">
-          <Clock className="h-4 w-4 animate-spin" />
-          <span>Loading contractor details...</span>
-        </div>
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <LoadingSpinner size="lg" text="Loading contractor details..." />
       </div>
     )
   }
 
   if (!contractor) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-[50vh]">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Contractor Not Found</h1>
-          <p className="text-gray-600 mb-4">The contractor you&apos;re looking for doesn&apos;t exist.</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Contractor Not Found</h1>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">The contractor you&apos;re looking for doesn&apos;t exist.</p>
           <Button onClick={() => router.push('/admin/contractor-verification')}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Contractor List
@@ -645,8 +643,8 @@ export default function ContractorVerificationDetailPage() {
             Back
           </Button>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Contractor Verification</h1>
-            <p className="text-gray-600">Review and verify contractor application</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Contractor Verification</h1>
+            <p className="text-gray-600 dark:text-gray-400">Review and verify contractor application</p>
           </div>
         </div>
       </div>
@@ -660,12 +658,12 @@ export default function ContractorVerificationDetailPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center space-x-3">
-              <div className="h-12 w-12 bg-gray-200 rounded-full flex items-center justify-center">
-                <Wrench className="h-6 w-6 text-gray-600" />
+              <div className="h-12 w-12 bg-gray-200 dark:bg-zinc-800 rounded-full flex items-center justify-center">
+                <Wrench className="h-6 w-6 text-gray-600 dark:text-gray-300" />
               </div>
               <div>
-                <h3 className="font-medium">{contractor.user.full_name}</h3>
-                <p className="text-sm text-gray-600">{contractor.user.email}</p>
+                <h3 className="font-medium text-gray-900 dark:text-white">{contractor.user.full_name}</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">{contractor.user.email}</p>
               </div>
             </div>
             
@@ -870,7 +868,7 @@ export default function ContractorVerificationDetailPage() {
             {/* Insurance Amounts Editing */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   General Liability (CAD)
                 </label>
                 <Input
@@ -891,7 +889,7 @@ export default function ContractorVerificationDetailPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Builders Risk (CAD)
                 </label>
                 <Input
@@ -915,7 +913,7 @@ export default function ContractorVerificationDetailPage() {
 
             {/* Insurance Expiry Date */}
             <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Insurance Expiry Date
               </label>
               <Input
@@ -935,11 +933,11 @@ export default function ContractorVerificationDetailPage() {
 
             
             {/* Insurance Verification Status */}
-            <div className="p-3 bg-gray-50 rounded-lg">
+            <div className="p-3 bg-gray-50 dark:bg-zinc-900/60 border border-gray-200 dark:border-zinc-800 rounded-lg">
               <div className="flex items-center justify-between">
                 <div>
-                  <h5 className="text-sm font-medium text-gray-700">Insurance Verification Status</h5>
-                  <p className="text-xs text-gray-500">
+                  <h5 className="text-sm font-medium text-gray-700 dark:text-gray-300">Insurance Verification Status</h5>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
                     {contractor.is_insurance_verified 
                       ? adminEditingInsurance 
                         ? 'Editing insurance amounts - changes will be saved when you click Save Changes'
@@ -951,10 +949,10 @@ export default function ContractorVerificationDetailPage() {
                   </p>
                 </div>
                 <div className="text-right">
-                  <div className="text-sm font-medium text-gray-700">
+                  <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     {contractor.is_insurance_verified ? 'Verified' : 'Pending'}
                   </div>
-                  <div className="text-xs text-gray-500">
+                  <div className="text-xs text-gray-500 dark:text-gray-400">
                     {contractor.is_insurance_verified && contractor.admin_verification_date
                       ? `Verified on ${new Date(contractor.admin_verification_date).toLocaleDateString()}`
                       : 'Not yet verified'
@@ -973,7 +971,7 @@ export default function ContractorVerificationDetailPage() {
                   variant="outline"
                   size="sm"
                   disabled={savingInsurance}
-                  className="text-gray-600 border-gray-300 hover:bg-gray-50"
+                  className="text-gray-600 dark:text-gray-400 border-gray-300 dark:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800"
                 >
                   Cancel
                 </Button>
@@ -1005,7 +1003,7 @@ export default function ContractorVerificationDetailPage() {
                   onClick={handleRejectInsurance}
                   disabled={uploading}
                   variant="outline"
-                  className="text-red-600 border-red-300 hover:bg-red-50 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  className="text-red-600 dark:text-red-400 border-red-300 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-950/30 disabled:bg-gray-100 dark:disabled:bg-zinc-800 disabled:cursor-not-allowed"
                   title="Reject Insurance Verification"
                 >
                   <XCircle className="h-4 w-4 mr-2" />
@@ -1017,7 +1015,7 @@ export default function ContractorVerificationDetailPage() {
                     onClick={handleRejectInsurance}
                     disabled={uploading}
                     variant="outline"
-                    className="text-red-600 border-red-300 hover:bg-red-50 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    className="text-red-600 dark:text-red-400 border-red-300 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-950/30 disabled:bg-gray-100 dark:disabled:bg-zinc-800 disabled:cursor-not-allowed"
                     title="Reject Insurance Verification"
                   >
                     <XCircle className="h-4 w-4 mr-2" />
@@ -1054,12 +1052,12 @@ export default function ContractorVerificationDetailPage() {
             <CardDescription>Insurance verification is not available</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+            <div className="p-4 bg-gray-50 dark:bg-zinc-900/60 border border-gray-200 dark:border-zinc-800 rounded-lg">
               <div className="flex items-center space-x-2">
-                <AlertCircle className="h-5 w-5 text-gray-500" />
+                <AlertCircle className="h-5 w-5 text-gray-500 dark:text-gray-400" />
                 <div>
-                  <h5 className="text-sm font-medium text-gray-700">No Insurance Document Uploaded</h5>
-                  <p className="text-sm text-gray-600">
+                  <h5 className="text-sm font-medium text-gray-700 dark:text-gray-300">No Insurance Document Uploaded</h5>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
                     The contractor has not uploaded an insurance document. Insurance verification is not available until a certificate is provided.
                   </p>
                 </div>
@@ -1155,12 +1153,12 @@ export default function ContractorVerificationDetailPage() {
               </div>
             </div>
           ) : (
-            <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+            <div className="p-4 bg-gray-50 dark:bg-zinc-900/60 border border-gray-200 dark:border-zinc-800 rounded-lg">
               <div className="flex items-center space-x-2">
-                <AlertCircle className="h-5 w-5 text-gray-500" />
+                <AlertCircle className="h-5 w-5 text-gray-500 dark:text-gray-400" />
                 <div>
-                  <h5 className="text-sm font-medium text-gray-700">No Government ID Uploaded</h5>
-                  <p className="text-sm text-gray-600">
+                  <h5 className="text-sm font-medium text-gray-700 dark:text-gray-300">No Government ID Uploaded</h5>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
                     The contractor has not uploaded a government-issued photo ID. Government ID verification is not available until a document is provided.
                   </p>
                 </div>
@@ -1195,7 +1193,7 @@ export default function ContractorVerificationDetailPage() {
                   }}
                   disabled={uploading}
                   variant="outline"
-                  className="text-red-600 border-red-300 hover:bg-red-50 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  className="text-red-600 dark:text-red-400 border-red-300 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-950/30 disabled:bg-gray-100 dark:disabled:bg-zinc-800 disabled:cursor-not-allowed"
                   title="Reject Government ID Verification"
                 >
                   <XCircle className="h-4 w-4 mr-2" />
@@ -1226,7 +1224,7 @@ export default function ContractorVerificationDetailPage() {
                     }}
                     disabled={uploading}
                     variant="outline"
-                    className="text-red-600 border-red-300 hover:bg-red-50 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    className="text-red-600 dark:text-red-400 border-red-300 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-950/30 disabled:bg-gray-100 dark:disabled:bg-zinc-800 disabled:cursor-not-allowed"
                     title="Reject Government ID Verification"
                   >
                     <XCircle className="h-4 w-4 mr-2" />
@@ -1350,12 +1348,12 @@ export default function ContractorVerificationDetailPage() {
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">GST/HST Clearance Document</span>
               {contractor.gst_hst_clearance_document ? (
-                <Badge className="bg-green-100 text-green-800">
+                <Badge className="bg-green-100 text-green-800 dark:bg-green-950/50 dark:text-green-300 dark:border-green-800">
                   <CheckCircle className="h-3 w-3 mr-1" />
                   Uploaded
                 </Badge>
               ) : (
-                <Badge variant="outline" className="text-gray-600">
+                <Badge variant="outline" className="text-gray-600 dark:text-gray-400">
                   <AlertCircle className="h-3 w-3 mr-1" />
                   Not uploaded
                 </Badge>
@@ -1401,7 +1399,7 @@ export default function ContractorVerificationDetailPage() {
                   variant="outline"
                   size="sm"
                   onClick={handleDeleteGstHstDocument}
-                  className="text-red-600 border-red-300 hover:bg-red-50"
+                  className="text-red-600 dark:text-red-400 border-red-300 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-950/30"
                 >
                   <Trash2 className="h-3 w-3 mr-1" />
                   Delete Document
@@ -1409,17 +1407,17 @@ export default function ContractorVerificationDetailPage() {
               </div>
             ) : (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Upload GST/HST Clearance Document
                 </label>
                 <input
                   type="file"
                   accept=".pdf,.jpg,.jpeg,.png"
                   onChange={(e) => setGstHstFile(e.target.files?.[0] || null)}
-                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                  className="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 dark:file:bg-blue-950/60 file:text-blue-700 dark:file:text-blue-300 hover:file:bg-blue-100 dark:hover:file:bg-blue-900/60 cursor-pointer"
                 />
                 {gstHstFile && (
-                  <p className="text-xs text-gray-600 mt-1">
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                     Selected: {gstHstFile.name}
                   </p>
                 )}
@@ -1432,12 +1430,12 @@ export default function ContractorVerificationDetailPage() {
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">WCB Clearance Document</span>
               {contractor.wcb_clearance_document ? (
-                <Badge className="bg-green-100 text-green-800">
+                <Badge className="bg-green-100 text-green-800 dark:bg-green-950/50 dark:text-green-300 dark:border-green-800">
                   <CheckCircle className="h-3 w-3 mr-1" />
                   Uploaded
                 </Badge>
               ) : (
-                <Badge variant="outline" className="text-gray-600">
+                <Badge variant="outline" className="text-gray-600 dark:text-gray-400">
                   <AlertCircle className="h-3 w-3 mr-1" />
                   Not uploaded
                 </Badge>
@@ -1483,7 +1481,7 @@ export default function ContractorVerificationDetailPage() {
                   variant="outline"
                   size="sm"
                   onClick={handleDeleteWcbDocument}
-                  className="text-red-600 border-red-300 hover:bg-red-50"
+                  className="text-red-600 dark:text-red-400 border-red-300 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-950/30"
                 >
                   <Trash2 className="h-3 w-3 mr-1" />
                   Delete Document
@@ -1491,17 +1489,17 @@ export default function ContractorVerificationDetailPage() {
               </div>
             ) : (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Upload WCB Clearance Document
                 </label>
                 <input
                   type="file"
                   accept=".pdf,.jpg,.jpeg,.png"
                   onChange={(e) => setWcbFile(e.target.files?.[0] || null)}
-                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                  className="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 dark:file:bg-blue-950/60 file:text-blue-700 dark:file:text-blue-300 hover:file:bg-blue-100 dark:hover:file:bg-blue-900/60 cursor-pointer"
                 />
                 {wcbFile && (
-                  <p className="text-xs text-gray-600 mt-1">
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                     Selected: {wcbFile.name}
                   </p>
                 )}
@@ -1522,7 +1520,7 @@ export default function ContractorVerificationDetailPage() {
                   onClick={handleRejectContractor}
                   disabled={uploading}
                   variant="outline"
-                  className="text-red-600 border-red-300 hover:bg-red-50"
+                  className="text-red-600 dark:text-red-400 border-red-300 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-950/30"
                 >
                   <XCircle className="h-4 w-4 mr-2" />
                   Reject Verification

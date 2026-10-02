@@ -305,17 +305,15 @@ export default function RecentProjects({
                                 View
                               </Link>
                             </DropdownMenuItem>
-                            {project.status !== PROJECT_STATUSES.PROPOSAL_SELECTED && project.status !== PROJECT_STATUSES.COMPLETED && (
-                              <DropdownMenuItem asChild>
-                                <Link
-                                  href={`/homeowner/projects/edit/${project.id}`}
-                                  className="flex items-center"
-                                >
-                                  <Edit className="h-4 w-4 mr-2" />
-                                  Edit
-                                </Link>
-                              </DropdownMenuItem>
-                            )}
+                            <DropdownMenuItem asChild>
+                              <Link
+                                href={`/homeowner/projects/edit/${project.id}`}
+                                className="flex items-center"
+                              >
+                                <Edit className="h-4 w-4 mr-2" />
+                                Edit
+                              </Link>
+                            </DropdownMenuItem>
                             {project.status === PROJECT_STATUSES.DRAFT && (
                               <DropdownMenuItem
                                 className="text-red-600 focus:text-red-600"

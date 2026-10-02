@@ -147,8 +147,8 @@ export function ProfilePictureUpload({
       >
         <div
           className={cn(
-            "relative rounded-full overflow-hidden border-2 border-gray-200 shadow-sm transition-all duration-200 group cursor-pointer",
-            dragActive && "border-orange-500 ring-4 ring-orange-100 bg-orange-50",
+            "relative rounded-full overflow-hidden border-2 border-gray-200 dark:border-white/10 shadow-sm transition-all duration-200 group cursor-pointer",
+            dragActive && "border-orange-500 ring-4 ring-orange-100 dark:ring-orange-950/40 bg-orange-50 dark:bg-orange-950/30",
             isUploading && "opacity-50",
             disabled && "opacity-50 cursor-not-allowed"
           )}
@@ -167,8 +167,8 @@ export function ProfilePictureUpload({
               }}
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-              <User className="w-10 h-10 text-gray-400" />
+            <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-zinc-800 dark:to-zinc-900 flex items-center justify-center">
+              <User className="w-10 h-10 text-gray-400 dark:text-zinc-500" />
             </div>
           )}
 
@@ -195,7 +195,7 @@ export function ProfilePictureUpload({
             type="button"
             onClick={handleClick}
             title={currentPhoto ? "Change profile photo" : "Upload profile photo"}
-            className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-orange-600 hover:bg-orange-700 text-white flex items-center justify-center shadow-md border-2 border-white transition-transform hover:scale-110 active:scale-95 z-10 cursor-pointer"
+            className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-orange-600 hover:bg-orange-700 text-white flex items-center justify-center shadow-md border-2 border-white dark:border-[#141414] transition-transform hover:scale-110 active:scale-95 z-10 cursor-pointer"
           >
             <Camera className="w-4 h-4" />
           </button>
@@ -208,8 +208,8 @@ export function ProfilePictureUpload({
           className={cn(
             "w-full max-w-sm border-2 border-dashed rounded-xl p-6 text-center transition-all duration-200 cursor-pointer",
             dragActive
-              ? "border-orange-500 bg-orange-50/50"
-              : "border-gray-200 hover:border-orange-400 hover:bg-orange-50/10",
+              ? "border-orange-500 bg-orange-50/50 dark:bg-orange-950/30"
+              : "border-gray-200 dark:border-white/10 hover:border-orange-400 dark:hover:border-orange-500/50 hover:bg-orange-50/10 dark:hover:bg-orange-950/10",
             disabled && "opacity-50 cursor-not-allowed"
           )}
           onDragEnter={handleDrag}
@@ -226,17 +226,17 @@ export function ProfilePictureUpload({
           onClick={handleClick}
         >
           <div className="flex flex-col items-center space-y-2">
-            <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
+            <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-white/10 flex items-center justify-center text-gray-500 dark:text-gray-400">
               <Upload className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-800">
+              <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
                 {currentPhoto ? "Change profile picture" : "Upload profile picture"}
               </p>
-              <p className="text-xs text-gray-500 mt-0.5">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                 Drag and drop or click to browse
               </p>
-              <p className="text-[11px] text-gray-400 mt-1">
+              <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1">
                 PNG, JPG, WebP up to 5MB
               </p>
             </div>
@@ -252,9 +252,9 @@ export function ProfilePictureUpload({
           size="sm"
           onClick={handleClick}
           disabled={disabled}
-          className="w-full max-w-sm font-semibold border-gray-200 hover:border-orange-200 hover:bg-orange-50/40 text-gray-700 hover:text-orange-700 transition-colors shadow-2xs"
+          className="w-full max-w-sm font-semibold border-gray-200 dark:border-white/10 bg-white dark:bg-[#141414] hover:border-orange-200 dark:hover:border-orange-500/30 hover:bg-orange-50/40 dark:hover:bg-orange-950/20 text-gray-700 dark:text-gray-200 hover:text-orange-700 dark:hover:text-orange-400 transition-colors shadow-2xs"
         >
-          <Camera className="w-3.5 h-3.5 mr-1.5 text-orange-600" />
+          <Camera className="w-3.5 h-3.5 mr-1.5 text-orange-600 dark:text-orange-400" />
           {currentPhoto ? "Change Photo" : "Upload Photo"}
         </Button>
       ) : null}

@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import { trpc } from '@/utils/trpc'
 import toast from 'react-hot-toast'
+import { LoadingSpinner } from '@/components/shared'
 
 interface Homeowner {
   id: string
@@ -107,8 +108,8 @@ export default function FeatureManagementPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Featured Project Management</h1>
-          <p className="text-gray-600">Manage featured projects and contractors</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Featured Project Management</h1>
+          <p className="text-gray-600 dark:text-gray-400">Manage featured projects and contractors</p>
         </div>
       </div>
 
@@ -128,7 +129,7 @@ export default function FeatureManagementPage() {
             {/* Search */}
             <div className="flex items-center space-x-2">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 h-4 w-4" />
                 <Input
                   placeholder="Search projects..."
                   value={projectSearchTerm}
@@ -139,10 +140,10 @@ export default function FeatureManagementPage() {
             </div>
 
             {/* Projects Table */}
-            <div className="border rounded-lg">
+            <div className="border border-border rounded-lg overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow>
+                  <TableRow className="bg-gray-50/50 dark:bg-zinc-900/50">
                     <TableHead>Project Title</TableHead>
                     <TableHead>Homeowner</TableHead>
                     <TableHead>Budget</TableHead>
@@ -155,25 +156,30 @@ export default function FeatureManagementPage() {
                   {projectsLoading ? (
                     <TableRow>
                       <TableCell colSpan={6} className="text-center py-8">
-                        Loading projects...
+                        <LoadingSpinner 
+                          text="Loading projects..."
+                          size="md"
+                          variant="default"
+                          className="justify-center"
+                        />
                       </TableCell>
                     </TableRow>
                   ) : filteredProjects.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                      <TableCell colSpan={6} className="text-center py-8 text-gray-500 dark:text-gray-400">
                         No projects found
                       </TableCell>
                     </TableRow>
                   ) : (
                     filteredProjects.map((project) => (
-                      <TableRow key={project.id}>
-                        <TableCell className="font-medium">
+                      <TableRow key={project.id} className="hover:bg-gray-50/50 dark:hover:bg-zinc-800/50">
+                        <TableCell className="font-medium text-gray-900 dark:text-white">
                           {project.project_title}
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="text-gray-700 dark:text-gray-300">
                           {Array.isArray(project.homeowner) ? project.homeowner[0]?.full_name || 'N/A' : (project.homeowner as Homeowner)?.full_name || 'N/A'}
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="font-medium text-gray-900 dark:text-white">
                           ${project.budget.toLocaleString()}
                         </TableCell>
                         <TableCell>
@@ -193,7 +199,7 @@ export default function FeatureManagementPage() {
                               onCheckedChange={() => handleToggleProject(project.id, project.is_featured_project)}
                               disabled={toggleFeaturedProject.isPending}
                             />
-                            <span className="text-sm text-gray-500">
+                            <span className="text-sm text-gray-500 dark:text-gray-400">
                               {project.is_featured_project ? 'On' : 'Off'}
                             </span>
                           </div>
@@ -224,7 +230,7 @@ export default function FeatureManagementPage() {
             {/* Search */}
             <div className="flex items-center space-x-2">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 h-4 w-4" />
                 <Input
                   placeholder="Search contractors..."
                   value={contractorSearchTerm}
@@ -235,10 +241,10 @@ export default function FeatureManagementPage() {
             </div>
 
             {/* Contractors Table */}
-            <div className="border rounded-lg">
+            <div className="border border-border rounded-lg overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow>
+                  <TableRow className="bg-gray-50/50 dark:bg-zinc-900/50">
                     <TableHead>Business Name</TableHead>
                     <TableHead>Contact Name</TableHead>
                     <TableHead>Email</TableHead>
@@ -252,25 +258,30 @@ export default function FeatureManagementPage() {
                   {contractorsLoading ? (
                     <TableRow>
                       <TableCell colSpan={7} className="text-center py-8">
-                        Loading contractors...
+                        <LoadingSpinner 
+                          text="Loading contractors..."
+                          size="md"
+                          variant="default"
+                          className="justify-center"
+                        />
                       </TableCell>
                     </TableRow>
                   ) : filteredContractors.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={7} className="text-center py-8 text-gray-500">
+                      <TableCell colSpan={7} className="text-center py-8 text-gray-500 dark:text-gray-400">
                         No contractors found
                       </TableCell>
                     </TableRow>
                   ) : (
                     filteredContractors.map((contractor) => (
-                      <TableRow key={contractor.id}>
-                        <TableCell className="font-medium">
+                      <TableRow key={contractor.id} className="hover:bg-gray-50/50 dark:hover:bg-zinc-800/50">
+                        <TableCell className="font-medium text-gray-900 dark:text-white">
                           {contractor.business_name}
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="text-gray-700 dark:text-gray-300">
                           {Array.isArray(contractor.user) ? contractor.user[0]?.full_name || 'N/A' : (contractor.user as User)?.full_name || 'N/A'}
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="text-gray-700 dark:text-gray-300">
                           {Array.isArray(contractor.user) ? contractor.user[0]?.email || 'N/A' : (contractor.user as User)?.email || 'N/A'}
                         </TableCell>
                         <TableCell>
@@ -304,7 +315,7 @@ export default function FeatureManagementPage() {
                               onCheckedChange={() => handleToggleContractor(contractor.id, contractor.is_featured_contractor)}
                               disabled={toggleFeaturedContractor.isPending}
                             />
-                            <span className="text-sm text-gray-500">
+                            <span className="text-sm text-gray-500 dark:text-gray-400">
                               {contractor.is_featured_contractor ? 'On' : 'Off'}
                             </span>
                           </div>

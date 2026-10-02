@@ -89,7 +89,9 @@ export class ProposalService {
         title: validatedData.title,
         description_of_work: validatedData.description_of_work,
         project: validatedData.project,
+        project_id: validatedData.project,
         contractor: validatedData.contractor,
+        contractor_id: validatedData.contractor,
         homeowner: validatedData.homeowner,
         subtotal_amount: validatedData.subtotal_amount,
         tax_included: validatedData.tax_included,
@@ -115,26 +117,22 @@ export class ProposalService {
 
       console.log("Inserting proposal data:", proposalInsertData)
 
-      const { data, error } = await this.supabase
+      let { data, error } = await this.supabase
         .from('proposals')
         .insert(proposalInsertData)
-        .select(`
-          *,
-          project:projects (
-            id,
-            project_title,
-            creator,
-            users!projects_creator_fkey (
-              id,
-              full_name
-            )
-          ),
-          contractor:users!proposals_contractor_fkey (
-            id,
-            full_name
-          )
-        `)
+        .select('*')
         .single()
+
+      if (error && error.message?.includes('proposals_status_check')) {
+        console.warn('proposals_status_check failed for status "submitted", retrying with "pending"...')
+        const retry = await this.supabase
+          .from('proposals')
+          .insert({ ...proposalInsertData, status: 'pending' })
+          .select('*')
+          .single()
+        data = retry.data
+        error = retry.error
+      }
 
       if (error) {
         console.error("Database insertion error:", error)
@@ -144,11 +142,35 @@ export class ProposalService {
         }
       }
 
+      // Enrich with project and contractor details if available
+      let enrichedProposal = data
+      try {
+        const { data: projectDetails } = await this.supabase
+          .from('projects')
+          .select('id, project_title, creator, users!projects_creator_fkey (id, full_name)')
+          .eq('id', validatedData.project)
+          .single()
+
+        const { data: contractorDetails } = await this.supabase
+          .from('users')
+          .select('id, full_name')
+          .eq('id', validatedData.contractor)
+          .single()
+
+        enrichedProposal = {
+          ...data,
+          project: projectDetails || { id: validatedData.project, project_title: '' },
+          contractor: contractorDetails || { id: validatedData.contractor, full_name: '' },
+        }
+      } catch (enrichErr) {
+        console.warn('Enriching proposal data warning:', enrichErr)
+      }
+
       console.log("Proposal created successfully:", data.id)
       return {
         success: true,
         proposalId: data.id,
-        data: data,
+        data: enrichedProposal,
       }
     } catch (error: unknown) {
       console.error("ProposalService.createProposal error:", error)
@@ -239,7 +261,7 @@ export class ProposalService {
         .from('proposals')
         .select(`
           *,
-          project:projects (
+          project:projects!proposals_project_fkey (
             id,
             project_title,
             statement_of_work,

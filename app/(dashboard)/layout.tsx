@@ -94,7 +94,7 @@ export default function DashboardLayout({
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" suppressHydrationWarning>
+      <div className="min-h-screen flex items-center justify-center bg-background text-foreground" suppressHydrationWarning>
         <LoadingSpinner
           text="Loading..."
           subtitle="Please wait a few seconds..."
@@ -114,8 +114,8 @@ export default function DashboardLayout({
     const routeRole = pathSegments[1];
 
     return (
-      <div className="min-h-screen flex items-center justify-center ">
-        <div className="text-center max-w-md mx-auto">
+      <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
+        <div className="text-center max-w-md mx-auto p-6">
           <LoadingSpinner
             text="Access Denied"
             subtitle={`You don't have permission to access the ${routeRole} dashboard. Redirecting you to your ${userRole} dashboard...`}
@@ -124,8 +124,8 @@ export default function DashboardLayout({
             className="mb-4"
           />
           <div className="animate-pulse">
-            <div className="h-2 bg-gray-200 rounded mb-2"></div>
-            <div className="h-2 bg-gray-200 rounded w-3/4 mx-auto"></div>
+            <div className="h-2 bg-gray-200 dark:bg-zinc-800 rounded mb-2"></div>
+            <div className="h-2 bg-gray-200 dark:bg-zinc-800 rounded w-3/4 mx-auto"></div>
           </div>
         </div>
       </div>
@@ -133,7 +133,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#0A0A0A] text-gray-900 dark:text-gray-100 transition-colors duration-200">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Top Navbar - Full width, fixed */}
       <Navbar 
         onMobileMenuToggle={handleMobileMenuToggle}
@@ -150,7 +150,7 @@ export default function DashboardLayout({
 
         {/* Main Content - Fixed position, sidebar expands on top */}
         <main className="transition-all duration-300 min-h-[calc(100vh-4rem)] lg:pl-64 bg-gray-50/60 dark:bg-[#0A0A0A]">
-          <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+          <div className="w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
             {children}
           </div>
         </main>

@@ -81,8 +81,8 @@ export function ProjectPhotosTab({ project }: ProjectPhotosTabProps) {
 
           {/* Show message if only before photo is available and project status is Proposal Selected */}
           {project.project_photos && project.project_photos.length > 0 && !project.after_photo && project.status === 'Proposal Selected' && (
-            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-sm text-blue-800">
+            <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 rounded-lg">
+              <p className="text-sm text-blue-800 dark:text-blue-300">
                 <strong>Note:</strong> After photo will be available once the homeowner uploads it.
               </p>
             </div>
@@ -90,9 +90,9 @@ export function ProjectPhotosTab({ project }: ProjectPhotosTabProps) {
         </div>
       ) : (
         <div className="text-center py-12">
-          <Camera className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No Photos Available</h3>
-          <p className="text-gray-600">
+          <Camera className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No Photos Available</h3>
+          <p className="text-gray-600 dark:text-gray-400">
             Project photos will appear here once they are uploaded.
           </p>
         </div>

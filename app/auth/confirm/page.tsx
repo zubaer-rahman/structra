@@ -106,13 +106,13 @@ export default function EmailConfirmationPage() {
 
   if (isProcessing) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-white p-4">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-white dark:bg-[#0A0A0A] p-4 text-gray-900 dark:text-gray-100">
         <div className="w-full max-w-md text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto mb-4"></div>
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 dark:border-orange-500 mx-auto mb-4"></div>
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
             Confirming Your Email...
           </h2>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-400">
             Please wait while we verify your account.
           </p>
         </div>
@@ -122,17 +122,17 @@ export default function EmailConfirmationPage() {
 
   if (error) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-white p-4">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-white dark:bg-[#0A0A0A] p-4 text-gray-900 dark:text-gray-100">
         <div className="w-full max-w-md text-center">
-          <div className="mx-auto h-12 w-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
-            <svg className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="mx-auto h-12 w-12 bg-red-100 dark:bg-red-950/50 rounded-full flex items-center justify-center mb-4">
+            <svg className="h-6 w-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </div>
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
             Confirmation Failed
           </h2>
-          <p className="text-gray-600 mb-4">
+          <p className="text-gray-600 dark:text-gray-400 mb-4">
             {error}
           </p>
           <button

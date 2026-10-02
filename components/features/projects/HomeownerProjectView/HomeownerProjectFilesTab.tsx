@@ -177,7 +177,7 @@ export function HomeownerProjectFilesTab({ project }: HomeownerProjectFilesTabPr
                       <Button
                         variant="secondary"
                         size="sm"
-                        className="h-8 px-3 bg-white/90 hover:bg-white text-gray-700 shadow-lg"
+                        className="h-8 px-3 bg-white/90 hover:bg-white text-gray-700 dark:bg-zinc-800/90 dark:hover:bg-zinc-800 dark:text-gray-200 shadow-lg"
                         onClick={async () => {
                           try {
                             const response = await fetch(photo.url);
@@ -209,14 +209,14 @@ export function HomeownerProjectFilesTab({ project }: HomeownerProjectFilesTabPr
                   
                   {/* Photo Info */}
                   <div className="p-3">
-                    <h4 className="text-xs font-medium text-gray-900 truncate" title={photo.filename}>
+                    <h4 className="text-xs font-medium text-gray-900 dark:text-white truncate" title={photo.filename}>
                       {photo.filename}
                     </h4>
                     <div className="flex items-center justify-between mt-1">
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
                         {formatFileSize(photo.size || 0)}
                       </span>
-                      <Badge className="text-xs bg-blue-100 text-blue-800">
+                      <Badge className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-800">
                         IMAGE
                       </Badge>
                     </div>
@@ -225,10 +225,10 @@ export function HomeownerProjectFilesTab({ project }: HomeownerProjectFilesTabPr
               ))}
             </div>
           ) : (
-            <div className="p-8 bg-gray-50 rounded-lg text-center">
+            <div className="p-8 bg-gray-50 dark:bg-white/5 rounded-lg text-center border border-transparent dark:border-white/5">
               <ImageIcon className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-              <h4 className="text-sm font-medium text-gray-900 mb-1">No photos uploaded</h4>
-              <p className="text-xs text-gray-600">No photos have been uploaded for this project.</p>
+              <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-1">No photos uploaded</h4>
+              <p className="text-xs text-gray-600 dark:text-gray-400">No photos have been uploaded for this project.</p>
             </div>
           )}
         </div>

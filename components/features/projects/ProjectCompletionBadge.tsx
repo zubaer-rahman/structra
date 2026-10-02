@@ -41,35 +41,35 @@ export function ProjectCompletionBadge({
   return (
     <div className={`mb-4 ${className}`}>
       {isCompleted ? (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+        <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900/50 rounded-lg p-4">
           <div className="flex items-center space-x-3">
-            <CheckCircle className="h-6 w-6 text-green-600" />
+            <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
             <div className="flex-1">
-              <h3 className="text-sm font-medium text-green-900">
+              <h3 className="text-sm font-medium text-green-900 dark:text-green-300">
                 Project Substantially Completed
               </h3>
-              <p className="text-sm text-green-700 mt-1">
+              <p className="text-sm text-green-700 dark:text-green-400 mt-1">
                 This project has reached substantial completion and is ready to be marked as completed.
               </p>
             </div>
-            <Badge variant="default" className="bg-green-100 text-green-800 border-green-200">
+            <Badge variant="default" className="bg-green-100 dark:bg-green-950/50 text-green-800 dark:text-green-300 border-green-200 dark:border-green-800">
               Ready for Closure
             </Badge>
           </div>
         </div>
       ) : (
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+        <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 rounded-lg p-4">
           <div className="flex items-center space-x-3">
-            <AlertTriangle className="h-6 w-6 text-amber-600" />
+            <AlertTriangle className="h-6 w-6 text-amber-600 dark:text-amber-400" />
             <div className="flex-1">
-              <h3 className="text-sm font-medium text-amber-900">
+              <h3 className="text-sm font-medium text-amber-900 dark:text-amber-300">
                 Substantial Completion Date Set
               </h3>
-              <p className="text-sm text-amber-700 mt-1">
+              <p className="text-sm text-amber-700 dark:text-amber-400 mt-1">
                 A substantial completion date has been set for a future date. The project will be ready for closure on that date.
               </p>
             </div>
-            <Badge variant="outline" className="border-amber-300 text-amber-800">
+            <Badge variant="outline" className="border-amber-300 dark:border-amber-700/60 text-amber-800 dark:text-amber-300">
               Pending Completion
             </Badge>
           </div>

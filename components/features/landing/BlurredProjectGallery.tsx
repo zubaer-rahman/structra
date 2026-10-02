@@ -223,7 +223,7 @@ export default function BlurredProjectGallery({ projectSlug }: BlurredProjectGal
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-background">
         <Navbar />
         <div className="flex items-center justify-center h-64">
           <LoadingSpinner />
@@ -234,12 +234,12 @@ export default function BlurredProjectGallery({ projectSlug }: BlurredProjectGal
 
   if (!project) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-background">
         <Navbar />
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Project Not Found</h2>
-            <p className="text-gray-600">The project you're looking for doesn't exist or has been removed.</p>
+            <h2 className="text-2xl font-bold text-foreground mb-2">Project Not Found</h2>
+            <p className="text-muted-foreground">The project you&apos;re looking for doesn&apos;t exist or has been removed.</p>
           </div>
         </div>
       </div>
@@ -249,24 +249,24 @@ export default function BlurredProjectGallery({ projectSlug }: BlurredProjectGal
   const images = getProjectImages();
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background text-foreground">
       <Navbar />
       
-      <div className="pt-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="pt-20">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
           {/* Header */}
           <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <h1 className="text-3xl font-bold text-gray-900 line-clamp-2">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
                 {project.project_title}
               </h1>
-              <div className="flex items-center space-x-2 text-sm text-gray-500">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground shrink-0">
                 <Lock className="w-4 h-4" />
                 <span>Limited Preview</span>
               </div>
             </div>
             
-            <div className="flex items-center space-x-6 text-sm text-gray-600">
+            <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
               <div className="flex items-center space-x-1">
                 <MapPin className="w-4 h-4" />
                 <span>{getLocationDisplay()}</span>
@@ -277,14 +277,14 @@ export default function BlurredProjectGallery({ projectSlug }: BlurredProjectGal
               </div>
               <div className="flex items-center space-x-1">
                 <DollarSign className="w-4 h-4" />
-                <span className="font-semibold">{formatBudget(project.budget)}</span>
+                <span className="font-semibold text-foreground">{formatBudget(project.budget)}</span>
               </div>
             </div>
           </div>
 
           {/* Image Gallery */}
           <div className="mb-8">
-            <div className="relative bg-gray-100 rounded-2xl overflow-hidden">
+            <div className="relative bg-muted rounded-2xl overflow-hidden border border-border">
               <div className="relative aspect-video">
                 {images.length > 0 ? (
                   <>
@@ -303,7 +303,7 @@ export default function BlurredProjectGallery({ projectSlug }: BlurredProjectGal
                     
                     {/* Blur overlay for all images except the first one */}
                     {!showOneImage && (
-                      <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                      <div className="absolute inset-0 bg-black/40 dark:bg-black/60 flex items-center justify-center">
                         <div className="text-center text-white">
                           <Lock className="w-12 h-12 mx-auto mb-4 opacity-80" />
                           <p className="text-lg font-medium mb-2">Limited Preview</p>
@@ -321,7 +321,7 @@ export default function BlurredProjectGallery({ projectSlug }: BlurredProjectGal
                           variant="outline"
                           size="sm"
                           onClick={prevImage}
-                          className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white"
+                          className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white dark:bg-zinc-800/90 dark:hover:bg-zinc-800 text-gray-700 dark:text-gray-200"
                         >
                           <ChevronLeft className="w-4 h-4" />
                         </Button>
@@ -329,7 +329,7 @@ export default function BlurredProjectGallery({ projectSlug }: BlurredProjectGal
                           variant="outline"
                           size="sm"
                           onClick={nextImage}
-                          className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white"
+                          className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white dark:bg-zinc-800/90 dark:hover:bg-zinc-800 text-gray-700 dark:text-gray-200"
                         >
                           <ChevronRight className="w-4 h-4" />
                         </Button>
@@ -342,8 +342,8 @@ export default function BlurredProjectGallery({ projectSlug }: BlurredProjectGal
                     </div>
                   </>
                 ) : (
-                  <div className="flex items-center justify-center h-full bg-gray-200">
-                    <div className="text-center text-gray-500">
+                  <div className="flex items-center justify-center h-full bg-muted">
+                    <div className="text-center text-muted-foreground">
                       <Lock className="w-12 h-12 mx-auto mb-4" />
                       <p>No images available</p>
                     </div>
@@ -357,28 +357,28 @@ export default function BlurredProjectGallery({ projectSlug }: BlurredProjectGal
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main Content */}
             <div className="lg:col-span-2">
-              <div className="bg-gray-50 rounded-2xl p-6 mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Project Overview</h3>
+              <div className="bg-card text-card-foreground border border-border rounded-2xl p-6 mb-6">
+                <h3 className="text-lg font-semibold text-foreground mb-4">Project Overview</h3>
                 <div className="space-y-4">
                   <div>
-                    <h4 className="font-medium text-gray-700 mb-2">Project Type</h4>
-                    <p className="text-gray-600">{project.project_type}</p>
+                    <h4 className="font-medium text-foreground mb-2">Project Type</h4>
+                    <p className="text-muted-foreground">{project.project_type}</p>
                   </div>
                   
                   <div>
-                    <h4 className="font-medium text-gray-700 mb-2">Categories</h4>
+                    <h4 className="font-medium text-foreground mb-2">Categories</h4>
                     <div className="flex flex-wrap gap-2">
                       {Array.isArray(project.category) ? (
                         project.category.map((cat, index) => (
                           <span
                             key={index}
-                            className="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full"
+                            className="px-3 py-1 bg-blue-100 dark:bg-blue-950/50 text-blue-800 dark:text-blue-300 border border-transparent dark:border-blue-800/50 text-sm rounded-full"
                           >
                             {cat}
                           </span>
                         ))
                       ) : (
-                        <span className="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">
+                        <span className="px-3 py-1 bg-blue-100 dark:bg-blue-950/50 text-blue-800 dark:text-blue-300 border border-transparent dark:border-blue-800/50 text-sm rounded-full">
                           {project.category}
                         </span>
                       )}
@@ -386,8 +386,8 @@ export default function BlurredProjectGallery({ projectSlug }: BlurredProjectGal
                   </div>
                   
                   <div>
-                    <h4 className="font-medium text-gray-700 mb-2">Timeline</h4>
-                    <div className="flex items-center space-x-4 text-sm text-gray-600">
+                    <h4 className="font-medium text-foreground mb-2">Timeline</h4>
+                    <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                       <span>Start: {formatDate(project.start_date)}</span>
                       <span>End: {formatDate(project.end_date)}</span>
                     </div>
@@ -396,16 +396,16 @@ export default function BlurredProjectGallery({ projectSlug }: BlurredProjectGal
               </div>
 
               {/* Blurred Description */}
-              <div className="bg-gray-50 rounded-2xl p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Project Description</h3>
+              <div className="bg-card text-card-foreground border border-border rounded-2xl p-6">
+                <h3 className="text-lg font-semibold text-foreground mb-4">Project Description</h3>
                 <div className="relative">
-                  <p className="text-gray-600 line-clamp-3 blur-sm">
+                  <p className="text-muted-foreground line-clamp-3 blur-sm">
                     {project.statement_of_work}
                   </p>
-                  <div className="absolute inset-0 bg-gradient-to-t from-white via-white/50 to-transparent flex items-end justify-center pt-8">
+                  <div className="absolute inset-0 bg-gradient-to-t from-card via-card/70 to-transparent flex items-end justify-center pt-8">
                     <div className="text-center">
-                      <Lock className="w-8 h-8 mx-auto mb-2 text-gray-400" />
-                      <p className="text-sm text-gray-500">
+                      <Lock className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
+                      <p className="text-sm text-muted-foreground">
                         Full description available to verified contractors
                       </p>
                     </div>
@@ -417,16 +417,16 @@ export default function BlurredProjectGallery({ projectSlug }: BlurredProjectGal
             {/* Sidebar */}
             <div className="space-y-6">
               {/* CTA Card */}
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/20 rounded-2xl p-6 border border-blue-200 dark:border-blue-900/50">
+                <h3 className="text-lg font-semibold text-foreground mb-4">
                   Interested in this project?
                 </h3>
-                <p className="text-gray-600 text-sm mb-6">
+                <p className="text-muted-foreground text-sm mb-6">
                   Sign up as a verified contractor to view full project details, submit proposals, and connect with homeowners.
                 </p>
-                <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-4">
                   <Link href="/register?role=contractor">
-                    <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                    <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
                       Sign Up as Contractor
                     </Button>
                   </Link>
@@ -439,20 +439,20 @@ export default function BlurredProjectGallery({ projectSlug }: BlurredProjectGal
               </div>
 
               {/* Project Stats */}
-              <div className="bg-gray-50 rounded-2xl p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Project Details</h3>
+              <div className="bg-card text-card-foreground border border-border rounded-2xl p-6">
+                <h3 className="text-lg font-semibold text-foreground mb-4">Project Details</h3>
                 <div className="space-y-4">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Status</span>
-                    <span className="font-medium text-green-600">{project.status}</span>
+                    <span className="text-muted-foreground">Status</span>
+                    <span className="font-medium text-green-600 dark:text-green-400">{project.status}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Budget</span>
-                    <span className="font-medium">{formatBudget(project.budget)}</span>
+                    <span className="text-muted-foreground">Budget</span>
+                    <span className="font-medium text-foreground">{formatBudget(project.budget)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Location</span>
-                    <span className="font-medium text-right">{getLocationDisplay()}</span>
+                    <span className="text-muted-foreground">Location</span>
+                    <span className="font-medium text-foreground text-right">{getLocationDisplay()}</span>
                   </div>
                 </div>
               </div>

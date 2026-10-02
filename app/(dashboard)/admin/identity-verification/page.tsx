@@ -86,13 +86,13 @@ export default function IdentityVerificationPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'pending':
-        return <Badge className="bg-yellow-100 text-yellow-800">Pending</Badge>
+        return <Badge className="bg-yellow-100 dark:bg-yellow-950/50 text-yellow-800 dark:text-yellow-400 border-yellow-200 dark:border-yellow-900/50">Pending</Badge>
       case 'approved':
-        return <Badge className="bg-green-100 text-green-800">Approved</Badge>
+        return <Badge className="bg-green-100 dark:bg-green-950/50 text-green-800 dark:text-green-400 border-green-200 dark:border-green-900/50">Approved</Badge>
       case 'rejected':
-        return <Badge className="bg-red-100 text-red-800">Rejected</Badge>
+        return <Badge className="bg-red-100 dark:bg-red-950/50 text-red-800 dark:text-red-400 border-red-200 dark:border-red-900/50">Rejected</Badge>
       default:
-        return <Badge className="bg-gray-100 text-gray-800">{status}</Badge>
+        return <Badge className="bg-gray-100 dark:bg-zinc-800 text-gray-800 dark:text-gray-300 border-gray-200 dark:border-zinc-700">{status}</Badge>
     }
   }
 
@@ -141,8 +141,8 @@ export default function IdentityVerificationPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Identity Verification</h1>
-          <p className="text-gray-600">Review and verify user identity documents</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Identity Verification</h1>
+          <p className="text-gray-600 dark:text-gray-400">Review and verify user identity documents</p>
         </div>
       </div>
 
@@ -151,10 +151,10 @@ export default function IdentityVerificationPage() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
-              <Clock className="h-5 w-5 text-yellow-600" />
+              <Clock className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
               <div>
-                <p className="text-2xl font-bold">{verificationRequests.filter(r => r.status === 'pending').length}</p>
-                <p className="text-sm text-gray-600">Pending</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{verificationRequests.filter(r => r.status === 'pending').length}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Pending</p>
               </div>
             </div>
           </CardContent>
@@ -162,10 +162,10 @@ export default function IdentityVerificationPage() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
-              <CheckCircle className="h-5 w-5 text-green-600" />
+              <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
               <div>
-                <p className="text-2xl font-bold">{verificationRequests.filter(r => r.status === 'approved').length}</p>
-                <p className="text-sm text-gray-600">Approved</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{verificationRequests.filter(r => r.status === 'approved').length}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Approved</p>
               </div>
             </div>
           </CardContent>
@@ -173,10 +173,10 @@ export default function IdentityVerificationPage() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
-              <XCircle className="h-5 w-5 text-red-600" />
+              <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
               <div>
-                <p className="text-2xl font-bold">{verificationRequests.filter(r => r.status === 'rejected').length}</p>
-                <p className="text-sm text-gray-600">Rejected</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{verificationRequests.filter(r => r.status === 'rejected').length}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Rejected</p>
               </div>
             </div>
           </CardContent>
@@ -184,10 +184,10 @@ export default function IdentityVerificationPage() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
-              <User className="h-5 w-5 text-blue-600" />
+              <User className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               <div>
-                <p className="text-2xl font-bold">{verificationRequests.length}</p>
-                <p className="text-sm text-gray-600">Total</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{verificationRequests.length}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Total</p>
               </div>
             </div>
           </CardContent>
@@ -212,7 +212,7 @@ export default function IdentityVerificationPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-2 border border-gray-300 dark:border-zinc-800 rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">All Status</option>
               <option value="pending">Pending</option>
@@ -233,7 +233,7 @@ export default function IdentityVerificationPage() {
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="bg-gray-50">
+                <TableRow className="bg-gray-50 dark:bg-zinc-900/50">
                   <TableHead>User</TableHead>
                   <TableHead>Type</TableHead>
                   <TableHead>Status</TableHead>
@@ -256,21 +256,21 @@ export default function IdentityVerificationPage() {
                   </TableRow>
                 ) : filteredRequests.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                    <TableCell colSpan={6} className="text-center py-8 text-gray-500 dark:text-gray-400">
                       No verification requests found
                     </TableCell>
                   </TableRow>
                 ) : (
                   filteredRequests.map((request) => (
-                  <TableRow key={request.id} className="hover:bg-gray-50">
+                  <TableRow key={request.id} className="hover:bg-gray-50 dark:hover:bg-zinc-800/50">
                     <TableCell>
                       <div className="flex items-center space-x-3">
-                        <div className="h-8 w-8 bg-gray-200 rounded-full flex items-center justify-center">
-                          <User className="h-4 w-4 text-gray-600" />
+                        <div className="h-8 w-8 bg-gray-200 dark:bg-zinc-800 rounded-full flex items-center justify-center">
+                          <User className="h-4 w-4 text-gray-600 dark:text-gray-300" />
                         </div>
                         <div>
-                          <p className="font-medium">{request.name}</p>
-                          <p className="text-sm text-gray-600">{request.email}</p>
+                          <p className="font-medium text-gray-900 dark:text-white">{request.name}</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">{request.email}</p>
                         </div>
                       </div>
                     </TableCell>
@@ -283,14 +283,14 @@ export default function IdentityVerificationPage() {
                     <TableCell>
                       {request.governmentId ? (
                         <div className="flex items-center space-x-2">
-                          <ImageIcon className="h-4 w-4 text-blue-600" />
-                          <span className="text-sm text-gray-600">Uploaded</span>
+                          <ImageIcon className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                          <span className="text-sm text-gray-600 dark:text-gray-300">Uploaded</span>
                         </div>
                       ) : (
-                        <span className="text-sm text-gray-400">Not uploaded</span>
+                        <span className="text-sm text-gray-400 dark:text-gray-500">Not uploaded</span>
                       )}
                     </TableCell>
-                    <TableCell className="text-sm text-gray-600">
+                    <TableCell className="text-sm text-gray-600 dark:text-gray-400">
                       {request.submittedAt}
                     </TableCell>
                     <TableCell>
@@ -308,7 +308,7 @@ export default function IdentityVerificationPage() {
                             <Button 
                               variant="outline" 
                               size="sm" 
-                              className="text-green-600 hover:bg-green-50"
+                              className="text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-950/30 border-green-200 dark:border-green-900/50"
                               onClick={() => {
                                 setSelectedUser(request)
                                 handleApprove()
@@ -319,7 +319,7 @@ export default function IdentityVerificationPage() {
                             <Button 
                               variant="outline" 
                               size="sm" 
-                              className="text-red-600 hover:bg-red-50"
+                              className="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 border-red-200 dark:border-red-900/50"
                               onClick={() => {
                                 setSelectedUser(request)
                                 handleReject()
@@ -343,11 +343,11 @@ export default function IdentityVerificationPage() {
       {/* Review Dialog */}
       <Dialog open={isReviewDialogOpen} onOpenChange={setIsReviewDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[70vh] flex flex-col">
-          <DialogHeader className="flex-shrink-0 border-b pb-3">
-            <DialogTitle className="text-base font-semibold text-gray-900">
+          <DialogHeader className="flex-shrink-0 border-b dark:border-zinc-800 pb-3">
+            <DialogTitle className="text-base font-semibold text-gray-900 dark:text-white">
               Identity Verification
             </DialogTitle>
-            <DialogDescription className="text-xs text-gray-600">
+            <DialogDescription className="text-xs text-gray-600 dark:text-gray-400">
               {selectedUser?.name}
             </DialogDescription>
           </DialogHeader>
@@ -357,24 +357,24 @@ export default function IdentityVerificationPage() {
               <div className="space-y-4">
                 {/* User Information Section */}
                 <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-gray-900">User Details</h3>
-                  <div className="bg-gray-50 rounded-lg p-3 space-y-2">
+                  <h3 className="text-sm font-medium text-gray-900 dark:text-white">User Details</h3>
+                  <div className="bg-gray-50 dark:bg-zinc-900/60 border border-gray-200 dark:border-zinc-800 rounded-lg p-3 space-y-2">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
-                        <span className="text-xs text-gray-500">Name</span>
-                        <p className="text-sm font-medium text-gray-900">{selectedUser.name}</p>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">Name</span>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">{selectedUser.name}</p>
                       </div>
                       <div>
-                        <span className="text-xs text-gray-500">User Type</span>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">User Type</span>
                         <Badge variant="outline" className="text-xs">{selectedUser.userType}</Badge>
                       </div>
                       <div>
-                        <span className="text-xs text-gray-500">Email</span>
-                        <p className="text-sm text-gray-900 truncate">{selectedUser.email}</p>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">Email</span>
+                        <p className="text-sm text-gray-900 dark:text-gray-100 truncate">{selectedUser.email}</p>
                       </div>
                       <div>
-                        <span className="text-xs text-gray-500">Submitted</span>
-                        <p className="text-sm text-gray-900">{selectedUser.submittedAt}</p>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">Submitted</span>
+                        <p className="text-sm text-gray-900 dark:text-gray-100">{selectedUser.submittedAt}</p>
                       </div>
                     </div>
                   </div>
@@ -382,21 +382,21 @@ export default function IdentityVerificationPage() {
 
                 {/* Document Section */}
                 <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-gray-900">Government ID</h3>
+                  <h3 className="text-sm font-medium text-gray-900 dark:text-white">Government ID</h3>
                   {selectedUser.governmentId ? (
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 rounded-lg p-3">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                            <Shield className="h-4 w-4 text-blue-600" />
+                          <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/50 rounded-lg flex items-center justify-center">
+                            <Shield className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                           </div>
                           <div>
-                            <p className="text-sm font-medium text-blue-900">Document Uploaded</p>
-                            <p className="text-xs text-blue-600 truncate max-w-[200px]">
+                            <p className="text-sm font-medium text-blue-900 dark:text-blue-200">Document Uploaded</p>
+                            <p className="text-xs text-blue-600 dark:text-blue-300 truncate max-w-[200px]">
                               {selectedUser.governmentId.filename || 'Government ID'}
                             </p>
                             {selectedUser.governmentId.size && (
-                              <p className="text-xs text-blue-500">
+                              <p className="text-xs text-blue-500 dark:text-blue-400">
                                 {(selectedUser.governmentId.size / 1024 / 1024).toFixed(2)} MB
                               </p>
                             )}
@@ -418,12 +418,12 @@ export default function IdentityVerificationPage() {
                       </div>
                     </div>
                   ) : (
-                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                    <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 rounded-lg p-3">
                       <div className="text-center">
-                        <div className="w-6 h-6 bg-amber-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-                          <Shield className="h-3 w-3 text-amber-600" />
+                        <div className="w-6 h-6 bg-amber-100 dark:bg-amber-900/50 rounded-lg flex items-center justify-center mx-auto mb-2">
+                          <Shield className="h-3 w-3 text-amber-600 dark:text-amber-400" />
                         </div>
-                        <p className="text-xs text-amber-800">No government ID uploaded</p>
+                        <p className="text-xs text-amber-800 dark:text-amber-300">No government ID uploaded</p>
                       </div>
                     </div>
                   )}
@@ -432,7 +432,7 @@ export default function IdentityVerificationPage() {
             )}
           </div>
 
-          <DialogFooter className="flex-shrink-0 border-t pt-3">
+          <DialogFooter className="flex-shrink-0 border-t dark:border-zinc-800 pt-3">
             <div className="flex justify-end space-x-2">
               <Button 
                 variant="outline" 
@@ -446,7 +446,7 @@ export default function IdentityVerificationPage() {
                 variant="outline" 
                 size="sm"
                 onClick={handleReject}
-                className="text-xs text-red-600 border-red-300 hover:bg-red-50"
+                className="text-xs text-red-600 dark:text-red-400 border-red-300 dark:border-red-900 hover:bg-red-50 dark:hover:bg-red-950/30"
               >
                 <XCircle className="h-3 w-3 mr-1" />
                 Reject
@@ -454,7 +454,7 @@ export default function IdentityVerificationPage() {
               <Button 
                 size="sm"
                 onClick={handleApprove}
-                className="text-xs bg-gray-900 text-white hover:bg-gray-800"
+                className="text-xs bg-gray-900 dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200"
               >
                 <CheckCircle className="h-3 w-3 mr-1" />
                 Approve

@@ -9,13 +9,13 @@ export const migration_044_add_file_upload_columns: Migration = {
     // Add portfolio_file column to store file references for portfolio
     await client.query(`
       ALTER TABLE contractor_profiles 
-      ADD COLUMN portfolio_file JSONB;
+      ADD COLUMN IF NOT EXISTS portfolio_file JSONB;
     `);
 
     // Add license_file column to store file references for licenses  
     await client.query(`
       ALTER TABLE contractor_profiles 
-      ADD COLUMN license_file JSONB;
+      ADD COLUMN IF NOT EXISTS license_file JSONB;
     `);
 
     // Add comments to document the new columns

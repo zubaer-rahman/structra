@@ -87,12 +87,12 @@ export function SubstantialCompletionModal({
           
           {/* After Photo Requirement */}
           {!hasAfterPhoto && (
-            <div className="border border-gray-200 rounded-lg p-4">
+            <div className="border border-border bg-muted/40 rounded-lg p-4">
               <div className="flex items-start gap-3">
-                <AlertTriangle className="h-5 w-5 text-gray-600 mt-0.5" />
+                <AlertTriangle className="h-5 w-5 text-muted-foreground mt-0.5" />
                 <div className="space-y-2">
-                  <h4 className="text-sm font-medium text-gray-900">After Photo Required</h4>
-                  <p className="text-sm text-gray-700">
+                  <h4 className="text-sm font-medium text-foreground">After Photo Required</h4>
+                  <p className="text-sm text-muted-foreground">
                     The homeowner must upload an after photo before setting the substantial completion date. 
                     This photo serves as evidence that the work has been completed.
                   </p>
@@ -101,12 +101,12 @@ export function SubstantialCompletionModal({
             </div>
           )}
 
-          <div className="border border-gray-200 rounded-lg p-4">
+          <div className="border border-border bg-muted/40 rounded-lg p-4">
             <div className="flex items-start gap-3">
-              <CheckCircle className="h-5 w-5 text-gray-600 mt-0.5" />
+              <CheckCircle className="h-5 w-5 text-muted-foreground mt-0.5" />
               <div className="space-y-2">
-                <h4 className="text-sm font-medium text-gray-900">What is Substantial Completion?</h4>
-                <p className="text-sm text-gray-700">
+                <h4 className="text-sm font-medium text-foreground">What is Substantial Completion?</h4>
+                <p className="text-sm text-muted-foreground">
                   The date when the project is completed to the point that the statement of work 
                   requirements are met, even if trivial deficiencies or minor work remains. 
                   This can be approximated as 98% complete.
@@ -130,12 +130,12 @@ export function SubstantialCompletionModal({
             )}
           </FormField>
 
-          <div className="border border-gray-200 rounded-lg p-4">
+          <div className="border border-border bg-muted/40 rounded-lg p-4">
             <div className="flex items-start gap-3">
-              <AlertTriangle className="h-5 w-5 text-gray-600 mt-0.5" />
+              <AlertTriangle className="h-5 w-5 text-muted-foreground mt-0.5" />
               <div>
-                <h4 className="text-sm font-medium text-gray-900">Important</h4>
-                <p className="text-sm text-gray-700">
+                <h4 className="text-sm font-medium text-foreground">Important</h4>
+                <p className="text-sm text-muted-foreground">
                   Setting this date will trigger the project close workflow. 
                   Make sure the work is truly substantially complete before proceeding.
                 </p>

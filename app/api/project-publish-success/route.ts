@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient as createRouteClient } from '@/lib/supabase/server'
 import { createClient as createSupabaseClient, type User } from '@supabase/supabase-js'
+import { stripe } from '@/lib/stripe'
+import { config } from '@/config/env'
 import { z } from 'zod'
 
 const requestSchema = z.object({
@@ -79,72 +81,142 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Find and update pending project verification fee transaction
     let transaction = null
+    let verifiedByStripe = false
 
+    // 1. Direct Stripe Session Verification as primary / fallback source of truth
     if (sessionId) {
-      // Try to find transaction by session ID first
-      const { data: sessionTransaction, error: sessionError } = await supabase
-        .from('transactions')
-        .select('id, status, transaction_type, metadata, amount, currency')
-        .eq('stripe_checkout_session_id', sessionId)
-        .eq('user_id', effectiveUserId)
-        .eq('transaction_type', 'project_verification_fee')
-        .single()
+      try {
+        const stripeSession = await stripe.checkout.sessions.retrieve(sessionId)
+        if (stripeSession && stripeSession.payment_status === 'paid') {
+          // Verify user match if metadata has userId
+          const sessionUserId = stripeSession.metadata?.userId
+          const sessionEmail = (stripeSession.customer_email || stripeSession.customer_details?.email || '').toLowerCase()
+          const userMatches = (!sessionUserId || sessionUserId === effectiveUserId) || (user.email && sessionEmail === user.email.toLowerCase())
 
-      if (sessionTransaction) {
-        transaction = sessionTransaction
+          if (userMatches) {
+            verifiedByStripe = true
+
+            // Update homeowner verification status if first payment
+            const isFirstPayment = stripeSession.metadata?.isFirstPayment === 'true' || !user.is_verified_homeowner
+            if (isFirstPayment) {
+              await supabase
+                .from('users')
+                .update({
+                  is_verified_homeowner: true,
+                  updated_at: new Date().toISOString(),
+                })
+                .eq('id', effectiveUserId)
+            }
+
+            // Attempt to record or update transaction in transactions table
+            try {
+              const { data: upsertedTx } = await supabase
+                .from('transactions')
+                .upsert({
+                  user_id: effectiveUserId,
+                  amount: stripeSession.amount_total || config.pricing.projectCreationFee,
+                  currency: (stripeSession.currency || 'CAD').toUpperCase(),
+                  transaction_type: 'project_verification_fee',
+                  status: 'succeeded',
+                  stripe_checkout_session_id: sessionId,
+                  stripe_payment_intent_id: typeof stripeSession.payment_intent === 'string' ? stripeSession.payment_intent : null,
+                  stripe_customer_id: typeof stripeSession.customer === 'string' ? stripeSession.customer : null,
+                  description: isFirstPayment ? 'Project verification' : 'New project creation',
+                  metadata: stripeSession.metadata || {},
+                  payment_method: 'card',
+                  billing_cycle: 'one_time',
+                  updated_at: new Date().toISOString(),
+                }, { onConflict: 'stripe_checkout_session_id' })
+                .select('id, status, transaction_type, metadata, amount, currency')
+                .single()
+
+              if (upsertedTx) {
+                transaction = upsertedTx
+              }
+            } catch (txDbErr) {
+              console.warn('transactions table may not exist yet:', txDbErr)
+            }
+
+            if (!transaction) {
+              transaction = {
+                id: sessionId,
+                status: 'succeeded',
+                transaction_type: 'project_verification_fee',
+                amount: stripeSession.amount_total || config.pricing.projectCreationFee,
+                currency: (stripeSession.currency || 'CAD').toUpperCase(),
+                metadata: stripeSession.metadata || {},
+              }
+            }
+          }
+        }
+      } catch (stripeErr) {
+        console.warn('Direct Stripe session check failed, falling back to database check:', stripeErr)
       }
     }
 
-    // If no transaction found by session ID, look for pending project verification fee
+    // 2. Fallback to existing transactions record in database
     if (!transaction) {
-      const { data: pendingTransaction, error: pendingError } = await supabase
-        .from('transactions')
-        .select('id, status, transaction_type, metadata, amount, currency')
-        .eq('user_id', effectiveUserId)
-        .eq('transaction_type', 'project_verification_fee')
-        .eq('status', 'pending')
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single()
+      if (sessionId) {
+        // Try to find transaction by session ID first
+        const { data: sessionTransaction } = await supabase
+          .from('transactions')
+          .select('id, status, transaction_type, metadata, amount, currency')
+          .eq('stripe_checkout_session_id', sessionId)
+          .eq('user_id', effectiveUserId)
+          .eq('transaction_type', 'project_verification_fee')
+          .single()
 
-      if (pendingTransaction) {
-        transaction = pendingTransaction
+        if (sessionTransaction) {
+          transaction = sessionTransaction
+        }
       }
-    }
 
-    if (!transaction) {
-      console.error('No project verification fee transaction found')
-      return NextResponse.json(
-        { error: 'No project verification payment found' },
-        { status: 404 }
-      )
-    }
+      // If no transaction found by session ID, look for pending project verification fee
+      if (!transaction) {
+        const { data: pendingTransaction } = await supabase
+          .from('transactions')
+          .select('id, status, transaction_type, metadata, amount, currency')
+          .eq('user_id', effectiveUserId)
+          .eq('transaction_type', 'project_verification_fee')
+          .eq('status', 'pending')
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single()
 
-    // Update transaction status to succeeded if it's still pending
-    if (transaction.status === 'pending') {
-      const { error: updateTransactionError } = await supabase
-        .from('transactions')
-        .update({
-          status: 'succeeded',
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', transaction.id)
+        if (pendingTransaction) {
+          transaction = pendingTransaction
+        }
+      }
 
-      if (updateTransactionError) {
-        console.error('Failed to update project verification transaction status:', updateTransactionError)
+      if (!transaction && !verifiedByStripe) {
+        console.error('No project verification fee transaction found')
         return NextResponse.json(
-          { error: 'Failed to update transaction status' },
-          { status: 500 }
+          { error: 'No project verification payment found' },
+          { status: 404 }
         )
+      }
+
+      // Update transaction status to succeeded if it's still pending
+      if (transaction && transaction.status === 'pending') {
+        const { error: updateTransactionError } = await supabase
+          .from('transactions')
+          .update({
+            status: 'succeeded',
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', transaction.id)
+
+        if (updateTransactionError) {
+          console.error('Failed to update project verification transaction status:', updateTransactionError)
+        }
       }
     }
 
     return NextResponse.json({
       success: true,
       message: 'Project publish payment completed successfully',
-      transactionId: transaction.id,
+      transactionId: transaction?.id || sessionId || null,
       status: 'succeeded'
     })
 

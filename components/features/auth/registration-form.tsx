@@ -108,7 +108,7 @@ export function RegistrationForm({ onSubmit, isLoading = false, error, defaultRo
           <CardTitle className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-orange-700 bg-clip-text text-transparent">
             {currentStep === 1 ? 'Choose Role' : 'Complete Profile'}
           </CardTitle>
-          <CardDescription className="text-base text-gray-600">
+          <CardDescription className="text-base text-muted-foreground">
             {currentStep === 1 ? 'Select your role' : 'Complete your profile'}
           </CardDescription>
         </CardHeader>
@@ -117,10 +117,10 @@ export function RegistrationForm({ onSubmit, isLoading = false, error, defaultRo
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-5">
             {/* Error Alert */}
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-lg p-4">
                 <div className="flex items-center space-x-3">
-                  <AlertCircle className="h-4 w-4 text-red-500" />
-                  <span className="text-red-700 text-sm">{error}</span>
+                  <AlertCircle className="h-4 w-4 text-red-500 flex-shrink-0" />
+                  <span className="text-red-700 dark:text-red-300 text-sm">{error}</span>
                 </div>
               </div>
             )}

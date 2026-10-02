@@ -202,12 +202,19 @@ export default function HomeownerProjectViewPage() {
       
       try {
         const supabase = createClient()
-        const { data, error: fetchError } = await supabase
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)
+        let query = supabase
           .from('projects')
           .select('*, project_certificate, title_awarded')
-          .eq('id', id)
           .eq('creator', user.id)
-          .single()
+
+        if (isUuid) {
+          query = query.or(`id.eq.${id},slug.eq.${id}`)
+        } else {
+          query = query.eq('slug', id)
+        }
+
+        const { data, error: fetchError } = await query.maybeSingle()
         
         if (fetchError) {
           throw fetchError
@@ -454,10 +461,6 @@ export default function HomeownerProjectViewPage() {
           status: PROPOSAL_STATUSES.ACCEPTED,
           is_selected: 'yes',
           accepted_date: new Date().toISOString(),
-          contract_reviewed: true,
-          homeowner_contract_reviewed: true,
-          contract_reviewed_at: new Date().toISOString(),
-          homeowner_contract_reviewed_at: new Date().toISOString(),
           last_updated: new Date().toISOString(),
           last_modified_by: user.id
         })
@@ -490,15 +493,14 @@ export default function HomeownerProjectViewPage() {
         .update({
           status: PROPOSAL_STATUSES.REJECTED,
           rejected_date: new Date().toISOString(),
-          rejection_reason: 'other',
-          rejection_reason_notes: 'Another proposal was selected by the homeowner',
+          notes: 'Another proposal was selected by the homeowner',
           is_selected: 'no',
           last_updated: new Date().toISOString(),
           last_modified_by: user.id
         })
         .eq('project', id)
         .neq('id', proposalId)
-        .in('status', [PROPOSAL_STATUSES.SUBMITTED, PROPOSAL_STATUSES.VIEWED])
+        .in('status', [PROPOSAL_STATUSES.SUBMITTED, 'pending', PROPOSAL_STATUSES.VIEWED])
       
       if (rejectError) {
         throw rejectError
@@ -541,7 +543,7 @@ export default function HomeownerProjectViewPage() {
         .eq('project', id)
         .eq('homeowner', user.id)
         .eq('is_deleted', 'no')
-        .in('status', ['submitted', 'viewed', 'accepted', 'rejected'])
+        .in('status', ['submitted', 'pending', 'viewed', 'accepted', 'rejected'])
         .order('created_at', { ascending: false })
       
       if (updatedProposals) {
@@ -749,8 +751,7 @@ export default function HomeownerProjectViewPage() {
         .update({
           status: PROPOSAL_STATUSES.REJECTED,
           rejected_date: new Date().toISOString(),
-          rejection_reason: reason || 'other',
-          rejection_reason_notes: notes,
+          notes: notes || reason || undefined,
           last_updated: new Date().toISOString(),
           last_modified_by: user.id
         })
@@ -789,7 +790,7 @@ export default function HomeownerProjectViewPage() {
         .eq('project', id)
         .eq('homeowner', user.id)
         .eq('is_deleted', 'no')
-        .in('status', [PROPOSAL_STATUSES.SUBMITTED, PROPOSAL_STATUSES.VIEWED, PROPOSAL_STATUSES.ACCEPTED, PROPOSAL_STATUSES.REJECTED])
+        .in('status', [PROPOSAL_STATUSES.SUBMITTED, 'pending', PROPOSAL_STATUSES.VIEWED, PROPOSAL_STATUSES.ACCEPTED, PROPOSAL_STATUSES.REJECTED])
         .order('created_at', { ascending: false })
       
       if (updatedProposals) {
@@ -836,7 +837,7 @@ export default function HomeownerProjectViewPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="w-full py-8">
         <div className="text-center">
           <LoadingSpinner size="lg" variant="default" text="Loading your project details..." />
         </div>
@@ -846,7 +847,7 @@ export default function HomeownerProjectViewPage() {
 
   if (error || !project || !user) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="w-full py-8">
         <div className="text-center text-red-600">
           {error || 'Project not found or you don\'t have access to view it'}
         </div>
@@ -865,11 +866,11 @@ export default function HomeownerProjectViewPage() {
   return (
     <>
       {isProcessingPaymentSuccess && (
-        <div className="fixed inset-0 bg-white/50 backdrop-blur-sm z-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg shadow-lg p-6 text-center max-w-md mx-4">
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="bg-card text-card-foreground border border-border rounded-lg shadow-lg p-6 text-center max-w-md mx-4">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600 mx-auto mb-4"></div>
-            <p className="text-gray-700 font-medium">Publishing your project...</p>
-            <p className="text-gray-500 text-sm mt-2">Please wait while we process your payment and publish your project.</p>
+            <p className="text-foreground font-medium">Publishing your project...</p>
+            <p className="text-muted-foreground text-sm mt-2">Please wait while we process your payment and publish your project.</p>
           </div>
         </div>
       )}

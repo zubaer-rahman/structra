@@ -97,14 +97,14 @@ export function ReviewConsentModal({
         <div className="space-y-6">
           
           {/* Consent Question */}
-          <div className="space-y-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-            <h3 className="text-sm font-semibold text-blue-900 flex items-center gap-2">
+          <div className="space-y-3 p-3 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 rounded-lg">
+            <h3 className="text-sm font-semibold text-blue-900 dark:text-blue-300 flex items-center gap-2">
               <Camera className="h-4 w-4" />
               Photo Usage Consent
             </h3>
             
             <div className="space-y-2">
-              <p className="text-sm text-blue-800">
+              <p className="text-sm text-blue-800 dark:text-blue-400">
                 Do you consent to include the before/after pictures of the Area of Work in the review and on the contractor's profile?
               </p>
               
@@ -116,10 +116,10 @@ export function ReviewConsentModal({
                     value="yes"
                     checked={consent === true}
                     onChange={() => setConsent(true)}
-                    className="h-3 w-3 text-blue-600 focus:ring-blue-500 border-gray-300"
+                    className="h-3 w-3 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-white/20"
                     disabled={loading}
                   />
-                  <span className="text-sm text-blue-800 font-medium">Yes</span>
+                  <span className="text-sm text-blue-800 dark:text-blue-300 font-medium">Yes</span>
                 </label>
                 
                 <label className="flex items-center space-x-2 cursor-pointer">
@@ -129,25 +129,25 @@ export function ReviewConsentModal({
                     value="no"
                     checked={consent === false}
                     onChange={() => setConsent(false)}
-                    className="h-3 w-3 text-blue-600 focus:ring-blue-500 border-gray-300"
+                    className="h-3 w-3 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-white/20"
                     disabled={loading}
                   />
-                  <span className="text-sm text-blue-800 font-medium">No</span>
+                  <span className="text-sm text-blue-800 dark:text-blue-300 font-medium">No</span>
                 </label>
               </div>
             </div>
           </div>
 
           {/* Review Form */}
-          <div className="space-y-6 p-4 bg-gray-50 border border-gray-200 rounded-lg">
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+          <div className="space-y-6 p-4 bg-muted/40 border border-border rounded-lg">
+            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
               <Star className="h-5 w-5" />
               Your Review
             </h3>
             
             {/* Rating Section */}
             <div className="space-y-3">
-              <label className="text-sm font-medium text-gray-700">
+              <label className="text-sm font-medium text-foreground">
                 Overall Rating <span className="text-red-500">*</span>
               </label>
               <div className="flex items-center space-x-1">
@@ -160,13 +160,13 @@ export function ReviewConsentModal({
                     className={`p-1 rounded ${
                       star <= rating 
                         ? 'text-yellow-400' 
-                        : 'text-gray-300 hover:text-yellow-400'
+                        : 'text-gray-300 dark:text-gray-600 hover:text-yellow-400'
                     } transition-colors`}
                   >
                     <Star className="h-8 w-8 fill-current" />
                   </button>
                 ))}
-                <span className="ml-2 text-sm text-gray-600">
+                <span className="ml-2 text-sm text-muted-foreground">
                   {rating} star{rating !== 1 ? 's' : ''}
                 </span>
               </div>
@@ -174,11 +174,11 @@ export function ReviewConsentModal({
 
             {/* Recommendation Score */}
             <div className="space-y-3">
-              <label className="text-sm font-medium text-gray-700">
+              <label className="text-sm font-medium text-foreground">
                 How likely are you to recommend {contractorName} to others? <span className="text-red-500">*</span>
               </label>
               <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-600">0</span>
+                <span className="text-sm text-muted-foreground">0</span>
                 <input
                   type="range"
                   min="0"
@@ -186,21 +186,21 @@ export function ReviewConsentModal({
                   value={recommendScore}
                   onChange={(e) => setRecommendScore(Number(e.target.value))}
                   disabled={loading}
-                  className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                  className="flex-1 h-2 bg-gray-200 dark:bg-white/10 rounded-lg appearance-none cursor-pointer"
                 />
-                <span className="text-sm text-gray-600">10</span>
-                <span className="ml-2 text-sm font-medium text-gray-900">
+                <span className="text-sm text-muted-foreground">10</span>
+                <span className="ml-2 text-sm font-medium text-foreground">
                   {recommendScore}/10
                 </span>
               </div>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-muted-foreground">
                 {recommendScore >= 9 ? 'Promoter' : recommendScore >= 7 ? 'Passive' : 'Detractor'}
               </p>
             </div>
 
             {/* Review Text */}
             <div className="space-y-3">
-              <label className="text-sm font-medium text-gray-700">
+              <label className="text-sm font-medium text-foreground">
                 Write your review <span className="text-red-500">*</span>
               </label>
               <Textarea
@@ -210,7 +210,7 @@ export function ReviewConsentModal({
                 className="min-h-[120px] resize-none"
                 disabled={loading}
               />
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-muted-foreground">
                 {text.length}/500 characters
               </p>
             </div>
@@ -218,9 +218,9 @@ export function ReviewConsentModal({
 
           {/* Error Display */}
           {error && (
-            <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
-              <AlertCircle className="h-4 w-4 text-red-600 flex-shrink-0" />
-              <p className="text-sm text-red-700">{error}</p>
+            <div className="flex items-center gap-2 p-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-lg">
+              <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400 flex-shrink-0" />
+              <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
             </div>
           )}
         </div>

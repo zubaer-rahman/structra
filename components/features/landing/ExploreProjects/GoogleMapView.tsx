@@ -1,13 +1,14 @@
 'use client'
 
 import React, { useMemo } from 'react'
-import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
-import { MapPin, DollarSign, Search } from 'lucide-react'
-import { Project } from '@/server/database/interfaces'
-import { motion } from 'framer-motion'
+import { Search, MapPin, DollarSign, Map, Building2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Project } from '@/server/database/interfaces'
+import Image from 'next/image'
+import Link from 'next/link'
 import LeafletInteractiveMap, { MapItem } from '@/components/shared/LeafletInteractiveMap'
+import { normalizeFileReferences } from "@/utils/helpers"
 
 interface MapViewProps {
   projects: Project[]
@@ -32,7 +33,6 @@ export default function GoogleMapView({
   onSearch,
   searchQuery,
 }: MapViewProps) {
-  // Convert projects with coordinates to MapItems for the free Leaflet map
   const mapItems = useMemo<MapItem[]>(() => {
     return projects
       .filter((project) => project.location?.latitude && project.location?.longitude)
@@ -51,103 +51,105 @@ export default function GoogleMapView({
       }))
   }, [projects, formatBudget])
 
+  const hasMapData = mapItems.length > 0
+
   return (
-    <div className="flex flex-col lg:grid lg:grid-cols-4 gap-0 min-h-[600px] bg-white dark:bg-black">
-      {/* Sidebar with Search and Project List */}
-      <div className="lg:col-span-1 overflow-hidden order-2 lg:order-1 border-r border-gray-200 dark:border-white/5 flex flex-col h-[600px]">
-        {/* Search header */}
-        <div className="p-6 border-b border-gray-200 dark:border-white/5 space-y-4 flex-shrink-0 bg-gray-50/70 dark:bg-black/40">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-orange-600 flex items-center justify-center text-white font-bold text-xs">
-              01
+    <div className="flex flex-col lg:grid lg:grid-cols-4 gap-0 min-h-[600px] bg-white dark:bg-[#0A0A0A]">
+      {/* ── Sidebar ── */}
+      <div className="lg:col-span-1 order-2 lg:order-1 border-r border-gray-200 dark:border-white/5 flex flex-col h-[600px]">
+
+        {/* Sidebar header */}
+        <div className="p-5 border-b border-gray-200 dark:border-white/5 space-y-3 flex-shrink-0">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-orange-600 flex items-center justify-center">
+              <Building2 className="w-3.5 h-3.5 text-white" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">
-                Sector Pipeline
-              </h2>
-              <p className="text-[10px] text-gray-500 dark:text-gray-400 font-bold uppercase tracking-widest">
-                Active Construction Ventures
+              <p className="text-xs font-black text-gray-900 dark:text-white uppercase tracking-wider">Pipeline</p>
+              <p className="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">
+                {projects.length} Active
               </p>
             </div>
           </div>
 
-          <div className="relative group">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500 group-focus-within:text-orange-500 transition-colors" />
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
             <Input
-              placeholder="Filter by territory..."
+              placeholder="Search territory..."
               value={searchQuery}
               onChange={(e) => onSearch(e.target.value)}
-              className="pl-10 h-10 bg-white dark:bg-white/[0.03] border-gray-200 dark:border-white/5 focus:border-orange-500/50 text-xs text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 rounded-xl transition-all"
+              className="pl-9 h-9 bg-gray-50 dark:bg-white/[0.03] border-gray-200 dark:border-white/5 text-xs rounded-xl"
             />
           </div>
         </div>
 
-        {/* Project List */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-3 bg-slate-50/50 dark:bg-black/20">
+        {/* Project list */}
+        <div className="flex-1 overflow-y-auto space-y-1.5 p-3">
           {projects.length === 0 ? (
             <div className="py-12 text-center">
-              <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">
-                Zero pipeline deployments
+              <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">
+                No active projects
               </p>
             </div>
           ) : (
-            projects.map((project, index) => (
-              <motion.div
-                key={project.id || `project-${index}`}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.04 }}
-                onClick={() => onProjectClick(project)}
-                className={cn(
-                  'p-4 rounded-2xl border cursor-pointer transition-all duration-300 group relative overflow-hidden',
-                  selectedProject?.id === project.id
-                    ? 'border-orange-500/60 bg-orange-500/10 shadow-[0_0_20px_rgba(234,88,12,0.15)]'
-                    : 'border-gray-200/80 dark:border-white/5 bg-white dark:bg-white/[0.02] hover:bg-gray-100/60 dark:hover:bg-white/[0.06] hover:border-gray-300 dark:hover:border-white/10 shadow-sm dark:shadow-none'
-                )}
-              >
-                <div className="relative z-10 space-y-2">
-                  <h3 className="font-bold text-xs text-gray-900 dark:text-white line-clamp-1 group-hover:text-orange-500 transition-colors">
-                    {project.project_title}
-                  </h3>
+            projects.map((project, index) => {
+              const location = project.location?.city
+                ? `${project.location.city}, ${project.location.province || ''}`
+                : project.location?.address || null
+              const isSelected = selectedProject?.id === project.id
+              const imageUrl = normalizeFileReferences(project.project_photos)?.[0]?.url || "/images/placeholder-image.png"
 
-                  <div className="flex flex-col gap-1.5">
-                    <div className="flex items-center gap-1.5 text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      <MapPin className="h-3 w-3 text-orange-500 flex-shrink-0" />
-                      <span className="truncate">
-                        {project.location?.city && project.location?.province
-                          ? `${project.location.city}, ${project.location.province}`
-                          : project.location?.address || 'Verified Locale'}
-                      </span>
+              return (
+                <div
+                  key={project.id || `project-${index}`}
+                  onClick={() => onProjectClick(project)}
+                  className={cn(
+                    'p-3.5 rounded-xl border cursor-pointer transition-all duration-200 group',
+                    isSelected
+                      ? 'border-orange-500/40 bg-orange-500/8 dark:bg-orange-500/10'
+                      : 'border-transparent hover:border-gray-200 dark:hover:border-white/5 hover:bg-gray-50 dark:hover:bg-white/[0.03]'
+                  )}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="relative w-9 h-9 shrink-0">
+                      <Image
+                        src={imageUrl}
+                        alt={project.project_title || 'Project'}
+                        fill
+                        className="rounded-lg object-cover"
+                        onError={(e) => { (e.target as HTMLImageElement).src = '/images/placeholder-image.png' }}
+                      />
                     </div>
-
-                    <div className="flex items-center gap-1.5 text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      <DollarSign className="h-3 w-3 text-orange-500 flex-shrink-0" />
-                      <span className="text-gray-900 dark:text-white font-bold">{formatBudget(project.budget)}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className={cn(
+                        'text-xs font-bold truncate transition-colors',
+                        isSelected ? 'text-orange-500' : 'text-gray-900 dark:text-white group-hover:text-orange-500'
+                      )}>
+                        {project.project_title}
+                      </p>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        {location && (
+                          <span className="flex items-center gap-1 text-[10px] text-gray-400 truncate">
+                            <MapPin className="w-2.5 h-2.5 text-orange-400 shrink-0" />
+                            {location}
+                          </span>
+                        )}
+                        <span className="flex items-center gap-0.5 text-[10px] font-bold text-gray-600 dark:text-gray-300 shrink-0">
+                          <DollarSign className="w-2.5 h-2.5 text-orange-400" />
+                          {formatBudget(project.budget)}
+                        </span>
+                      </div>
                     </div>
                   </div>
-
-                  {project.category && project.category.length > 0 && (
-                    <div className="flex flex-wrap gap-1 pt-1">
-                      {project.category.slice(0, 1).map((cat, catIdx) => (
-                        <Badge
-                          key={catIdx}
-                          variant="outline"
-                          className="bg-gray-100 dark:bg-white/5 border-gray-200 dark:border-white/10 text-[9px] font-black uppercase text-gray-600 dark:text-gray-400 px-2 py-0"
-                        >
-                          {cat}
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
                 </div>
-              </motion.div>
-            ))
+              )
+            })
           )}
         </div>
       </div>
 
-      {/* Interactive Free OpenStreetMap Leaflet Display */}
-      <div className="lg:col-span-3 order-1 lg:order-2 h-full min-h-[600px] relative">
+      {/* ── Map Panel ── */}
+      <div className="lg:col-span-3 order-1 lg:order-2 relative min-h-[400px] lg:min-h-[600px]">
         <LeafletInteractiveMap
           items={mapItems}
           center={mapCenter}

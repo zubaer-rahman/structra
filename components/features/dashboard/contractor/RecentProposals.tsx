@@ -12,6 +12,7 @@ import {
 import { CalendarDays, DollarSign, MapPin, Plus, Edit, Building2, XCircle, MoreHorizontal, Clock, Star, FileText, TrendingUp } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { formatLocation } from "@/utils/helpers"
 
 
 interface Proposal {
@@ -102,7 +103,7 @@ export default function RecentProposals({ proposals }: RecentProposalsProps) {
     if (target.closest('[data-dropdown-trigger]') || target.closest('[data-dropdown-content]')) {
       return
     }
-    router.push(`/contractor/my-projects/${proposalId}`)
+    router.push(`/contractor/proposals/${proposalId}`)
   }
 
   return (
@@ -191,9 +192,7 @@ export default function RecentProposals({ proposals }: RecentProposalsProps) {
                       <div className="flex items-center gap-2 text-gray-700 bg-gray-50 p-2 rounded-lg">
                         <MapPin className="h-4 w-4 text-gray-600" />
                         <span className="text-sm font-medium truncate">
-                          {project.location && typeof project.location === 'object' && 'city' in project.location && 'province' in project.location
-                            ? `${project.location.city}, ${project.location.province}` 
-                            : typeof project.location === 'string' ? project.location : 'Not specified'}
+                          {formatLocation(project.location)}
                         </span>
                       </div>
                       <div className="flex items-center gap-2 text-gray-700 bg-gray-50 p-2 rounded-lg">
@@ -225,7 +224,7 @@ export default function RecentProposals({ proposals }: RecentProposalsProps) {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" data-dropdown-content>
                             <DropdownMenuItem asChild>
-                              <Link href={`/contractor/my-projects/${proposal.id}`} className="flex items-center">
+                              <Link href={`/contractor/proposals/${proposal.id}`} className="flex items-center">
                                 <Edit className="h-4 w-4 mr-2" />
                                 View Proposal
                               </Link>
@@ -296,9 +295,7 @@ export default function RecentProposals({ proposals }: RecentProposalsProps) {
                                   {project.project_title}
                                 </div>
                                 <div className="text-sm text-gray-500 dark:text-gray-400">
-                                  {project.location && typeof project.location === 'object' && 'city' in project.location && 'province' in project.location
-                                    ? `${project.location.city}, ${project.location.province}` 
-                                    : typeof project.location === 'string' ? project.location : 'Location not specified'}
+                                  {formatLocation(project.location)}
                                 </div>
                               </div>
                             </div>
@@ -332,7 +329,7 @@ export default function RecentProposals({ proposals }: RecentProposalsProps) {
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" data-dropdown-content>
                             <DropdownMenuItem asChild>
-                              <Link href={`/contractor/my-projects/${proposal.id}`} className="flex items-center">
+                              <Link href={`/contractor/proposals/${proposal.id}`} className="flex items-center">
                                 <Edit className="h-4 w-4 mr-2" />
                                 View Proposal
                               </Link>
@@ -352,7 +349,7 @@ export default function RecentProposals({ proposals }: RecentProposalsProps) {
           
           {/* View All link centered below the table */}
           <div className="flex justify-center pt-4">
-            <Link href="/contractor/my-projects" className="text-orange-600 hover:text-orange-700 font-medium text-sm transition-colors">
+            <Link href="/contractor/proposals" className="text-primary hover:underline font-medium text-sm transition-colors">
               View All Proposals
             </Link>
           </div>

@@ -97,7 +97,7 @@ const FormMultiSelect = React.forwardRef<
         {label && (
           <Label
             htmlFor={selectId}
-            className="text-sm font-medium text-gray-700 block"
+            className="text-sm font-medium text-gray-700 dark:text-gray-200 block"
           >
             {label}
             {required && <span className="text-red-500 ml-1">*</span>}
@@ -115,11 +115,10 @@ const FormMultiSelect = React.forwardRef<
               className={cn(
                 "w-full justify-between h-10 px-3 py-2 text-left font-normal",
                 "transition-colors duration-200",
-                "border-gray-300 focus-visible:border-blue-500 focus-visible:ring-offset-0 focus-visible:ring-0",
-                "bg-white hover:bg-gray-50",
-                error &&
-                  "border-red-500",
-                disabled && "opacity-50 cursor-not-allowed bg-gray-50"
+                "border-gray-300 dark:border-white/10 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:ring-offset-0 focus-visible:ring-0",
+                "bg-white dark:bg-[#141414] hover:bg-gray-50 dark:hover:bg-white/5 text-gray-900 dark:text-white",
+                error && "border-red-500 dark:border-red-500",
+                disabled && "opacity-50 cursor-not-allowed bg-gray-50 dark:bg-zinc-900"
               )}
             >
               <div className="flex-1 min-w-0 flex items-center">
@@ -129,7 +128,7 @@ const FormMultiSelect = React.forwardRef<
                       <Badge
                         key={option.value}
                         variant="outline"
-                        className="inline-flex items-center gap-1 h-6 px-2 py-0.5 text-xs font-medium border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors"
+                        className="inline-flex items-center gap-1 h-6 px-2 py-0.5 text-xs font-medium border-blue-200 dark:border-blue-500/30 bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-colors"
                       >
                         <span className="truncate max-w-[120px]">
                           {option.label}
@@ -147,9 +146,9 @@ const FormMultiSelect = React.forwardRef<
                               handleRemoveItem(option.value);
                             }
                           }}
-                          className="ml-1 rounded-full outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 cursor-pointer hover:bg-gray-200 p-0.5 transition-colors"
+                          className="ml-1 rounded-full outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 cursor-pointer hover:bg-blue-200 dark:hover:bg-white/20 p-0.5 transition-colors"
                         >
-                          <X className="h-3 w-3 text-gray-500" />
+                          <X className="h-3 w-3 text-blue-700 dark:text-blue-300" />
                           <span className="sr-only">Remove {option.label}</span>
                         </span>
                       </Badge>
@@ -157,30 +156,30 @@ const FormMultiSelect = React.forwardRef<
                     {selectedOptions.length > maxDisplayItems && (
                       <Badge
                         variant="outline"
-                        className="inline-flex items-center h-6 px-2 py-0.5 text-xs font-medium border-blue-200 bg-blue-50 text-blue-600"
+                        className="inline-flex items-center h-6 px-2 py-0.5 text-xs font-medium border-blue-200 dark:border-blue-500/30 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400"
                       >
                         +{selectedOptions.length - maxDisplayItems} more
                       </Badge>
                     )}
                   </div>
                 ) : (
-                  <span className="text-gray-500">{placeholder}</span>
+                  <span className="text-gray-500 dark:text-gray-400">{placeholder}</span>
                 )}
               </div>
-              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 text-gray-500 dark:text-gray-400" />
             </Button>
           </PopoverTrigger>
 
           <PopoverContent
-            className="w-[var(--radix-popover-trigger-width)] p-0"
+            className="w-[var(--radix-popover-trigger-width)] p-0 bg-white dark:bg-[#141414] border-gray-200 dark:border-white/10 text-gray-900 dark:text-white shadow-xl"
             align="start"
           >
-            <Command>
+            <Command className="bg-transparent">
               {searchable && (
-                <CommandInput placeholder="Search options..." className="h-9" />
+                <CommandInput placeholder="Search options..." className="h-9 placeholder:text-gray-400 dark:placeholder:text-gray-500" />
               )}
               <CommandList>
-                <CommandEmpty>No options found.</CommandEmpty>
+                <CommandEmpty className="text-sm py-4 text-center text-gray-500 dark:text-gray-400">No options found.</CommandEmpty>
 
                 <CommandGroup heading="All Options">
                   {options.map((option) => (
@@ -188,14 +187,14 @@ const FormMultiSelect = React.forwardRef<
                       key={option.value}
                       value={option.value}
                       onSelect={() => handleSelect(option.value)}
-                      className="flex items-center"
+                      className="flex items-center text-gray-900 dark:text-gray-100 aria-selected:bg-gray-100 dark:aria-selected:bg-white/10 aria-selected:text-gray-900 dark:aria-selected:text-white cursor-pointer"
                     >
                       {option.label}
                       <Check
                         className={cn(
                           "ml-auto h-4 w-4",
                           value?.includes(option.value)
-                            ? "opacity-100 text-gray-600"
+                            ? "opacity-100 text-blue-600 dark:text-blue-400"
                             : "opacity-0"
                         )}
                       />
@@ -208,9 +207,9 @@ const FormMultiSelect = React.forwardRef<
         </Popover>
 
         {helperText && (
-          <p className="text-xs text-gray-500 leading-relaxed">{helperText}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">{helperText}</p>
         )}
-        {error && <p className="text-sm text-red-500">{error}</p>}
+        {error && <p className="text-sm text-red-500 dark:text-red-400">{error}</p>}
       </div>
     );
   }

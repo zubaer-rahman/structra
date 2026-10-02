@@ -8,10 +8,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { AlertCircle } from "lucide-react"
 
 export interface FormSelectOption {
   value: string
   label: string
+  disabled?: boolean
 }
 
 export interface FormSelectProps {
@@ -47,17 +49,21 @@ const FormSelect = React.forwardRef<HTMLButtonElement, FormSelectProps>(
     validationMessage
   }, ref) => {
     const selectId = `form-select-${Math.random().toString(36).substr(2, 9)}`
+    const hasError = Boolean(error || isInvalid)
+    const errorMessage = error || validationMessage
     
     return (
-      <div className={cn("space-y-2", containerClassName)}>
+      <div className={cn("space-y-1.5", containerClassName)}>
         {label && (
-          <Label htmlFor={selectId} className={cn(
-            "text-sm font-medium block",
-            isInvalid ? "text-red-600" : "text-gray-700"
-          )}>
-            {label}
-            {required && <span className="text-red-500 ml-1">*</span>}
-          </Label>
+          <div className="flex items-center justify-between">
+            <Label htmlFor={selectId} className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+              {label}
+              {required && <span className="text-red-500 font-bold ml-1">*</span>}
+            </Label>
+            {hasError && (
+              <span className="text-xs font-medium text-red-500">Required</span>
+            )}
+          </div>
         )}
         <Select 
           value={value} 
@@ -70,31 +76,36 @@ const FormSelect = React.forwardRef<HTMLButtonElement, FormSelectProps>(
           <SelectTrigger 
             ref={ref}
             className={cn(
-              "w-full transition-colors duration-200",
-              "border-gray-300 focus:border-blue-500 focus:ring-0 focus:ring-offset-0 focus-visible:ring-offset-0 focus-visible:ring-0",
-              "bg-white hover:bg-gray-50",
-              (error || isInvalid) && "border-red-500 focus:border-red-500 focus:ring-0 focus:ring-offset-0 focus-visible:ring-offset-0 focus-visible:ring-0 bg-red-50",
-              disabled && "bg-gray-50 text-gray-500 cursor-not-allowed"
+              "w-full transition-all h-10 text-sm dark:bg-[#141414] dark:text-white",
+              hasError
+                ? "border-red-500 focus-visible:ring-red-400 bg-red-50/20 dark:bg-red-950/20"
+                : "border-gray-200 dark:border-white/10 focus-visible:ring-2 focus-visible:ring-orange-500/20 focus-visible:border-orange-500",
+              disabled && "bg-gray-50 dark:bg-zinc-900 text-gray-500 dark:text-gray-400 cursor-not-allowed"
             )}
           >
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-white dark:bg-[#141414] border-gray-200 dark:border-white/10 text-gray-900 dark:text-gray-100 shadow-xl">
             {options.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
+              <SelectItem 
+                key={option.value} 
+                value={option.value}
+                disabled={option.disabled}
+                className="text-gray-900 dark:text-gray-100 focus:bg-gray-100 dark:focus:bg-white/10 focus:text-gray-900 dark:focus:text-white cursor-pointer"
+              >
                 {option.label}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
-        {helperText && (
-          <p className="text-xs text-gray-500 leading-relaxed">{helperText}</p>
+        {helperText && !hasError && (
+          <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">{helperText}</p>
         )}
-        {error && (
-          <p className="text-sm text-red-500 font-medium">{error}</p>
-        )}
-        {isInvalid && !error && validationMessage && (
-          <p className="text-sm text-red-500 font-medium">{validationMessage}</p>
+        {hasError && errorMessage && (
+          <p className="text-xs text-red-500 flex items-center gap-1 mt-1">
+            <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
+            <span>{errorMessage}</span>
+          </p>
         )}
       </div>
     )
@@ -103,3 +114,4 @@ const FormSelect = React.forwardRef<HTMLButtonElement, FormSelectProps>(
 FormSelect.displayName = "FormSelect"
 
 export { FormSelect }
+

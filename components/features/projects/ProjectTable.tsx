@@ -10,7 +10,7 @@ import {
   type SortingState,
 } from "@tanstack/react-table";
 import { useState } from "react";
-import { ArrowUpDown, Calendar, MapPin, DollarSign, Clock } from "lucide-react";
+import { ArrowUpDown, Calendar, MapPin, DollarSign, Clock, Edit, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -270,24 +270,46 @@ export default function ProjectTable({
       }),
       columnHelper.display({
         id: "actions",
-        header: "Actions",
+        header: () => <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Actions</span>,
         cell: ({ row }) => {
           const project = row.original;
-          const canEdit = project.status !== PROJECT_STATUSES.PROPOSAL_SELECTED && 
-                         project.status !== PROJECT_STATUSES.COMPLETED;
           const canDelete = project.status === PROJECT_STATUSES.DRAFT;
           
           return (
-            <div className="flex justify-center" data-actions-cell>
+            <div className="flex items-center justify-end gap-1" data-actions-cell>
+              {onViewProject && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-neutral-100 dark:hover:bg-white/10"
+                  onClick={() => onViewProject(project)}
+                  title="View Project"
+                >
+                  <Eye className="h-4 w-4" />
+                  <span className="sr-only">View</span>
+                </Button>
+              )}
+              {onEditProject && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-950/30"
+                  onClick={() => onEditProject(project)}
+                  title="Edit Project"
+                >
+                  <Edit className="h-4 w-4" />
+                  <span className="sr-only">Edit</span>
+                </Button>
+              )}
               <TableActionDropdown
                 onView={() => onViewProject?.(project)}
-                onEdit={canEdit ? () => onEditProject?.(project) : undefined}
+                onEdit={onEditProject ? () => onEditProject(project) : undefined}
                 onDelete={canDelete ? () => onDeleteProject?.(project) : undefined}
               />
             </div>
           );
         },
-        size: 80,
+        size: 110,
       }),
     ],
          [onViewProject, onEditProject, onDeleteProject, projectProposalCounts]

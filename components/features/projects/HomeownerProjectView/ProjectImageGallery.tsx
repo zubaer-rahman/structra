@@ -172,14 +172,14 @@ export default function ProjectImageGallery({
           <>
             <button
               onClick={previousImage}
-              className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-700 p-1.5 sm:p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white dark:bg-zinc-800/90 dark:hover:bg-zinc-800 text-gray-700 dark:text-gray-200 p-1.5 sm:p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200"
               aria-label="Previous image"
             >
               <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4" />
             </button>
             <button
               onClick={nextImage}
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-700 p-1.5 sm:p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white dark:bg-zinc-800/90 dark:hover:bg-zinc-800 text-gray-700 dark:text-gray-200 p-1.5 sm:p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200"
               aria-label="Next image"
             >
               <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />

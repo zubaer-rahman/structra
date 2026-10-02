@@ -8,7 +8,7 @@ export const migration_037_add_government_id_verified_to_users: Migration = {
   up: async (db) => {
     await db.execute(`
       ALTER TABLE users 
-      ADD COLUMN government_id_verified BOOLEAN DEFAULT FALSE;
+      ADD COLUMN IF NOT EXISTS government_id_verified BOOLEAN DEFAULT FALSE;
     `);
   },
   down: async (db) => {

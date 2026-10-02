@@ -171,8 +171,6 @@ export default function HomeownerProposalsPage() {
             proposed_end_date,
             contractor,
             project,
-            contract_reviewed,
-            homeowner_contract_reviewed,
             project_details:projects!proposals_project_fkey (
               id,
               project_title,
@@ -233,8 +231,8 @@ export default function HomeownerProposalsPage() {
               status: proposal.status as ProposalStatus,
               is_selected: proposal.is_selected || 'no',
               is_deleted: 'no' as const,
-              contract_reviewed: proposal.contract_reviewed || false,
-              homeowner_contract_reviewed: proposal.homeowner_contract_reviewed || false,
+              contract_reviewed: false,
+              homeowner_contract_reviewed: false,
               created_at: proposal.created_at || '',
               updated_at: proposal.created_at || '',
               last_updated: proposal.created_at || '',
@@ -387,11 +385,11 @@ export default function HomeownerProposalsPage() {
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <div className="text-center p-6 max-w-md">
+            <h3 className="text-lg font-semibold text-foreground mb-2">
               Access Denied
             </h3>
-            <p className="text-gray-600">
+            <p className="text-sm text-muted-foreground">
               Only homeowners can view project proposals.
             </p>
           </div>
@@ -401,7 +399,7 @@ export default function HomeownerProposalsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-7xl mx-auto">
       <div>
         <Breadcrumbs
           items={[
@@ -414,31 +412,30 @@ export default function HomeownerProposalsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
             Project Proposals
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-sm text-muted-foreground mt-1">
             Review and manage proposals from contractors for your projects
           </p>
         </div>
       </div>
 
       {/* Controls Bar */}
-      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-        {/* Search and Filters */}
-        <div className="flex flex-col sm:flex-row gap-3 flex-1 max-w-md">
-          <div className="relative">
+      <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+        <div className="flex flex-col sm:flex-row gap-3 flex-1 max-w-lg">
+          <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
-              placeholder="Search proposals..."
+              placeholder="Search proposals, contractors..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pl-9 text-sm"
             />
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full sm:w-32">
-              <SelectValue placeholder="Status" />
+            <SelectTrigger className="w-full sm:w-36 text-sm">
+              <SelectValue placeholder="All Status" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Status</SelectItem>
@@ -448,53 +445,57 @@ export default function HomeownerProposalsPage() {
               <SelectItem value="rejected">Rejected</SelectItem>
             </SelectContent>
           </Select>
+          {projects.length > 1 && (
+            <Select value={projectFilter} onValueChange={setProjectFilter}>
+              <SelectTrigger className="w-full sm:w-44 text-sm truncate">
+                <SelectValue placeholder="All Projects" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Projects</SelectItem>
+                {projects.map((proj) => (
+                  <SelectItem key={proj.id} value={proj.id} className="truncate">
+                    {proj.project_title}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
         </div>
-
-
       </div>
 
-     
+      {/* Main Content: Table or Empty State */}
+      {filteredProposals.length === 0 && !proposalsLoading ? (
+        <div className="rounded-xl border border-dashed border-border/80 p-12 text-center">
+          <FileText className="h-10 w-10 text-muted-foreground/60 mx-auto mb-3" />
+          <h3 className="text-base font-semibold text-foreground mb-1">
+            No proposals found
+          </h3>
+          <p className="text-sm text-muted-foreground max-w-sm mx-auto">
+            {searchTerm || statusFilter !== "all" || projectFilter !== "all"
+              ? "No proposals match your current search or filter criteria."
+              : "You haven't received any proposals yet. Check back later or publish your project to receive proposals from contractors."}
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          <ResultsSummary
+            startIndex={startIndex}
+            endIndex={endIndex}
+            totalItems={filteredProposals.length}
+            itemsPerPage={itemsPerPage}
+            onItemsPerPageChange={handleItemsPerPageChange}
+          />
 
-             {/* Results Summary */}
-       <ResultsSummary
-         startIndex={startIndex}
-         endIndex={endIndex}
-         totalItems={filteredProposals.length}
-         itemsPerPage={itemsPerPage}
-         onItemsPerPageChange={handleItemsPerPageChange}
-       />
+          <HomeownerProposalTable proposals={paginatedProposals} />
 
-              {/* Proposals Table */}
-        <HomeownerProposalTable
-          proposals={paginatedProposals}
-        />
-
-       {/* Pagination */}
-       {totalPages > 1 && (
-         <SharedPagination
-           currentPage={currentPage}
-           totalPages={totalPages}
-           onPageChange={handlePageChange}
-         />
-       )}
-
-       {/* Empty State */}
-      {filteredProposals.length === 0 && !proposalsLoading && (
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-center py-12">
-              <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                No proposals found
-              </h3>
-              <p className="text-gray-600">
-                {searchTerm || statusFilter !== "all" || projectFilter !== "all"
-                  ? "Try adjusting your search or filters"
-                  : "You haven't received any proposals yet. Check back later or create a new project to attract contractors."}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+          {totalPages > 1 && (
+            <SharedPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          )}
+        </div>
       )}
     </div>
   );

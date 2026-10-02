@@ -1,5 +1,3 @@
 export { default as HomeownerDashboard } from './HomeownerDashboard'
-export { default as UserGreeting } from './UserGreeting'
-export { default as QuickActions } from './QuickActions'
 export { default as ProjectStats } from './ProjectStats'
 export { default as RecentProjects } from './RecentProjects'

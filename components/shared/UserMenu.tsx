@@ -28,31 +28,31 @@ export function UserMenu() {
     return null
   }
 
-  // Get user initial for avatar fallback (only first letter)
-  const getUserInitial = () => {
-    if (user?.user_metadata?.full_name) {
-      return user.user_metadata.full_name[0].toUpperCase()
-    }
-    if (user?.email) {
-      return user.email[0].toUpperCase()
-    }
-    return 'U'
-  }
+  const userDisplayName =
+    user?.user_metadata?.full_name ||
+    user?.full_name ||
+    (user?.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : '') ||
+    user?.email ||
+    'User'
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className="group cursor-pointer transition-all duration-300 p-0.5 rounded-full border-2 border-gray-100 dark:border-white/10 hover:border-orange-200 dark:hover:border-orange-500/40 hover:bg-orange-50/50 dark:hover:bg-orange-500/10 shadow-sm hover:shadow-md">
+        <button
+          type="button"
+          aria-label="User account menu"
+          className="group cursor-pointer transition-all duration-300 p-0.5 rounded-full border-2 border-gray-100 dark:border-white/10 hover:border-orange-200 dark:hover:border-orange-500/40 hover:bg-orange-50/50 dark:hover:bg-orange-500/10 shadow-sm hover:shadow-md inline-flex items-center justify-center shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+        >
           <RoleBasedAvatar
             role={user?.user_role}
             isVerified={false}
-            size={44}
-            name={user?.user_metadata?.full_name || user?.email}
+            size={40}
+            name={userDisplayName}
             showVerificationBadge={false}
             profilePhoto={user?.profile_photo}
             className="group-hover:scale-95 transition-transform duration-300"
           />
-        </div>
+        </button>
       </DropdownMenuTrigger>
       
       <DropdownMenuContent className="w-64 p-1.5 rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#141414] shadow-xl text-gray-900 dark:text-gray-100" align="end" forceMount>
@@ -62,7 +62,7 @@ export function UserMenu() {
             {/* Username Row */}
             <div className="flex items-center">
               <p className="text-base font-semibold leading-tight text-gray-800 dark:text-white truncate">
-                {capitalizeWords(user?.user_metadata?.full_name) || "User"}
+                {capitalizeWords(userDisplayName)}
               </p>
             </div>
             
@@ -113,7 +113,7 @@ export function UserMenu() {
         
         <DropdownMenuItem
           onClick={handleSignOut}
-          className="p-2 rounded-lg text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors"
+          className="p-2 rounded-lg text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors cursor-pointer"
         >
           <LogOut className="mr-2 h-4 w-4" />
           <span className="font-medium">Sign Out</span>

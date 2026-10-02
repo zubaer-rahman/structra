@@ -199,7 +199,7 @@ export default function ReviewsTabContent({
               className={`w-5 h-5 ${
                 star <= rating
                   ? "text-yellow-400 fill-yellow-400"
-                  : "text-gray-300"
+                  : "text-gray-300 dark:text-gray-600"
               }`}
             />
           </button>
@@ -210,10 +210,10 @@ export default function ReviewsTabContent({
 
   const renderRecommendScore = (score: number) => {
     const getScoreColor = (score: number) => {
-      if (score >= 9) return "text-green-600 bg-green-100";
-      if (score >= 7) return "text-yellow-600 bg-yellow-100";
-      if (score >= 5) return "text-orange-600 bg-orange-100";
-      return "text-red-600 bg-red-100";
+      if (score >= 9) return "text-green-600 bg-green-100 dark:text-green-400 dark:bg-green-950/40";
+      if (score >= 7) return "text-yellow-600 bg-yellow-100 dark:text-yellow-400 dark:bg-yellow-950/40";
+      if (score >= 5) return "text-orange-600 bg-orange-100 dark:text-orange-400 dark:bg-orange-950/40";
+      return "text-red-600 bg-red-100 dark:text-red-400 dark:bg-red-950/40";
     };
 
     return (
@@ -228,7 +228,7 @@ export default function ReviewsTabContent({
       <div className="flex items-center justify-center py-8">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading reviews...</p>
+          <p className="text-gray-600 dark:text-gray-400">Loading reviews...</p>
         </div>
       </div>
     );

@@ -8,7 +8,7 @@ export const migration_031_add_delay_penalty_to_projects: Migration = {
   up: async (db) => {
     await db.execute(`
       ALTER TABLE projects 
-      ADD COLUMN delay_penalty DECIMAL(10,2) DEFAULT 0.00 NOT NULL;
+      ADD COLUMN IF NOT EXISTS delay_penalty DECIMAL(10,2) DEFAULT 0.00 NOT NULL;
     `);
     
     await db.execute(`

@@ -61,6 +61,13 @@ export function HomeownerProfile() {
     government_id_verified: false,
   });
 
+  const [initialFormData, setInitialFormData] = useState<{
+    first_name: string;
+    last_name: string;
+    phone_number: string;
+    address: LocationData;
+  } | null>(null);
+
   useEffect(() => {
     const fetchUserData = async () => {
       if (!user) return;
@@ -112,15 +119,20 @@ export function HomeownerProfile() {
           };
         }
 
-        setFormData({
+        const initialValues = {
           first_name: data?.first_name || "",
           last_name: data?.last_name || "",
           phone_number: data?.phone_number || "",
           address: addressData,
+        };
+
+        setFormData({
+          ...initialValues,
           profile_photo: data?.profile_photo || "",
           government_id: data?.government_id || null,
           government_id_verified: data?.government_id_verified || false,
         });
+        setInitialFormData(initialValues);
       } catch (error) {
         console.error("Error fetching user data:", error);
       } finally {
@@ -142,6 +154,20 @@ export function HomeownerProfile() {
   const isAddressValid = addressString.length > 0;
 
   const isFormValid = isFirstNameValid && isLastNameValid && isPhoneValid && isAddressValid;
+
+  const isDirty = useMemo(() => {
+    if (!initialFormData) return false;
+    return (
+      formData.first_name.trim() !== initialFormData.first_name.trim() ||
+      formData.last_name.trim() !== initialFormData.last_name.trim() ||
+      formData.phone_number.trim() !== initialFormData.phone_number.trim() ||
+      (formData.address?.address || "").trim() !== (initialFormData.address?.address || "").trim() ||
+      formData.address?.city !== initialFormData.address?.city ||
+      formData.address?.province !== initialFormData.address?.province ||
+      formData.address?.postalCode !== initialFormData.address?.postalCode ||
+      formData.address?.country !== initialFormData.address?.country
+    );
+  }, [formData, initialFormData]);
 
   const requiredFields = useMemo(() => [
     { key: 'first_name', label: 'First Name', valid: isFirstNameValid },
@@ -288,6 +314,12 @@ export function HomeownerProfile() {
       }
 
       await fetchUserProfile();
+      setInitialFormData({
+        first_name: trimmedFirstName,
+        last_name: trimmedLastName,
+        phone_number: trimmedPhone,
+        address: { ...formData.address },
+      });
       toast.success("Profile updated successfully!");
     } catch (error: any) {
       console.error("Error updating profile:", error);
@@ -299,9 +331,9 @@ export function HomeownerProfile() {
 
   if (!user) {
     return (
-      <div className="min-h-[50vh] bg-gray-50 flex items-center justify-center" suppressHydrationWarning>
-        <div className="max-w-md w-full bg-white rounded-lg shadow-md p-6" suppressHydrationWarning>
-          <div className="text-center" suppressHydrationWarning>Authentication required. Please sign in.</div>
+      <div className="min-h-[50vh] bg-gray-50 dark:bg-black flex items-center justify-center" suppressHydrationWarning>
+        <div className="max-w-md w-full bg-white dark:bg-[#141414] border border-gray-200 dark:border-white/10 rounded-lg shadow-md p-6" suppressHydrationWarning>
+          <div className="text-center text-gray-900 dark:text-white" suppressHydrationWarning>Authentication required. Please sign in.</div>
         </div>
       </div>
     );
@@ -311,53 +343,53 @@ export function HomeownerProfile() {
     return (
       <div className="space-y-6" suppressHydrationWarning>
         <div className="text-center py-12" suppressHydrationWarning>
-          <div className="text-gray-600" suppressHydrationWarning>Loading profile...</div>
+          <div className="text-gray-600 dark:text-gray-400" suppressHydrationWarning>Loading profile...</div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8 pb-12">
+    <div className="space-y-8 pb-20">
       {/* Breadcrumb Navigation */}
       <Breadcrumbs />
 
       {/* Hero / Header Section */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-gray-100">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-gray-100 dark:border-white/10">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-orange-600 bg-orange-50 px-2.5 py-0.5 rounded-full border border-orange-100">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/40 px-2.5 py-0.5 rounded-full border border-orange-100 dark:border-orange-500/20">
               Account Management
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 mt-1">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 dark:text-white mt-1">
             Homeowner Profile
           </h1>
-          <p className="text-sm text-gray-500 mt-0.5">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
             Manage your personal details, home location, and verification credentials.
           </p>
         </div>
 
         {/* Verification & Role Status Badges */}
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200/60 shadow-xs">
-            <User className="h-3.5 w-3.5 text-gray-500" />
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-200 border border-gray-200/60 dark:border-white/10 shadow-xs">
+            <User className="h-3.5 w-3.5 text-gray-500 dark:text-gray-400" />
             Homeowner
           </span>
 
           {formData.government_id_verified ? (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80 shadow-xs">
-              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-500/30 shadow-xs">
+              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
               Verified Account
             </span>
           ) : formData.government_id ? (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200/80 shadow-xs">
-              <Clock className="h-3.5 w-3.5 text-amber-600" />
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-500/30 shadow-xs">
+              <Clock className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
               Pending Review
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-gray-50 text-gray-600 border border-gray-200 shadow-xs">
-              <Shield className="h-3.5 w-3.5 text-gray-400" />
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-gray-50 dark:bg-white/5 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-white/10 shadow-xs">
+              <Shield className="h-3.5 w-3.5 text-gray-400 dark:text-gray-500" />
               Unverified
             </span>
           )}
@@ -369,7 +401,7 @@ export function HomeownerProfile() {
         {/* Left Column: Profile Card, Readiness & Trust Summary (Sticky on Desktop) */}
         <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-20">
           {/* Identity & Avatar Card */}
-          <div className="bg-white rounded-2xl border border-gray-200/80 shadow-xs p-6 text-center space-y-4">
+          <div className="bg-white dark:bg-[#141414] rounded-2xl border border-gray-200/80 dark:border-white/10 shadow-xs p-6 text-center space-y-4">
             <div className="flex justify-center">
               <ProfilePictureUpload
                 currentPhoto={formData.profile_photo}
@@ -380,25 +412,25 @@ export function HomeownerProfile() {
             </div>
 
             <div>
-              <h2 className="text-lg font-bold text-gray-900 leading-tight">
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white leading-tight">
                 {`${formData.first_name} ${formData.last_name}`.trim() || user?.user_metadata?.full_name || "Homeowner"}
               </h2>
-              <p className="text-xs text-gray-500 mt-0.5 truncate" title={user?.email || ""}>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate" title={user?.email || ""}>
                 {user?.email || "No email linked"}
               </p>
             </div>
 
-            <div className="border-t border-gray-100 pt-4">
+            <div className="border-t border-gray-100 dark:border-white/10 pt-4">
               {/* Profile Strength Progress Bar */}
               <div className="flex items-center justify-between text-xs mb-1.5">
-                <span className="font-semibold text-gray-700">Profile Completion</span>
-                <span className="font-bold text-orange-600">
+                <span className="font-semibold text-gray-700 dark:text-gray-300">Profile Completion</span>
+                <span className="font-bold text-orange-600 dark:text-orange-400">
                   {Math.round((completedCount / requiredFields.length) * 100)}%
                 </span>
               </div>
-              <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+              <div className="h-2 w-full bg-gray-100 dark:bg-white/10 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-orange-600 transition-all duration-300 rounded-full"
+                  className="h-full bg-orange-600 dark:bg-orange-500 transition-all duration-300 rounded-full"
                   style={{ width: `${(completedCount / requiredFields.length) * 100}%` }}
                 />
               </div>
@@ -406,52 +438,52 @@ export function HomeownerProfile() {
               {/* Requirement Checklist */}
               <div className="mt-4 space-y-2 text-left">
                 {requiredFields.map((field) => (
-                  <div key={field.key} className="flex items-center justify-between text-xs text-gray-600">
+                  <div key={field.key} className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-300">
                     <span className="flex items-center gap-2">
                       {field.valid ? (
-                        <Check className="h-3.5 w-3.5 text-emerald-600" />
+                        <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                       ) : (
-                        <div className="h-1.5 w-1.5 rounded-full bg-gray-300 ml-1 mr-1" />
+                        <div className="h-1.5 w-1.5 rounded-full bg-gray-300 dark:bg-gray-600 ml-1 mr-1" />
                       )}
                       <span>{field.label}</span>
                     </span>
-                    <span className={field.valid ? "text-emerald-600 font-medium" : "text-gray-400"}>
+                    <span className={field.valid ? "text-emerald-600 dark:text-emerald-400 font-medium" : "text-gray-400 dark:text-gray-500"}>
                       {field.valid ? "Done" : "Missing"}
                     </span>
                   </div>
                 ))}
                 
-                <div className="flex items-center justify-between text-xs text-gray-600 pt-1 border-t border-dashed border-gray-100">
+                <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-300 pt-1 border-t border-dashed border-gray-100 dark:border-white/10">
                   <span className="flex items-center gap-2">
                     {formData.profile_photo ? (
-                      <Check className="h-3.5 w-3.5 text-emerald-600" />
+                      <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                     ) : (
-                      <div className="h-1.5 w-1.5 rounded-full bg-gray-300 ml-1 mr-1" />
+                      <div className="h-1.5 w-1.5 rounded-full bg-gray-300 dark:bg-gray-600 ml-1 mr-1" />
                     )}
                     <span>Profile Photo</span>
                   </span>
-                  <span className={formData.profile_photo ? "text-emerald-600 font-medium" : "text-gray-400"}>
+                  <span className={formData.profile_photo ? "text-emerald-600 dark:text-emerald-400 font-medium" : "text-gray-400 dark:text-gray-500"}>
                     {formData.profile_photo ? "Added" : "Optional"}
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between text-xs text-gray-600">
+                <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-300">
                   <span className="flex items-center gap-2">
                     {formData.government_id_verified ? (
-                      <Check className="h-3.5 w-3.5 text-emerald-600" />
+                      <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                     ) : formData.government_id ? (
-                      <Clock className="h-3.5 w-3.5 text-amber-500" />
+                      <Clock className="h-3.5 w-3.5 text-amber-500 dark:text-amber-400" />
                     ) : (
-                      <div className="h-1.5 w-1.5 rounded-full bg-gray-300 ml-1 mr-1" />
+                      <div className="h-1.5 w-1.5 rounded-full bg-gray-300 dark:bg-gray-600 ml-1 mr-1" />
                     )}
                     <span>Government ID</span>
                   </span>
                   <span className={
                     formData.government_id_verified 
-                      ? "text-emerald-600 font-medium" 
+                      ? "text-emerald-600 dark:text-emerald-400 font-medium" 
                       : formData.government_id 
-                      ? "text-amber-600 font-medium" 
-                      : "text-gray-400"
+                      ? "text-amber-600 dark:text-amber-400 font-medium" 
+                      : "text-gray-400 dark:text-gray-500"
                   }>
                     {formData.government_id_verified 
                       ? "Verified" 
@@ -464,13 +496,13 @@ export function HomeownerProfile() {
             </div>
 
             {/* Trust & Escrow Guarantee Note */}
-            <div className="border-t border-gray-100 pt-4 text-left">
-              <div className="bg-slate-50 border border-slate-200/70 rounded-xl p-3.5">
+            <div className="border-t border-gray-100 dark:border-white/10 pt-4 text-left">
+              <div className="bg-slate-50 dark:bg-white/[0.03] border border-slate-200/70 dark:border-white/10 rounded-xl p-3.5">
                 <div className="flex items-start gap-2.5">
-                  <ShieldCheck className="h-4 w-4 text-emerald-600 flex-shrink-0 mt-0.5" />
+                  <ShieldCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5" />
                   <div>
-                    <h4 className="text-xs font-bold text-gray-900">Protected Profile</h4>
-                    <p className="text-[11px] text-gray-600 leading-relaxed mt-0.5">
+                    <h4 className="text-xs font-bold text-gray-900 dark:text-white">Protected Profile</h4>
+                    <p className="text-[11px] text-gray-600 dark:text-gray-400 leading-relaxed mt-0.5">
                       Your identity documents and phone number are encrypted and strictly used for verified contracts and escrow milestone releases.
                     </p>
                   </div>
@@ -483,15 +515,15 @@ export function HomeownerProfile() {
         {/* Right Column: Editable Forms & Verification Documents */}
         <div className="lg:col-span-8 space-y-6">
           {/* Card 1: Personal & Contact Information */}
-          <div className="rounded-2xl bg-white border border-gray-200/80 p-6 sm:p-7 shadow-xs space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-gray-100 gap-3">
+          <div className="rounded-2xl bg-white dark:bg-[#141414] border border-gray-200/80 dark:border-white/10 p-6 sm:p-7 shadow-xs space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-gray-100 dark:border-white/10 gap-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center text-orange-600 flex-shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-950/40 border border-orange-100 dark:border-orange-500/20 flex items-center justify-center text-orange-600 dark:text-orange-400 flex-shrink-0">
                   <User className="h-5 w-5" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-gray-900">Personal Information</h2>
-                  <p className="text-xs text-gray-500">
+                  <h2 className="text-lg font-bold text-gray-900 dark:text-white">Personal Information</h2>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
                     Your legal name and primary contact details for agreements.
                   </p>
                 </div>
@@ -500,13 +532,13 @@ export function HomeownerProfile() {
               <span className={cn(
                 "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold self-start sm:self-auto",
                 completedCount === requiredFields.length
-                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                  : "bg-amber-50 text-amber-700 border border-amber-200"
+                  ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/30"
+                  : "bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-500/30"
               )}>
                 {completedCount === requiredFields.length ? (
-                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                 ) : (
-                  <AlertCircle className="h-3.5 w-3.5 text-amber-600" />
+                  <AlertCircle className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
                 )}
                 {completedCount} of {requiredFields.length} Required Fields
               </span>
@@ -518,7 +550,7 @@ export function HomeownerProfile() {
                 {/* First Name */}
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="first_name" className="text-xs font-semibold text-gray-700">
+                    <Label htmlFor="first_name" className="text-xs font-semibold text-gray-700 dark:text-gray-300">
                       First Name <span className="text-red-500 font-bold">*</span>
                     </Label>
                     {touched.first_name && !isFirstNameValid && (
@@ -532,10 +564,10 @@ export function HomeownerProfile() {
                     onBlur={() => handleBlur("first_name")}
                     placeholder="Enter first name"
                     className={cn(
-                      "transition-all h-10 text-sm",
+                      "transition-all h-10 text-sm dark:bg-[#161616] dark:text-white",
                       touched.first_name && !isFirstNameValid
-                        ? "border-red-500 focus-visible:ring-red-400 bg-red-50/20"
-                        : "border-gray-200 focus-visible:ring-2 focus-visible:ring-orange-500/20 focus-visible:border-orange-500"
+                        ? "border-red-500 focus-visible:ring-red-400 bg-red-50/20 dark:bg-red-950/20"
+                        : "border-gray-200 dark:border-white/10 focus-visible:ring-2 focus-visible:ring-orange-500/20 focus-visible:border-orange-500"
                     )}
                   />
                   {touched.first_name && !isFirstNameValid && (
@@ -548,7 +580,7 @@ export function HomeownerProfile() {
                 {/* Last Name */}
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="last_name" className="text-xs font-semibold text-gray-700">
+                    <Label htmlFor="last_name" className="text-xs font-semibold text-gray-700 dark:text-gray-300">
                       Last Name <span className="text-red-500 font-bold">*</span>
                     </Label>
                     {touched.last_name && !isLastNameValid && (
@@ -562,10 +594,10 @@ export function HomeownerProfile() {
                     onBlur={() => handleBlur("last_name")}
                     placeholder="Enter last name"
                     className={cn(
-                      "transition-all h-10 text-sm",
+                      "transition-all h-10 text-sm dark:bg-[#161616] dark:text-white",
                       touched.last_name && !isLastNameValid
-                        ? "border-red-500 focus-visible:ring-red-400 bg-red-50/20"
-                        : "border-gray-200 focus-visible:ring-2 focus-visible:ring-orange-500/20 focus-visible:border-orange-500"
+                        ? "border-red-500 focus-visible:ring-red-400 bg-red-50/20 dark:bg-red-950/20"
+                        : "border-gray-200 dark:border-white/10 focus-visible:ring-2 focus-visible:ring-orange-500/20 focus-visible:border-orange-500"
                     )}
                   />
                   {touched.last_name && !isLastNameValid && (
@@ -581,7 +613,7 @@ export function HomeownerProfile() {
                 {/* Phone Number */}
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="phone_number" className="text-xs font-semibold text-gray-700 flex items-center gap-1.5">
+                    <Label htmlFor="phone_number" className="text-xs font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
                       <Phone className="h-3 w-3 text-gray-400" />
                       <span>Phone Number</span>
                       <span className="text-red-500 font-bold">*</span>
@@ -600,10 +632,10 @@ export function HomeownerProfile() {
                     onBlur={() => handleBlur("phone_number")}
                     placeholder="e.g. +1 (555) 123-4567"
                     className={cn(
-                      "transition-all h-10 text-sm",
+                      "transition-all h-10 text-sm dark:bg-[#161616] dark:text-white",
                       touched.phone_number && !isPhoneValid
-                        ? "border-red-500 focus-visible:ring-red-400 bg-red-50/20"
-                        : "border-gray-200 focus-visible:ring-2 focus-visible:ring-orange-500/20 focus-visible:border-orange-500"
+                        ? "border-red-500 focus-visible:ring-red-400 bg-red-50/20 dark:bg-red-950/20"
+                        : "border-gray-200 dark:border-white/10 focus-visible:ring-2 focus-visible:ring-orange-500/20 focus-visible:border-orange-500"
                     )}
                   />
                   {touched.phone_number && !isPhoneValid && (
@@ -619,11 +651,11 @@ export function HomeownerProfile() {
                 {/* Email Address */}
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="email" className="text-xs font-semibold text-gray-700 flex items-center gap-1.5">
+                    <Label htmlFor="email" className="text-xs font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
                       <Mail className="h-3 w-3 text-gray-400" />
                       <span>Email Address</span>
                     </Label>
-                    <span className="text-[11px] text-gray-400 flex items-center gap-1">
+                    <span className="text-[11px] text-gray-400 dark:text-gray-500 flex items-center gap-1">
                       <Lock className="h-3 w-3" /> Read-only
                     </span>
                   </div>
@@ -632,7 +664,7 @@ export function HomeownerProfile() {
                     type="email"
                     value={user?.email || ""}
                     disabled
-                    className="h-10 text-sm bg-gray-50/80 border-gray-200 text-gray-500 cursor-not-allowed"
+                    className="h-10 text-sm bg-gray-50/80 dark:bg-white/5 border-gray-200 dark:border-white/10 text-gray-500 dark:text-gray-400 cursor-not-allowed"
                   />
                 </div>
               </div>
@@ -656,40 +688,40 @@ export function HomeownerProfile() {
           </div>
 
           {/* Card 2: Government-Issued Photo ID */}
-          <div className="rounded-2xl bg-white border border-gray-200/80 p-6 sm:p-7 shadow-xs space-y-5">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-gray-100 gap-3">
+          <div className="rounded-2xl bg-white dark:bg-[#141414] border border-gray-200/80 dark:border-white/10 p-6 sm:p-7 shadow-xs space-y-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-gray-100 dark:border-white/10 gap-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center text-orange-600 flex-shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-950/40 border border-orange-100 dark:border-orange-500/20 flex items-center justify-center text-orange-600 dark:text-orange-400 flex-shrink-0">
                   <Shield className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-gray-900">Government Issued Photo ID</h3>
-                  <p className="text-xs text-gray-500">
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">Government Issued Photo ID</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
                     Official identification required for verification and compliance.
                   </p>
                 </div>
               </div>
 
               {formData.government_id_verified ? (
-                <div className="flex items-center space-x-1.5 text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full text-xs font-semibold self-start sm:self-auto">
-                  <CheckCircle className="h-3.5 w-3.5 text-emerald-600" />
+                <div className="flex items-center space-x-1.5 text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-500/30 px-3 py-1 rounded-full text-xs font-semibold self-start sm:self-auto">
+                  <CheckCircle className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                   <span>Verified by Admin</span>
                 </div>
               ) : formData.government_id ? (
-                <div className="flex items-center space-x-1.5 text-amber-700 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full text-xs font-semibold self-start sm:self-auto">
-                  <Clock className="h-3.5 w-3.5 text-amber-600" />
+                <div className="flex items-center space-x-1.5 text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-500/30 px-3 py-1 rounded-full text-xs font-semibold self-start sm:self-auto">
+                  <Clock className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
                   <span>Pending Admin Review</span>
                 </div>
               ) : null}
             </div>
 
             {formData.government_id_verified ? (
-              <div className="p-4 bg-emerald-50/70 border border-emerald-200 rounded-xl">
+              <div className="p-4 bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-500/30 rounded-xl">
                 <div className="flex items-start space-x-3">
-                  <CheckCircle className="h-5 w-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sm font-semibold text-emerald-900">Government ID Verified</p>
-                    <p className="text-xs text-emerald-700 mt-0.5">
+                    <p className="text-sm font-semibold text-emerald-900 dark:text-emerald-200">Government ID Verified</p>
+                    <p className="text-xs text-emerald-700 dark:text-emerald-300 mt-0.5">
                       Your government-issued photo ID has been reviewed and approved by our admin team.
                     </p>
                   </div>
@@ -698,12 +730,12 @@ export function HomeownerProfile() {
             ) : (
               <>
                 {formData.government_id && (
-                  <div className="p-4 bg-amber-50/70 border border-amber-200 rounded-xl mb-4">
+                  <div className="p-4 bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-500/30 rounded-xl mb-4">
                     <div className="flex items-start space-x-3">
-                      <Clock className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                      <Clock className="h-5 w-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
                       <div>
-                        <p className="text-sm font-semibold text-amber-900">Government ID In Review</p>
-                        <p className="text-xs text-amber-700 mt-0.5">
+                        <p className="text-sm font-semibold text-amber-900 dark:text-amber-200">Government ID In Review</p>
+                        <p className="text-xs text-amber-700 dark:text-amber-300 mt-0.5">
                           Your government ID has been uploaded and is waiting for administrator verification. You will be notified once reviewed.
                         </p>
                       </div>
@@ -725,25 +757,32 @@ export function HomeownerProfile() {
             userRole="homeowner"
             userName={`${formData.first_name} ${formData.last_name}`.trim()}
             userEmail={user?.email}
-            className="mb-0"
-            cardClassName="rounded-2xl border border-gray-200/80 shadow-xs"
+            className="mb-2"
+            cardClassName="rounded-2xl border border-gray-200/80 dark:border-white/10 shadow-xs bg-white dark:bg-[#141414]"
           />
 
           {/* Docked Action Bar */}
-          <div className="sticky bottom-4 z-20 bg-white/95 backdrop-blur-md border border-gray-200/90 rounded-2xl p-4 sm:p-5 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="sticky bottom-4 z-20 !mt-8 sm:!mt-10 bg-white/95 dark:bg-[#141414]/95 backdrop-blur-md border border-gray-200/90 dark:border-white/10 rounded-2xl p-4 sm:p-5 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-sm">
-              {!isFormValid ? (
-                <div className="flex items-center gap-2 text-amber-800">
-                  <AlertCircle className="h-4 w-4 text-amber-500 flex-shrink-0" />
+              {!isDirty ? (
+                <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+                  <Check className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                  <span className="text-xs sm:text-sm font-medium">
+                    All profile information is up to date.
+                  </span>
+                </div>
+              ) : !isFormValid ? (
+                <div className="flex items-center gap-2 text-amber-800 dark:text-amber-300">
+                  <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400 flex-shrink-0" />
                   <span className="text-xs sm:text-sm font-medium">
                     Complete all required fields ({completedCount}/{requiredFields.length}) to save changes.
                   </span>
                 </div>
               ) : (
-                <div className="flex items-center gap-2 text-emerald-800">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600 flex-shrink-0" />
+                <div className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
                   <span className="text-xs sm:text-sm font-medium">
-                    All required fields are complete. Ready to save.
+                    Unsaved changes detected. Ready to save.
                   </span>
                 </div>
               )}
@@ -751,11 +790,11 @@ export function HomeownerProfile() {
 
             <Button 
               onClick={handleSave} 
-              disabled={saving || !isFormValid} 
+              disabled={saving || !isFormValid || !isDirty} 
               className={cn(
                 "gap-2 min-w-[170px] font-semibold h-11 px-6 rounded-xl transition-all shadow-xs",
-                !isFormValid || saving
-                  ? "bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed hover:bg-gray-100"
+                !isFormValid || saving || !isDirty
+                  ? "bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-gray-500 border border-gray-200 dark:border-white/10 cursor-not-allowed hover:bg-gray-100 dark:hover:bg-white/5"
                   : "bg-orange-600 hover:bg-orange-700 text-white shadow-sm hover:shadow cursor-pointer"
               )}
             >

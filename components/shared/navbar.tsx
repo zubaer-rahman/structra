@@ -31,7 +31,8 @@ export default function Navbar({
   const isDashboardPage =
     pathname.includes("/dashboard") ||
     pathname.includes("/homeowner") ||
-    pathname.includes("/contractor") ||
+    pathname.startsWith("/contractor/") ||
+    pathname === "/contractor" ||
     pathname.includes("/admin");
   
   // Auth page detection
@@ -49,7 +50,10 @@ export default function Navbar({
         ? "bg-slate-50/80 dark:bg-black/40 backdrop-blur-xl border-b border-gray-200/60 dark:border-white/5 text-gray-900 dark:text-white" 
         : "bg-white/80 dark:bg-[#0D0D0D]/80 backdrop-blur-md border-b border-gray-200/70 dark:border-white/10 text-gray-700 dark:text-gray-200"
     )}>
-      <div className="flex items-center justify-between w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+      <div className={cn(
+        "flex items-center justify-between w-full px-4 sm:px-6 lg:px-8 transition-all duration-300",
+        !isDashboardPage && "max-w-[1440px] mx-auto"
+      )}>
         <div className="flex items-center space-x-2 sm:space-x-4">
           {backUrl && (
             <Link href={backUrl}>

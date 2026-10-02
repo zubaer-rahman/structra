@@ -7,7 +7,7 @@ export const migration_029_add_valid_until_to_transactions: Migration = {
   up: async (client) => {
     await client.query(`
       ALTER TABLE transactions 
-      ADD COLUMN valid_until TIMESTAMPTZ;
+      ADD COLUMN IF NOT EXISTS valid_until TIMESTAMPTZ;
     `);
 
     console.log('✅ Added valid_until column to transactions table');

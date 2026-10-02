@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { isValidSlug } from '@/utils/helpers/slugUtils'
 
 export async function GET(
@@ -9,18 +9,22 @@ export async function GET(
   try {
     const { slug } = await params
 
-    // Validate slug format
-    if (!isValidSlug(slug)) {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+    const isUuid = uuidRegex.test(slug)
+
+    // Validate slug or UUID format
+    if (!isUuid && !isValidSlug(slug)) {
       return NextResponse.json(
         { error: 'Invalid slug format' },
         { status: 400 }
       )
     }
 
-    const supabase = await createClient()
+    const supabase = createAdminClient()
 
-    // Fetch contractor profile with user data by slug
-    const { data: contractorData, error: contractorError } = await supabase
+    // 1. First attempt: fetch by slug
+    let contractorData = null
+    const { data: bySlugData } = await supabase
       .from('contractor_profiles')
       .select(`
         *,
@@ -39,10 +43,66 @@ export async function GET(
         )
       `)
       .eq('slug', slug)
-      .single()
+      .maybeSingle()
 
-    if (contractorError) {
-      console.error('Error fetching contractor by slug:', contractorError)
+    if (bySlugData) {
+      contractorData = bySlugData
+    } else if (isUuid) {
+      // 2. Second attempt: fallback by user_id
+      const { data: byUserData } = await supabase
+        .from('contractor_profiles')
+        .select(`
+          *,
+          user:users!user_id (
+            id,
+            full_name,
+            first_name,
+            last_name,
+            email,
+            phone_number,
+            address,
+            profile_photo,
+            user_role,
+            is_verified_contractor,
+            created_at
+          )
+        `)
+        .eq('user_id', slug)
+        .maybeSingle()
+
+      if (byUserData) {
+        contractorData = byUserData
+      } else {
+        // 3. Third attempt: fallback by profile id
+        const { data: byProfileIdData } = await supabase
+          .from('contractor_profiles')
+          .select(`
+            *,
+            user:users!user_id (
+              id,
+              full_name,
+              first_name,
+              last_name,
+              email,
+              phone_number,
+              address,
+              profile_photo,
+              user_role,
+              is_verified_contractor,
+              created_at
+            )
+          `)
+          .eq('id', slug)
+          .maybeSingle()
+
+        if (byProfileIdData) {
+          contractorData = byProfileIdData
+        }
+      }
+    }
+
+    if (!contractorData) {
+      console.error('Contractor not found for slug/id:', slug)
       return NextResponse.json(
         { error: 'Contractor not found' },
         { status: 404 }

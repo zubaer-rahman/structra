@@ -21,7 +21,7 @@ export function ProgressSteps({ currentStep, steps }: ProgressStepsProps) {
               flex items-center justify-center w-8 h-8 rounded-full border-2 transition-all duration-200
               ${currentStep >= step.id 
                 ? "border-orange-500 bg-orange-500 text-white" 
-                : "border-gray-300 text-gray-500"
+                : "border-gray-300 dark:border-white/20 text-gray-500 dark:text-gray-400"
               }
             `}>
               {currentStep > step.id ? (
@@ -33,13 +33,13 @@ export function ProgressSteps({ currentStep, steps }: ProgressStepsProps) {
             <div className="ml-2 text-left">
               <h3 className={`
                 text-sm font-medium transition-colors
-                ${currentStep >= step.id ? "text-gray-900" : "text-gray-500"}
+                ${currentStep >= step.id ? "text-gray-900 dark:text-white" : "text-gray-500 dark:text-gray-400"}
               `}>
                 {step.title}
               </h3>
               <p className={`
                 text-xs transition-colors
-                ${currentStep >= step.id ? "text-gray-600" : "text-gray-400"}
+                ${currentStep >= step.id ? "text-gray-600 dark:text-gray-400" : "text-gray-400 dark:text-gray-500"}
               `}>
                 {step.description}
               </p>
@@ -47,7 +47,7 @@ export function ProgressSteps({ currentStep, steps }: ProgressStepsProps) {
             {index < steps.length - 1 && (
               <div className={`
                 w-12 h-0.5 mx-3 transition-colors
-                ${currentStep > step.id ? "bg-orange-500" : "bg-gray-200"}
+                ${currentStep > step.id ? "bg-orange-500" : "bg-gray-200 dark:bg-white/10"}
               `} />
             )}
           </div>

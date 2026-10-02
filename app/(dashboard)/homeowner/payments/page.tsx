@@ -6,17 +6,17 @@ import { Button } from '@/components/ui/button'
 
 export default function HomeownerPaymentsPage() {
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-[60vh] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center">
-          <DollarSign className="mx-auto h-24 w-24 text-gray-300" />
-          <h1 className="mt-4 text-3xl font-bold text-gray-900">
+          <DollarSign className="mx-auto h-24 w-24 text-gray-300 dark:text-zinc-700" />
+          <h1 className="mt-4 text-3xl font-bold text-gray-900 dark:text-white">
             Payments
           </h1>
-          <p className="mt-2 text-lg text-gray-600">
+          <p className="mt-2 text-lg text-gray-600 dark:text-gray-400">
             Manage your project payments and invoices
           </p>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             This feature is coming soon!
           </p>
         </div>

@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export function Footer() {
   return (
-    <footer className="bg-slate-100 dark:bg-[#050505] text-gray-900 dark:text-white py-24 border-t border-gray-200 dark:border-white/5 transition-colors">
+    <footer className="bg-slate-100 dark:bg-[#050505] text-gray-900 dark:text-white py-12 sm:py-16 lg:py-20 border-t border-gray-200 dark:border-white/5 transition-colors">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 sm:gap-16 mb-16">
           <div className="md:col-span-2">
@@ -43,12 +43,12 @@ export function Footer() {
           </div>
         </div>
         
-        <div className="pt-12 border-t border-gray-200 dark:border-white/5 text-gray-600 dark:text-gray-400 flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] leading-none">
+        <div className="pt-12 border-t border-gray-200 dark:border-white/5 text-gray-600 dark:text-gray-400 flex flex-col gap-4 md:flex-row justify-between items-center">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] leading-none text-center md:text-left">
             &copy; 2025 <span className="text-orange-600">Structra</span>. The Standard for High-Fidelity Construction.
           </p>
-          <div className="flex gap-8 items-center">
-             <div className="flex items-center gap-2 mr-4">
+          <div className="flex flex-wrap gap-4 items-center justify-center">
+             <div className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
                 <span className="text-[9px] font-black uppercase tracking-widest text-gray-500 dark:text-gray-400">Network Stable</span>
              </div>

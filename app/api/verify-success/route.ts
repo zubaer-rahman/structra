@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient as createRouteClient } from '@/lib/supabase/server'
 import { createClient as createSupabaseClient } from '@supabase/supabase-js'
+import { stripe } from '@/lib/stripe'
 import { z } from 'zod'
 import type { User } from '@supabase/supabase-js'
 
@@ -80,6 +81,71 @@ async function handleVerifySuccess(request: NextRequest, userId: string, session
         message: 'User is already verified',
         isVerified: true
       })
+    }
+
+    // 0) If Stripe checkout session id is provided, verify directly with Stripe SDK
+    if (sessionId && sessionId.startsWith('cs_')) {
+      try {
+        const stripeSession = await stripe.checkout.sessions.retrieve(sessionId)
+        if (
+          stripeSession &&
+          (stripeSession.payment_status === 'paid' || stripeSession.status === 'complete')
+        ) {
+          const sessionUserId = stripeSession.metadata?.userId || stripeSession.client_reference_id
+          if (!sessionUserId || sessionUserId === userId) {
+            console.log('✅ Successfully verified Stripe checkout session directly:', sessionId)
+            
+            const validUntilDate = new Date()
+            validUntilDate.setFullYear(validUntilDate.getFullYear() + 1)
+
+            // Update user verification status in database
+            const { error: updateError } = await supabase
+              .from('users')
+              .update({
+                is_verified_contractor: true,
+                updated_at: new Date().toISOString(),
+              })
+              .eq('id', userId)
+
+            if (updateError) {
+              console.error('Failed to update verification status:', updateError)
+              return NextResponse.json(
+                { error: 'Failed to update verification status' },
+                { status: 500 }
+              )
+            }
+
+            // Attempt to record or update transaction if transactions table exists
+            try {
+              await supabase
+                .from('transactions')
+                .upsert({
+                  user_id: userId,
+                  amount: stripeSession.amount_total || 40000,
+                  currency: (stripeSession.currency || 'cad').toUpperCase(),
+                  transaction_type: stripeSession.mode === 'subscription' ? 'contractor_verification_subscription' : 'contractor_verification_fee',
+                  status: 'succeeded',
+                  stripe_checkout_session_id: sessionId,
+                  stripe_customer_id: typeof stripeSession.customer === 'string' ? stripeSession.customer : null,
+                  description: 'Contractor Verification',
+                  valid_until: validUntilDate.toISOString(),
+                  updated_at: new Date().toISOString(),
+                }, { onConflict: 'stripe_checkout_session_id' })
+            } catch (txDbErr) {
+              console.warn('transactions table may not exist yet:', txDbErr)
+            }
+
+            return NextResponse.json({
+              success: true,
+              message: 'Contractor verification completed successfully',
+              isVerified: true,
+              validUntil: validUntilDate.toISOString(),
+            })
+          }
+        }
+      } catch (stripeErr) {
+        console.warn('Failed to verify session directly with Stripe SDK:', stripeErr)
+      }
     }
 
     let transaction = null

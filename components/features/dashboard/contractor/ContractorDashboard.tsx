@@ -67,7 +67,7 @@ export default function ContractorDashboard() {
             description_of_work,
             proposed_start_date,
             proposed_end_date,
-            project:projects (
+            project:projects!proposals_project_fkey (
               id,
               project_title,
               statement_of_work,
@@ -116,16 +116,14 @@ export default function ContractorDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white relative">
-        <div className="relative flex items-center justify-center min-h-screen">
-          <LoadingSpinner 
-            text="Loading Your Dashboard"
-            subtitle="Preparing your contractor overview..."
-            size="lg"
-            variant="default"
-            className="text-center"
-          />
-        </div>
+      <div className="min-h-[50vh] flex items-center justify-center">
+        <LoadingSpinner 
+          text="Loading Your Dashboard"
+          subtitle="Preparing your contractor overview..."
+          size="lg"
+          variant="default"
+          className="text-center"
+        />
       </div>
     )
   }
@@ -148,28 +146,23 @@ export default function ContractorDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-transparent text-gray-900 dark:text-gray-100">
-      <div className="container mx-auto px-4 py-6">
-        {/* Dashboard Content */}
-        <div className="space-y-6">
-          {/* Profile Completion Warning */}
-          <ProfileCompletionWarning />
+    <div className="space-y-6">
+      {/* Profile Completion Warning */}
+      <ProfileCompletionWarning />
 
-          {/* Greeting */}
-          <div className="mb-4">
-            <h1 className="text-sm font-medium text-gray-800 dark:text-gray-100">
-              Hello, {user?.user_metadata?.full_name ? capitalizeWords(user.user_metadata.full_name) : user?.email?.split('@')[0] ? capitalizeWords(user.email.split('@')[0]) : 'There'}
-            </h1>
-            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Welcome to your contractor dashboard</p>
-          </div>
-
-          {/* Contractor Statistics */}
-          <ContractorStats stats={stats} />
-
-          {/* Recent Proposals */}
-          <RecentProposals proposals={proposals} />
-        </div>
+      {/* Greeting */}
+      <div className="mb-4">
+        <h1 className="text-sm font-medium text-gray-800 dark:text-gray-100">
+          Hello, {user?.user_metadata?.full_name ? capitalizeWords(user.user_metadata.full_name) : user?.email?.split('@')[0] ? capitalizeWords(user.email.split('@')[0]) : 'There'}
+        </h1>
+        <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Welcome to your contractor dashboard</p>
       </div>
+
+      {/* Contractor Statistics */}
+      <ContractorStats stats={stats} />
+
+      {/* Recent Proposals */}
+      <RecentProposals proposals={proposals} />
     </div>
   )
 }

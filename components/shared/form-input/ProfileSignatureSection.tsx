@@ -213,29 +213,29 @@ export function ProfileSignatureSection({
   const getStatusColor = (status: string) => {
     switch (status) {
       case SIGNATURE_STATUSES.VERIFIED:
-        return 'bg-green-100 text-green-800'
+        return 'bg-green-100 text-green-800 dark:bg-green-950/40 dark:text-green-300'
       case SIGNATURE_STATUSES.SIGNED:
-        return 'bg-blue-100 text-blue-800'
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-950/40 dark:text-blue-300'
       case SIGNATURE_STATUSES.REJECTED:
-        return 'bg-red-100 text-red-800'
+        return 'bg-red-100 text-red-800 dark:bg-red-950/40 dark:text-red-300'
       case SIGNATURE_STATUSES.EXPIRED:
-        return 'bg-orange-100 text-orange-800'
+        return 'bg-orange-100 text-orange-800 dark:bg-orange-950/40 dark:text-orange-300'
       case SIGNATURE_STATUSES.PENDING:
-        return 'bg-yellow-100 text-yellow-800'
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-950/40 dark:text-yellow-300'
       default:
-        return 'bg-gray-100 text-gray-800'
+        return 'bg-gray-100 text-gray-800 dark:bg-white/10 dark:text-gray-300'
     }
   }
 
   return (
     <div className={`profile-signature-section ${className}`}>
-      <Card className={cn("rounded-2xl border border-gray-200/80 shadow-xs", cardClassName)}>
+      <Card className={cn("rounded-2xl bg-white dark:bg-[#141414] border border-gray-200/80 dark:border-white/10 shadow-xs", cardClassName)}>
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <PenTool className="h-5 w-5" />
+          <CardTitle className="flex items-center space-x-2 text-gray-900 dark:text-white">
+            <PenTool className="h-5 w-5 text-orange-600 dark:text-orange-500" />
             <span>Digital Signature</span>
           </CardTitle>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             Create and manage your digital signature for contracts and agreements
           </p>
         </CardHeader>
@@ -248,16 +248,16 @@ export function ProfileSignatureSection({
           ) : signature ? (
             <div className="space-y-4">
               {/* Signature Preview */}
-              <div className="border-2 border-dashed border-gray-200 rounded-lg p-4 bg-gray-50">
+              <div className="border-2 border-dashed border-gray-200 dark:border-white/10 rounded-lg p-4 bg-gray-50 dark:bg-white/[0.02]">
                 <div className="flex items-center justify-center min-h-[100px]">
                   {signature.signature_type === 'handwritten' || signature.signature_type === 'uploaded' ? (
                     <img
                       src={signature.signature_data}
                       alt={`Signature by ${signature.signer_name}`}
-                      className="max-h-24 max-w-full object-contain"
+                      className="max-h-24 max-w-full object-contain filter dark:brightness-95"
                     />
                   ) : (
-                    <div className="text-lg font-signature text-gray-700">
+                    <div className="text-lg font-signature text-gray-800 dark:text-gray-100">
                       {signature.signature_data.includes('base64,') 
                         ? atob(signature.signature_data.split(',')[1])
                         : signature.signature_data
@@ -270,7 +270,7 @@ export function ProfileSignatureSection({
               {/* Signature Details */}
               <div className="space-y-2 text-sm">
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Status:</span>
+                  <span className="text-gray-600 dark:text-gray-400">Status:</span>
                   <div className="flex items-center space-x-2">
                     {getStatusIcon(signature.status)}
                     <Badge className={getStatusColor(signature.status)}>
@@ -280,30 +280,30 @@ export function ProfileSignatureSection({
                 </div>
                 
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Type:</span>
-                  <span className="capitalize">{signature.signature_type}</span>
+                  <span className="text-gray-600 dark:text-gray-400">Type:</span>
+                  <span className="capitalize text-gray-900 dark:text-white">{signature.signature_type}</span>
                 </div>
                 
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Created:</span>
-                  <span>{format(new Date(signature.created_at), 'MMM dd, yyyy HH:mm')}</span>
+                  <span className="text-gray-600 dark:text-gray-400">Created:</span>
+                  <span className="text-gray-900 dark:text-white">{format(new Date(signature.created_at), 'MMM dd, yyyy HH:mm')}</span>
                 </div>
 
                 {signature.verified_at && (
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Verified:</span>
-                    <span>{format(new Date(signature.verified_at), 'MMM dd, yyyy HH:mm')}</span>
+                    <span className="text-gray-600 dark:text-gray-400">Verified:</span>
+                    <span className="text-gray-900 dark:text-white">{format(new Date(signature.verified_at), 'MMM dd, yyyy HH:mm')}</span>
                   </div>
                 )}
               </div>
 
               {/* Action Buttons */}
-              <div className="flex space-x-2 pt-4 border-t">
+              <div className="flex space-x-2 pt-4 border-t border-gray-100 dark:border-white/10">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={handleDownloadSignature}
-                  className="flex items-center space-x-1"
+                  className="flex items-center space-x-1 border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10"
                 >
                   <Download className="h-4 w-4" />
                   <span>Download</span>
@@ -313,7 +313,7 @@ export function ProfileSignatureSection({
                   variant="outline"
                   size="sm"
                   onClick={() => setShowSignatureModal(true)}
-                  className="flex items-center space-x-1"
+                  className="flex items-center space-x-1 border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10"
                 >
                   <PenTool className="h-4 w-4" />
                   <span>Edit</span>
@@ -324,7 +324,7 @@ export function ProfileSignatureSection({
                   size="sm"
                   onClick={handleDeleteSignature}
                   disabled={isDeleting}
-                  className="flex items-center space-x-1 text-red-600 hover:text-red-700"
+                  className="flex items-center space-x-1 text-red-600 hover:text-red-700 border-gray-200 dark:border-white/10 dark:hover:bg-white/10"
                 >
                   <Trash2 className="h-4 w-4" />
                   <span>{isDeleting ? 'Deleting...' : 'Delete'}</span>
@@ -333,11 +333,11 @@ export function ProfileSignatureSection({
             </div>
           ) : (
             <div className="text-center py-8">
-              <div className="bg-gray-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <PenTool className="h-8 w-8 text-gray-400" />
+              <div className="bg-gray-100 dark:bg-white/10 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                <PenTool className="h-8 w-8 text-gray-400 dark:text-gray-500" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No Signature Created</h3>
-              <p className="text-gray-600 mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No Signature Created</h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
                 Create your digital signature to use in contracts and agreements
               </p>
               <Button onClick={() => setShowSignatureModal(true)} className="bg-orange-600 hover:bg-orange-700 text-white font-medium shadow-xs">

@@ -21,22 +21,22 @@ export default function ProposalCardGrid({
 }: ProposalCardGridProps) {
   if (proposals.length === 0) {
     return (
-      <Card>
-        <CardContent className="flex flex-col items-center justify-center py-12">
-          <FileText className="w-12 h-12 text-gray-400 mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
-            No proposals yet
-          </h3>
-          <p className="text-gray-600 text-center mb-6">
-            Start by browsing available projects and submitting your first proposal.
-          </p>
-          {onBrowseProjects && (
-            <Button onClick={onBrowseProjects}>
-              Browse Projects
-            </Button>
-          )}
-        </CardContent>
-      </Card>
+      <div className="rounded-xl border border-dashed border-border/80 bg-card/50 p-8 lg:p-12 text-center">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-muted/60 text-muted-foreground mb-4">
+          <FileText className="h-6 w-6" />
+        </div>
+        <h3 className="text-base lg:text-lg font-semibold text-foreground mb-2">
+          No proposals yet
+        </h3>
+        <p className="text-sm lg:text-base text-muted-foreground max-w-md mx-auto mb-6">
+          Start by browsing available projects and submitting your first proposal.
+        </p>
+        {onBrowseProjects && (
+          <Button onClick={onBrowseProjects}>
+            Browse Projects
+          </Button>
+        )}
+      </div>
     )
   }
 

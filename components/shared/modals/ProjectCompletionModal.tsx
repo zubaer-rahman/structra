@@ -102,16 +102,16 @@ export function ProjectCompletionModal({
 
           {/* Error Display */}
           {error && (
-            <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
-              <AlertCircle className="h-4 w-4 text-red-600 flex-shrink-0" />
-              <p className="text-sm text-red-700">{error}</p>
+            <div className="flex items-center gap-2 p-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-lg">
+              <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400 flex-shrink-0" />
+              <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
             </div>
           )}
 
           {/* Help Text - Only show when uploading new photo */}
           {!existingAfterPhoto && (
-            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-sm text-blue-800">
+            <div className="p-4 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 rounded-lg">
+              <p className="text-sm text-blue-800 dark:text-blue-300">
                 <strong>Important:</strong> The after photo will be used to create a before/after comparison 
                 showing the completed work. Make sure the photo clearly shows the finished project area.
               </p>

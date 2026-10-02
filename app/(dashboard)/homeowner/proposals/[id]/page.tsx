@@ -2,6 +2,7 @@
 
 import { useState, useEffect, use } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 import { Breadcrumbs, LoadingSpinner } from "@/components/shared";
 import { Button } from "@/components/ui/button";
@@ -20,31 +21,37 @@ import {
 } from "@/components/ui/dialog";
 
 import {
-  Building,
-  User,
-  DollarSign,
+  Building2,
   FileText,
   AlertCircle,
-  Shield,
-  ThumbsUp,
-  ThumbsDown,
-  Clock4,
-  CheckCircle,
+  ShieldCheck,
+  Clock,
+  CheckCircle2,
   AlertTriangle,
-  Image,
   Award,
   XCircle,
   Download,
-  Share2,
+  Calendar,
+  MapPin,
+  ArrowLeft,
+  Eye,
+  Mail,
+  Phone,
+  FileDown,
+  ExternalLink,
+  Shield,
+  Layers,
+  Sparkles,
 } from "lucide-react";
 import { USER_ROLES } from "@/utils/constants";
 import { formatCurrency } from "@/lib/utils";
 import { createClient } from "@/lib/supabase";
-import { getProposalStatusConfig } from "@/utils/helpers";
+import { getProposalStatusConfig, formatLocation } from "@/utils/helpers";
 import ProjectImageGallery from "@/components/features/projects/HomeownerProjectView/ProjectImageGallery";
 import PDFPreviewModal from "@/components/shared/PDFPreviewModal";
 import { generateProposalPDFBlob } from "@/utils/helpers/pdfPreviewGenerator";
 import { ProposalWithJoins } from "@/server/database/interfaces/proposals";
+import { RandomAvatar } from "@/components/ui/random-avatar";
 
 interface Location {
   lat?: number;
@@ -163,6 +170,7 @@ interface HomeownerProposalData {
     portfolio?: string[];
     logo?: string;
     work_guarantee?: number;
+    work_guarantee_statement?: string;
     address?: Address;
   };
 }
@@ -182,15 +190,14 @@ export default function HomeownerProposalViewPage({
   const [showAcceptDialog, setShowAcceptDialog] = useState(false);
   const [showRejectDialog, setShowRejectDialog] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
+  const [downloadingFileId, setDownloadingFileId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState("");
   const [showPDFPreview, setShowPDFPreview] = useState(false);
   const [previewPDFBlob, setPreviewPDFBlob] = useState<Blob | null>(null);
   const [previewTitle, setPreviewTitle] = useState("");
 
-  // Unwrap params using React.use()
   const resolvedParams = use(params);
   const proposalId = resolvedParams.id;
-
 
   useEffect(() => {
     if (!user) return;
@@ -204,43 +211,8 @@ export default function HomeownerProposalViewPage({
           .from("proposals")
           .select(
             `
-            id,
-            title,
-            description_of_work,
-            subtotal_amount,
-            tax_included,
-            total_amount,
-            deposit_amount,
-            deposit_due_on,
-            delay_penalty,
-            abandonment_penalty,
-            proposed_start_date,
-            proposed_end_date,
-            expiry_date,
-            status,
-            is_selected,
-            is_deleted,
-            submitted_date,
-            accepted_date,
-            rejected_date,
-            withdrawn_date,
-            viewed_date,
-            last_updated,
-            rejected_by,
-            rejection_reason,
-            rejection_reason_notes,
-            clause_preview_html,
-            attached_files,
-            notes,
-            visibility_settings,
-            project,
-            contractor,
-            homeowner,
-            created_by,
-            last_modified_by,
-            created_at,
-            updated_at,
-            project:projects (
+            *,
+            project:projects!proposals_project_fkey (
               id,
               project_title,
               statement_of_work,
@@ -273,25 +245,20 @@ export default function HomeownerProposalViewPage({
           .single();
 
         if (fetchError) {
-          console.error("Error fetching proposal:", fetchError);
+          console.error("Error fetching proposal:", fetchError.message || fetchError);
           setError(fetchError.message);
           return;
         }
 
-
-        // Manually fetch contractor details
         let contractor_details = null;
         if (data.contractor) {
           const { data: contractorData, error: contractorError } =
             await supabase
               .from("users")
-              .select(
-                "id, full_name, email, phone_number, address"
-              )
+              .select("id, full_name, email, phone_number, address")
               .eq("id", data.contractor)
               .single();
 
-          // Also fetch contractor profile data
           const { data: profileData } =
             await supabase
               .from("contractor_profiles")
@@ -301,33 +268,29 @@ export default function HomeownerProposalViewPage({
               .eq("user_id", data.contractor)
               .single();
 
-
-
           if (!contractorError && contractorData) {
             contractor_details = {
               ...contractorData,
-              ...profileData
+              ...profileData,
             };
           }
         }
 
-        // Transform the data to match our HomeownerProposalData interface
         const transformedData: HomeownerProposalData = {
           ...data,
-          project: data.project?.id || data.project, // Preserve the project ID string
+          project: data.project?.id || data.project,
           project_details: {
             ...data.project,
             location: {
               ...data.project?.location,
               ...(data.project?.location_geom?.coordinates && {
                 lat: data.project.location_geom.coordinates[1],
-                lng: data.project.location_geom.coordinates[0]
-              })
-            }
+                lng: data.project.location_geom.coordinates[0],
+              }),
+            },
           },
           contractor_details: contractor_details || undefined,
         };
-
 
         setProposal(transformedData);
       } catch (err) {
@@ -366,95 +329,75 @@ export default function HomeownerProposalViewPage({
 
     try {
       const supabase = createClient();
-      
-      // First, mark the selected proposal as viewed (if not already)
+
       await supabase
-        .from('proposals')
+        .from("proposals")
         .update({
           status: PROPOSAL_STATUSES.VIEWED,
           viewed_date: new Date().toISOString(),
           last_updated: new Date().toISOString(),
-          last_modified_by: user.id
+          last_modified_by: user.id,
         })
-        .eq('id', proposal.id)
-        .eq('status', PROPOSAL_STATUSES.SUBMITTED);
-      
-      // Accept the selected proposal
+        .eq("id", proposal.id)
+        .eq("status", PROPOSAL_STATUSES.SUBMITTED);
+
       const { error: acceptError } = await supabase
-        .from('proposals')
+        .from("proposals")
         .update({
           status: PROPOSAL_STATUSES.ACCEPTED,
-          is_selected: 'yes',
+          is_selected: "yes",
           accepted_date: new Date().toISOString(),
-          contract_reviewed: true,
-          homeowner_contract_reviewed: true,
-          contract_reviewed_at: new Date().toISOString(),
-          homeowner_contract_reviewed_at: new Date().toISOString(),
           last_updated: new Date().toISOString(),
-          last_modified_by: user.id
+          last_modified_by: user.id,
         })
-        .eq('id', proposal.id)
-        .eq('homeowner', user.id);
-      
-      if (acceptError) {
-        throw acceptError;
-      }
+        .eq("id", proposal.id)
+        .eq("homeowner", user.id);
 
-      // Ensure only the accepted proposal remains selected.
+      if (acceptError) throw acceptError;
+
       const { error: clearSelectionError } = await supabase
-        .from('proposals')
+        .from("proposals")
         .update({
-          is_selected: 'no',
+          is_selected: "no",
           last_updated: new Date().toISOString(),
-          last_modified_by: user.id
+          last_modified_by: user.id,
         })
-        .eq('project', proposal.project)
-        .eq('homeowner', user.id)
-        .neq('id', proposal.id);
+        .eq("project", proposal.project)
+        .eq("homeowner", user.id)
+        .neq("id", proposal.id);
 
-      if (clearSelectionError) {
-        throw clearSelectionError;
-      }
-      
-      // Reject all other proposals for this project
+      if (clearSelectionError) throw clearSelectionError;
+
       const { error: rejectError } = await supabase
-        .from('proposals')
+        .from("proposals")
         .update({
           status: PROPOSAL_STATUSES.REJECTED,
           rejected_date: new Date().toISOString(),
-          rejection_reason: 'other',
-          rejection_reason_notes: 'Another proposal was selected by the homeowner',
+          notes: "Another proposal was selected by the homeowner",
           last_updated: new Date().toISOString(),
-          last_modified_by: user.id
+          last_modified_by: user.id,
         })
-        .eq('project', proposal.project)
-        .neq('id', proposal.id)
-        .in('status', [PROPOSAL_STATUSES.SUBMITTED, PROPOSAL_STATUSES.VIEWED]);
-      
-      if (rejectError) {
-        throw rejectError;
-      }
-      
-      // Update project status to proposal selected
+        .eq("project", proposal.project)
+        .neq("id", proposal.id)
+        .in("status", [PROPOSAL_STATUSES.SUBMITTED, "pending", PROPOSAL_STATUSES.VIEWED]);
+
+      if (rejectError) throw rejectError;
+
       const { error: projectError } = await supabase
-        .from('projects')
+        .from("projects")
         .update({ status: PROJECT_STATUSES.PROPOSAL_SELECTED })
-        .eq('id', proposal.project);
-      
-      if (projectError) {
-        throw projectError;
-      }
-      
-      console.log("Proposal accepted:", proposal.id);
+        .eq("id", proposal.project);
+
+      if (projectError) throw projectError;
+
       toast.success("Proposal accepted successfully!");
       setDecisionMade(true);
-      // Redirect to project details or show success message
       setTimeout(
         () => router.push(`/homeowner/projects/view/${proposal.project}`),
         2000
       );
     } catch (error) {
-      console.error("Error accepting proposal:", error);
+      console.error("Error accepting proposal:", error instanceof Error ? error.message : error);
       toast.error("Failed to accept proposal. Please try again.");
     } finally {
       setActionLoading(false);
@@ -475,30 +418,24 @@ export default function HomeownerProposalViewPage({
 
     try {
       const supabase = createClient();
-      
-      // Update proposal status to rejected
+
       const { error: rejectError } = await supabase
-        .from('proposals')
+        .from("proposals")
         .update({
           status: PROPOSAL_STATUSES.REJECTED,
           rejected_date: new Date().toISOString(),
-          rejection_reason: 'other',
-          rejection_reason_notes: trimmedReason,
+          notes: trimmedReason,
           last_updated: new Date().toISOString(),
-          last_modified_by: user.id
+          last_modified_by: user.id,
         })
-        .eq('id', proposal.id)
-        .eq('homeowner', user.id);
-      
-      if (rejectError) {
-        throw rejectError;
-      }
-      
-      console.log("Proposal rejected:", proposal.id);
+        .eq("id", proposal.id)
+        .eq("homeowner", user.id);
+
+      if (rejectError) throw rejectError;
+
       toast.success("Proposal rejected successfully!");
       setDecisionMade(true);
       setRejectReason("");
-      // Show rejection reason modal or redirect
       setTimeout(() => router.push("/homeowner/proposals"), 2000);
     } catch (error) {
       console.error("Error rejecting proposal:", error);
@@ -550,7 +487,7 @@ export default function HomeownerProposalViewPage({
 
       if (result.success && result.blob) {
         setPreviewPDFBlob(result.blob);
-        setPreviewTitle(`Proposal - ${proposal.title}`);
+        setPreviewTitle(`Proposal - ${proposal.title || proposal.project_details?.project_title || "Details"}`);
         setShowPDFPreview(true);
         return;
       }
@@ -562,33 +499,58 @@ export default function HomeownerProposalViewPage({
     }
   };
 
-  const formatDate = (dateString: string) => {
+  const handleDownloadFile = async (url: string, filename: string, id: string) => {
+    try {
+      setDownloadingFileId(id);
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (err) {
+      console.error("Download failed:", err);
+      window.open(url, "_blank");
+    } finally {
+      setDownloadingFileId(null);
+    }
+  };
+
+  const formatDate = (dateString?: string | null) => {
     if (!dateString) return "Not specified";
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
-      month: "long",
+      month: "short",
       day: "numeric",
     });
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-3">
         <LoadingSpinner />
+        <p className="text-sm text-muted-foreground tracking-tight">Loading proposal...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+      <div className="min-h-[60vh] flex items-center justify-center p-4">
+        <div className="max-w-md w-full text-center p-6 space-y-4">
+          <AlertCircle className="h-10 w-10 text-destructive mx-auto" />
+          <h2 className="text-xl font-medium text-foreground tracking-tight">
             Error Loading Proposal
           </h2>
-          <p className="text-gray-600 mb-4">{error}</p>
-          <Button onClick={() => router.back()}>Go Back</Button>
+          <p className="text-muted-foreground text-sm">{error}</p>
+          <Button onClick={() => router.back()} variant="ghost" size="sm">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Go Back
+          </Button>
         </div>
       </div>
     );
@@ -596,16 +558,16 @@ export default function HomeownerProposalViewPage({
 
   if (!proposal) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+      <div className="min-h-[60vh] flex items-center justify-center p-4">
+        <div className="max-w-md w-full text-center p-6 space-y-4">
+          <FileText className="h-10 w-10 text-muted-foreground mx-auto" />
+          <h2 className="text-xl font-medium text-foreground tracking-tight">
             Proposal Not Found
           </h2>
-          <p className="text-gray-600 mb-4">
-            The requested proposal could not be found.
+          <p className="text-muted-foreground text-sm">
+            The requested proposal could not be found or may have been removed.
           </p>
-          <Button onClick={() => router.push("/homeowner/proposals")}>
+          <Button onClick={() => router.push("/homeowner/proposals")} variant="outline" size="sm">
             View All Proposals
           </Button>
         </div>
@@ -615,13 +577,13 @@ export default function HomeownerProposalViewPage({
 
   if (userRole !== USER_ROLES.HOMEOWNER) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <Shield className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+      <div className="min-h-[60vh] flex items-center justify-center p-4">
+        <div className="max-w-md w-full text-center p-6 space-y-3">
+          <Shield className="h-10 w-10 text-destructive mx-auto" />
+          <h2 className="text-xl font-medium text-foreground tracking-tight">
             Access Denied
           </h2>
-          <p className="text-gray-600">
+          <p className="text-muted-foreground text-sm">
             You don&apos;t have permission to view this proposal.
           </p>
         </div>
@@ -629,588 +591,731 @@ export default function HomeownerProposalViewPage({
     );
   }
 
-  const proposalStatusConfig = getProposalStatusConfig(proposal.status);
-  const StatusIcon = proposalStatusConfig.icon;
-
   if (decisionMade) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto">
-          <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+      <div className="min-h-[60vh] flex items-center justify-center p-4">
+        <div className="max-w-md w-full text-center p-8 space-y-4">
+          <CheckCircle2 className="h-12 w-12 text-emerald-500 mx-auto" />
+          <h2 className="text-2xl font-semibold text-foreground tracking-tight">
             Decision Recorded
           </h2>
-          <p className="text-gray-600 mb-4">
-            Your decision has been recorded. You&apos;ll be redirected shortly.
+          <p className="text-muted-foreground text-sm">
+            Your decision has been updated. Redirecting to your project...
           </p>
-          <div className="animate-pulse">
-            <div className="h-2 bg-gray-200 rounded-full mb-2"></div>
-            <div className="h-2 bg-gray-200 rounded-full w-3/4"></div>
+          <div className="w-full bg-muted/60 rounded-full h-1 overflow-hidden mt-2">
+            <div className="bg-emerald-500 h-1 rounded-full animate-[pulse_1s_ease-in-out_infinite] w-full" />
           </div>
         </div>
       </div>
     );
   }
 
+  const proposalStatusConfig = getProposalStatusConfig(proposal.status);
+  const StatusIcon = proposalStatusConfig.icon;
+  const isDecided = Boolean(proposal.accepted_date || proposal.rejected_date);
+
+  const totalAmount = proposal.total_amount || 0;
+  const subtotalAmount = proposal.subtotal_amount || 0;
+  const calculatedTax = Math.max(0, totalAmount - subtotalAmount);
+  const projectBudget = proposal.project_details?.budget || null;
+  const savings = projectBudget && totalAmount ? projectBudget - totalAmount : null;
+  const durationDays =
+    proposal.proposed_start_date && proposal.proposed_end_date
+      ? Math.max(
+          1,
+          Math.ceil(
+            (new Date(proposal.proposed_end_date).getTime() -
+              new Date(proposal.proposed_start_date).getTime()) /
+              (1000 * 60 * 60 * 24)
+          )
+        )
+      : null;
+
+  const contractorName =
+    proposal.contractor_details?.business_name ||
+    proposal.contractor_details?.full_name ||
+    "Contractor";
+
   return (
-    <div className="min-h-screen bg-white">
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        {/* Breadcrumbs */}
-        <div className="bg-white px-4 py-4 mb-6">
-          <div className="max-w-7xl mx-auto">
-            <Breadcrumbs
-              items={[
-                { label: "Dashboard", href: "/homeowner/dashboard" },
-                { label: "Proposals", href: "/homeowner/proposals" },
-                { label: proposal.project_details?.project_title || "Project Proposal", href: "#" },
-              ]}
-            />
+    <div className="space-y-8 pb-16 max-w-7xl mx-auto">
+      {/* Top Bar: Breadcrumbs */}
+      <div>
+        <Breadcrumbs
+          items={[
+            { label: "Dashboard", href: "/homeowner/dashboard" },
+            { label: "Proposals", href: "/homeowner/proposals" },
+            {
+              label: proposal.project_details?.project_title || "Proposal",
+              href: "#",
+            },
+          ]}
+        />
+      </div>
+
+      {/* Hero Header: Open, Commanding, Minimal */}
+      <div className="space-y-6">
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 pb-2">
+          <div className="space-y-3 flex-1">
+            {/* Metadata Pills */}
+            <div className="flex flex-wrap items-center gap-3 text-xs">
+              <span className="inline-flex items-center gap-1.5 font-medium px-2.5 py-0.5 rounded-full border border-border bg-muted/40 text-foreground">
+                <span className={`h-1.5 w-1.5 rounded-full ${
+                  proposal.status === PROPOSAL_STATUSES.ACCEPTED
+                    ? "bg-emerald-500"
+                    : proposal.status === PROPOSAL_STATUSES.REJECTED
+                    ? "bg-rose-500"
+                    : "bg-blue-500"
+                }`} />
+                {proposalStatusConfig.label}
+              </span>
+
+              <span className="text-muted-foreground flex items-center gap-1">
+                <Clock className="h-3.5 w-3.5" />
+                Submitted {formatDate(proposal.submitted_date)}
+              </span>
+
+              {proposal.expiry_date && (
+                <span className="text-muted-foreground flex items-center gap-1">
+                  <Calendar className="h-3.5 w-3.5" />
+                  Valid to {formatDate(proposal.expiry_date)}
+                </span>
+              )}
+            </div>
+
+            {/* Title & Relationship */}
+            <div className="space-y-1">
+              <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">
+                {proposal.project_details?.project_title || "Project Proposal"}
+              </h1>
+              <p className="text-sm text-muted-foreground">
+                Submitted by <span className="font-medium text-foreground">{contractorName}</span>
+                {proposal.project && (
+                  <>
+                    {" · "}
+                    <Link
+                      href={`/homeowner/projects/view/${proposal.project}`}
+                      className="hover:text-foreground underline underline-offset-4 decoration-border"
+                    >
+                      View project listing
+                    </Link>
+                  </>
+                )}
+              </p>
+            </div>
+          </div>
+
+          {/* Action Button Suite */}
+          <div className="flex flex-wrap items-center gap-2.5">
+            <Button
+              onClick={handleOpenDecisionPDF}
+              variant="outline"
+              size="sm"
+              className="gap-2 h-9 text-xs font-medium"
+            >
+              <Eye className="h-3.5 w-3.5" />
+              Preview PDF
+            </Button>
+
+            {!isDecided && (
+              <>
+                <Button
+                  onClick={() => setShowRejectDialog(true)}
+                  disabled={actionLoading}
+                  variant="ghost"
+                  size="sm"
+                  className="text-xs text-muted-foreground hover:text-destructive gap-1.5 h-9"
+                >
+                  <XCircle className="h-3.5 w-3.5" />
+                  Decline
+                </Button>
+
+                <Button
+                  onClick={() => setShowAcceptDialog(true)}
+                  disabled={actionLoading}
+                  size="sm"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium gap-1.5 h-9 text-xs px-4 shadow-xs"
+                >
+                  <CheckCircle2 className="h-3.5 w-3.5" />
+                  {actionLoading ? "Processing..." : "Accept Proposal"}
+                </Button>
+              </>
+            )}
           </div>
         </div>
 
-        {/* Decision Header */}
-        <div className="bg-white p-6 mb-6">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-            <div className="flex-1">
-              <div className="flex items-center gap-4 mb-4">
-                <StatusIcon className="h-5 w-5 text-black" />
-                <Badge className="bg-black text-white border-0 px-3 py-1">
-                  {proposalStatusConfig.label}
-                </Badge>
-                <span className="text-sm text-gray-600">
-                  Submitted {proposal.submitted_date ? formatDate(proposal.submitted_date) : "Date not specified"}
-                </span>
+        {/* Minimal Decided Banner */}
+        {isDecided && (
+          <div className="pt-2">
+            {proposal.accepted_date ? (
+              <div className="border-l-2 border-emerald-500 bg-emerald-500/5 px-4 py-3 rounded-r-lg text-xs sm:text-sm text-emerald-800 dark:text-emerald-300 flex items-center justify-between gap-4">
+                <div className="flex items-center gap-2.5">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                  <span>
+                    Proposal accepted on <strong>{formatDate(proposal.accepted_date)}</strong>. Project moved to next phase.
+                  </span>
+                </div>
+                {proposal.project && (
+                  <Link
+                    href={`/homeowner/projects/view/${proposal.project}`}
+                    className="font-medium underline underline-offset-4 hover:text-emerald-900 dark:hover:text-emerald-200 shrink-0"
+                  >
+                    Open Project &rarr;
+                  </Link>
+                )}
               </div>
-
-              <h1 className="text-3xl font-bold text-black mb-2">
-                {proposal.project_details?.project_title || "Project Details"}
-              </h1>
-              <p className="text-gray-600">
-                Proposal from {proposal.contractor_details?.business_name || proposal.contractor_details?.full_name || "Contractor"}
-              </p>
-            </div>
-
-            {/* Quick Decision Actions */}
-            {!proposal.accepted_date && !proposal.rejected_date && (
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Button
-                  onClick={() => {
-                    handleOpenDecisionPDF();
-                  }}
-                  disabled={actionLoading}
-                  variant="outline"
-                  className="px-6 py-2 font-medium"
-                >
-                  <CheckCircle className="h-4 w-4 mr-2" />
-                  {actionLoading ? "Processing..." : "Accept"}
-                </Button>
-                <Button
-                  onClick={() => {
-                    handleOpenDecisionPDF();
-                  }}
-                  disabled={actionLoading}
-                  variant="outline"
-                  className="px-6 py-2 font-medium"
-                >
-                  <XCircle className="h-4 w-4 mr-2" />
-                  {actionLoading ? "Processing..." : "Reject"}
-                </Button>
-              </div>
-            )}
-            
-            {/* Show status message if already decided */}
-            {(proposal.accepted_date || proposal.rejected_date) && (
-              <div className="flex items-center justify-between px-4 py-2 bg-gray-100">
-                <div className="flex items-center gap-3">
-                  {proposal.accepted_date ? (
-                    <>
-                      <CheckCircle className="h-4 w-4 text-black" />
-                      <span className="text-black font-medium">
-                        Proposal Accepted on {formatDate(proposal.accepted_date)}
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <AlertTriangle className="h-4 w-4 text-gray-600" />
-                      <span className="text-gray-600 font-medium">
-                        Proposal Rejected on {formatDate(proposal.rejected_date!)}
-                      </span>
-                    </>
+            ) : (
+              <div className="border-l-2 border-rose-500 bg-rose-500/5 px-4 py-3 rounded-r-lg text-xs sm:text-sm text-rose-800 dark:text-rose-300 flex items-start gap-2.5">
+                <AlertTriangle className="h-4 w-4 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
+                <div>
+                  <span>Proposal declined on <strong>{formatDate(proposal.rejected_date)}</strong>.</span>
+                  {proposal.notes && (
+                    <span className="block mt-0.5 text-xs text-rose-700/80 dark:text-rose-400/80 italic">
+                      Note: &ldquo;{proposal.notes}&rdquo;
+                    </span>
                   )}
                 </div>
               </div>
             )}
           </div>
+        )}
+      </div>
+
+      {/* Financial Highlight Strip: Borderless, Typographic, Minimal */}
+      <div className="border-y border-border/50 py-5 my-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 sm:gap-8">
+          {/* Proposal Total */}
+          <div>
+            <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground mb-1">
+              Proposal Total
+            </div>
+            <div className="text-2xl sm:text-3xl font-semibold tracking-tight font-mono text-foreground">
+              {formatCurrency(totalAmount)}
+            </div>
+            <div className="text-[11px] text-muted-foreground mt-0.5">
+              {proposal.tax_included === "yes" ? "Tax included" : "+ Tax (estimated)"}
+            </div>
+          </div>
+
+          {/* GST / HST */}
+          <div>
+            <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground mb-1">
+              GST / HST
+            </div>
+            <div className="text-2xl sm:text-3xl font-semibold tracking-tight font-mono text-foreground">
+              {formatCurrency(calculatedTax)}
+            </div>
+            <div className="text-[11px] text-muted-foreground mt-0.5">
+              {proposal.tax_included === "yes" ? "Included" : "Tax estimate"}
+            </div>
+          </div>
+
+          {/* Target Budget */}
+          <div>
+            <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground mb-1">
+              Target Budget
+            </div>
+            <div className="text-2xl sm:text-3xl font-semibold tracking-tight font-mono text-foreground">
+              {projectBudget ? formatCurrency(projectBudget) : "—"}
+            </div>
+            <div className="text-[11px] text-muted-foreground mt-0.5">
+              {projectBudget ? "Homeowner baseline" : "Not specified"}
+            </div>
+          </div>
+
+          {/* Budget Variance */}
+          <div>
+            <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground mb-1">
+              {savings !== null && savings < 0 ? "Variance" : "Estimated Savings"}
+            </div>
+            <div className={`text-2xl sm:text-3xl font-semibold tracking-tight font-mono ${
+              savings !== null && savings >= 0
+                ? "text-emerald-600 dark:text-emerald-400"
+                : savings !== null && savings < 0
+                ? "text-amber-600 dark:text-amber-400"
+                : "text-foreground"
+            }`}>
+              {savings !== null ? formatCurrency(Math.abs(savings)) : "—"}
+            </div>
+            <div className="text-[11px] text-muted-foreground mt-0.5">
+              {savings !== null
+                ? savings >= 0
+                  ? "Under target budget"
+                  : "Above target budget"
+                : "No baseline"}
+            </div>
+          </div>
+
+          {/* Delay Penalty */}
+          <div>
+            <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground mb-1">
+              Delay Penalty
+            </div>
+            <div className="text-2xl sm:text-3xl font-semibold tracking-tight font-mono text-foreground">
+              {proposal.delay_penalty && proposal.delay_penalty > 0
+                ? formatCurrency(proposal.delay_penalty)
+                : "—"}
+            </div>
+            <div className="text-[11px] text-muted-foreground mt-0.5">
+              {proposal.delay_penalty && proposal.delay_penalty > 0
+                ? "Per day overdue"
+                : "No penalty"}
+            </div>
+          </div>
+
+          {/* Abandonment Penalty */}
+          <div>
+            <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground mb-1">
+              Default Clause
+            </div>
+            <div className="text-2xl sm:text-3xl font-semibold tracking-tight font-mono text-foreground">
+              {proposal.abandonment_penalty && proposal.abandonment_penalty > 0
+                ? formatCurrency(proposal.abandonment_penalty)
+                : "—"}
+            </div>
+            <div className="text-[11px] text-muted-foreground mt-0.5">
+              {proposal.abandonment_penalty && proposal.abandonment_penalty > 0
+                ? "Abandonment penalty"
+                : "Standard protection"}
+            </div>
+          </div>
         </div>
+      </div>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-          {/* Left Column - Project & Proposal Details */}
-          <div className="xl:col-span-2 space-y-6">
-            {/* Financial Summary */}
-            <div className="bg-white p-6 shadow-sm">
-              <div className="flex items-center gap-3 mb-6">
-                <DollarSign className="h-5 w-5 text-black" />
-                <h2 className="text-2xl font-bold text-black">
-                  Financial Summary
-                </h2>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-                <div className="text-center p-4 bg-orange-50">
-                  <p className="text-sm text-gray-600 font-medium mb-2">Proposal Amount</p>
-                  <p className="text-2xl font-bold text-black">
-                    {formatCurrency(proposal.total_amount || 0)}
-                  </p>
-                </div>
-                <div className="text-center p-4 bg-blue-50">
-                  <p className="text-sm text-gray-600 font-medium mb-2">GST/HST</p>
-                  <p className="text-xl font-bold text-blue-700">
-                    {formatCurrency((proposal.total_amount || 0) - (proposal.subtotal_amount || 0))}
-                  </p>
-                </div>
-                <div className="text-center p-4 bg-gray-50">
-                  <p className="text-sm text-gray-600 font-medium mb-2">Project Budget</p>
-                  <p className="text-xl font-semibold text-gray-700">
-                    {proposal.project_details?.budget
-                      ? formatCurrency(proposal.project_details.budget)
-                      : "Not specified"}
-                  </p>
-                </div>
-                <div className="text-center p-4 bg-gray-50">
-                  <p className="text-sm text-gray-600 font-medium mb-2">Potential Savings</p>
-                  <p className="text-xl font-bold text-black">
-                    {proposal.project_details?.budget && proposal.total_amount
-                      ? formatCurrency(
-                          proposal.project_details.budget -
-                            proposal.total_amount
-                        )
-                      : "Not specified"}
-                  </p>
-                </div>
-                <div className="text-center p-4 bg-red-50">
-                  <p className="text-sm text-gray-600 font-medium mb-2">Delay Penalty (Per Day)</p>
-                  <p className="text-xl font-bold text-red-700">
-                    {proposal.delay_penalty && proposal.delay_penalty > 0
-                      ? formatCurrency(proposal.delay_penalty)
-                      : "No penalty"}
-                  </p>
-                </div>
-                <div className="text-center p-4 bg-orange-50">
-                  <p className="text-sm text-gray-600 font-medium mb-2">Abandonment Penalty</p>
-                  <p className="text-xl font-bold text-orange-700">
-                    {proposal.abandonment_penalty && proposal.abandonment_penalty > 0
-                      ? formatCurrency(proposal.abandonment_penalty)
-                      : "No penalty"}
-                  </p>
-                </div>
-              </div>
+      {/* Main Content Grid: Clean 2-Column Asymmetrical Editorial Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 pt-2">
+        {/* Main Flow (8 cols) */}
+        <div className="lg:col-span-8 space-y-12">
+          {/* Section: Scope & Description of Work */}
+          <section className="space-y-4">
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-semibold tracking-tight text-foreground">
+                Scope & Description of Work
+              </h2>
             </div>
 
-            {/* Work Description */}
-            <div className="bg-white p-6 shadow-sm">
-              <div className="flex items-center gap-3 mb-6">
-                <FileText className="h-5 w-5 text-black" />
-                <h2 className="text-2xl font-bold text-black">
-                  Work Description
-                </h2>
-              </div>
-
-              <div className="space-y-6">
-                <div className="p-4 bg-gray-50">
-                  <h3 className="font-semibold text-black mb-3">
-                    Description of Work
-                  </h3>
-                  <p className="text-gray-700 leading-relaxed">
-                    {proposal.description_of_work || "No description provided"}
-                  </p>
-                </div>
-
-                {proposal.notes && (
-                  <div className="p-4 bg-gray-50">
-                    <h3 className="font-semibold text-black mb-3">Additional Notes</h3>
-                    <p className="text-gray-700 leading-relaxed">
-                      {proposal.notes}
-                    </p>
-                  </div>
-                )}
-              </div>
+            <div className="text-sm sm:text-base text-foreground/90 leading-relaxed whitespace-pre-wrap font-normal">
+              {proposal.description_of_work || "No work description provided."}
             </div>
 
-            {/* Project Photos */}
-            {(proposal.project_details?.certificate_of_title || proposal.project_details?.project_photos || proposal.project_details?.files) && (
-              <div className="bg-white p-6 shadow-sm">
-                <div className="flex items-center gap-3 mb-4">
-                  <Image className="h-5 w-5 text-black" aria-label="Project photos icon" />
-                  <h2 className="text-2xl font-bold text-black">
-                    Project Photos
-                  </h2>
-                </div>
-                
-                {/* Photo Gallery */}
-                {proposal.project_details?.project_photos && proposal.project_details.project_photos.length > 0 && (
-                  <div className="mb-6">
-                    <ProjectImageGallery 
-                      projectPhotos={proposal.project_details.project_photos?.map(photo => ({
+            {proposal.notes && (
+              <div className="border-l-2 border-amber-500/70 pl-4 py-1 mt-6 text-sm text-muted-foreground space-y-1">
+                <span className="text-xs font-semibold uppercase tracking-wider text-foreground block">
+                  Contractor Notes
+                </span>
+                <p className="leading-relaxed whitespace-pre-wrap">{proposal.notes}</p>
+              </div>
+            )}
+          </section>
+
+          {/* Section: Project Overview & Specs */}
+          <section className="space-y-4 border-t border-border/40 pt-10">
+            <h2 className="text-lg font-semibold tracking-tight text-foreground">
+              Project Listing Specifications
+            </h2>
+
+            <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-sm">
+              <div className="flex flex-col py-1 border-b border-border/30">
+                <dt className="text-xs text-muted-foreground mb-1">Location</dt>
+                <dd className="font-medium text-foreground flex items-center gap-1.5">
+                  <MapPin className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                  {formatLocation(proposal.project_details?.location)}
+                </dd>
+              </div>
+
+              <div className="flex flex-col py-1 border-b border-border/30">
+                <dt className="text-xs text-muted-foreground mb-1">Trade Category</dt>
+                <dd className="font-medium text-foreground">
+                  {proposal.project_details?.category ? (
+                    Array.isArray(proposal.project_details.category) ? (
+                      proposal.project_details.category.join(", ")
+                    ) : (
+                      proposal.project_details.category
+                    )
+                  ) : (
+                    "Not specified"
+                  )}
+                </dd>
+              </div>
+
+              <div className="flex flex-col py-1 border-b border-border/30">
+                <dt className="text-xs text-muted-foreground mb-1">Project Type</dt>
+                <dd className="font-medium text-foreground">
+                  {proposal.project_details?.project_type || "Standard Project"}
+                </dd>
+              </div>
+
+              <div className="flex flex-col py-1 border-b border-border/30">
+                <dt className="text-xs text-muted-foreground mb-1">Permit Requirement</dt>
+                <dd className="font-medium text-foreground">
+                  {proposal.project_details?.permit_required ? "Permit Required" : "No Permit Required"}
+                </dd>
+              </div>
+            </dl>
+
+            {proposal.project_details?.is_verified_project && (
+              <div className="flex items-center gap-2 pt-2 text-xs text-muted-foreground">
+                <Award className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                <span>Verified Project Listing on Structra</span>
+              </div>
+            )}
+          </section>
+
+          {/* Section: Project Visuals & Files */}
+          {(proposal.project_details?.project_photos?.length ||
+            proposal.project_details?.files?.length) ? (
+            <section className="space-y-5 border-t border-border/40 pt-10">
+              <h2 className="text-lg font-semibold tracking-tight text-foreground">
+                Project Visuals & Listing Files
+              </h2>
+
+              {proposal.project_details?.project_photos &&
+                proposal.project_details.project_photos.length > 0 && (
+                  <div className="rounded-lg overflow-hidden border border-border/50">
+                    <ProjectImageGallery
+                      projectPhotos={proposal.project_details.project_photos.map((photo) => ({
                         ...photo,
-                        uploadedAt: photo.uploadedAt ? new Date(photo.uploadedAt) : undefined
+                        uploadedAt: photo.uploadedAt ? new Date(photo.uploadedAt) : undefined,
                       }))}
                       projectType={proposal.project_details.project_type}
                     />
                   </div>
                 )}
-                
-                {/* Project Files */}
-                {proposal.project_details?.files && proposal.project_details.files.length > 0 && (
-                  <div className="space-y-4">
-                    <div className="p-3 bg-gray-50">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <FileText className="h-5 w-5 text-gray-600" />
-                        <span className="font-medium text-black">Project Files ({proposal.project_details.files.length})</span>
-                      </div>
-                      <div className="text-sm text-gray-600">Additional project documents available</div>
+
+              {proposal.project_details?.files && proposal.project_details.files.length > 0 && (
+                <div className="divide-y divide-border/30 pt-2">
+                  {proposal.project_details.files.map((file, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center justify-between py-2.5 text-sm"
+                    >
+                      <span className="font-medium text-foreground truncate pr-4">
+                        {file.filename}
+                      </span>
+                      <a
+                        href={file.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 shrink-0 underline underline-offset-4"
+                      >
+                        <Download className="h-3 w-3" />
+                        Download
+                      </a>
                     </div>
-                  </div>
-                )}
-              </div>
-            )}
+                  ))}
+                </div>
+              )}
+            </section>
+          ) : null}
 
-            {/* Project Details */}
-            <div className="bg-white p-6 shadow-sm">
-              <div className="flex items-center gap-3 mb-4">
-                <Building className="h-5 w-5 text-black" />
-                <h2 className="text-2xl font-bold text-black">
-                  Project Details
+          {/* Section: Supporting Documents Submitted by Contractor */}
+          {proposal.attached_files && proposal.attached_files.length > 0 && (
+            <section className="space-y-4 border-t border-border/40 pt-10">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-semibold tracking-tight text-foreground">
+                  Attached Proposal Documents
                 </h2>
+                <span className="text-xs text-muted-foreground">
+                  {proposal.attached_files.length} {proposal.attached_files.length === 1 ? "file" : "files"}
+                </span>
               </div>
 
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-3 bg-gray-50">
-                    <h3 className="font-medium text-black mb-2">Location</h3>
-                    <p className="text-gray-700 text-sm">
-                      {proposal.project_details?.location
-                        ? `${proposal.project_details.location.city || 'Unknown City'}, ${proposal.project_details.location.province || 'Unknown Province'}`
-                        : "Location not specified"}
-                    </p>
-                  </div>
-
-                  <div className="p-3 bg-gray-50">
-                    <h3 className="font-medium text-black mb-2">Category</h3>
-                    <p className="text-gray-700 text-sm">
-                      {proposal.project_details?.category
-                        ? Array.isArray(proposal.project_details.category)
-                          ? proposal.project_details.category.join(", ")
-                          : proposal.project_details.category
-                        : "Not specified"}
-                    </p>
-                  </div>
-
-                  <div className="p-3 bg-gray-50">
-                    <h3 className="font-medium text-black mb-2">Project Type</h3>
-                    <p className="text-gray-700 text-sm">
-                      {proposal.project_details?.project_type || "Type not specified"}
-                    </p>
-                  </div>
-
-                  <div className="p-3 bg-gray-50">
-                    <h3 className="font-medium text-black mb-2">Permit Required</h3>
-                    <p className="text-gray-700 text-sm">
-                      {proposal.project_details?.permit_required
-                        ? "Yes"
-                        : "No"}
-                    </p>
-                  </div>
-                </div>
-
-
-
-                {/* Verified Project Badge */}
-                <div className="pt-4">
-                  <div className="space-y-3">
-                    {proposal.project_details?.is_verified_project && (
-                      <div className="flex items-center gap-3 p-3 bg-gray-50">
-                        <Award className="h-4 w-4 text-black" />
-                        <span className="text-black font-medium">
-                          Verified Project
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Attached Files */}
-            {proposal.attached_files && proposal.attached_files.length > 0 && (
-              <div className="bg-white p-6 shadow-sm">
-                <div className="flex items-center gap-3 mb-6">
-                  <Download className="h-5 w-5 text-black" />
-                  <h2 className="text-2xl font-bold text-black">
-                    Supporting Documents
-                  </h2>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {proposal.attached_files.map((file, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <FileText className="h-5 w-5 text-gray-500" />
-                        <div>
-                          <p className="font-medium text-black">{file.filename}</p>
+              <div className="divide-y divide-border/30">
+                {proposal.attached_files.map((file, index) => {
+                  const isDownloading = downloadingFileId === (file.id || String(index));
+                  return (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between py-3 group"
+                    >
+                      <div className="flex items-center gap-3 min-w-0 pr-4">
+                        <FileDown className="h-4 w-4 text-muted-foreground shrink-0" />
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-foreground truncate">
+                            {file.filename}
+                          </p>
                           {file.size && (
-                            <p className="text-sm text-gray-500">
-                              {(file.size / 1024 / 1024).toFixed(2)} MB
+                            <p className="text-xs text-muted-foreground">
+                              {(file.size / (1024 * 1024)).toFixed(2)} MB
                             </p>
                           )}
                         </div>
                       </div>
                       <Button
-                        variant="outline"
+                        variant="ghost"
                         size="sm"
-                        onClick={async () => {
-                          try {
-                            // Fetch the file as a blob to force download
-                            const response = await fetch(file.url)
-                            const blob = await response.blob()
-                            const url = window.URL.createObjectURL(blob)
-                            const link = document.createElement('a')
-                            link.href = url
-                            link.download = file.filename
-                            document.body.appendChild(link)
-                            link.click()
-                            document.body.removeChild(link)
-                            window.URL.revokeObjectURL(url)
-                          } catch (error) {
-                            console.error('Download failed:', error)
-                            // Fallback to direct link if fetch fails
-                            const link = document.createElement('a')
-                            link.href = file.url
-                            link.download = file.filename
-                            link.style.display = 'none'
-                            document.body.appendChild(link)
-                            link.click()
-                            document.body.removeChild(link)
-                          }
-                        }}
-                        className="h-8 px-3 text-xs border-blue-200 text-blue-700 hover:bg-blue-50"
+                        disabled={isDownloading}
+                        onClick={() =>
+                          handleDownloadFile(file.url, file.filename, file.id || String(index))
+                        }
+                        className="h-8 text-xs text-muted-foreground hover:text-foreground shrink-0 gap-1"
                       >
-                        <Download className="h-3 w-3 mr-1" />
-                        Download
+                        <Download className="h-3.5 w-3.5" />
+                        {isDownloading ? "..." : "Download"}
                       </Button>
                     </div>
-                  ))}
-                </div>
+                  );
+                })}
               </div>
-            )}
-          </div>
+            </section>
+          )}
+        </div>
 
-          {/* Right Column - Contractor & Actions */}
-          <div className="space-y-6">
-            {/* Contractor Profile */}
-            <div className="bg-white p-6 shadow-sm">
-              <div className="flex items-center gap-3 mb-4">
-                <User className="h-5 w-5 text-black" />
-                <h2 className="text-2xl font-bold text-black">
-                  Contractor Profile
-                </h2>
-              </div>
+        {/* Sidebar Rail (4 cols): Minimalist Contractor Profile & Milestones */}
+        <aside className="lg:col-span-4 space-y-10 lg:border-l lg:border-border/40 lg:pl-10">
+          {/* Contractor Profile */}
+          <div className="space-y-5">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Contractor Profile
+            </h3>
 
-              <div className="mb-4">
-                <h3 className="text-lg font-semibold text-black">
-                  {proposal.contractor_details?.full_name || "Contractor"}
-                </h3>
-                <p className="text-gray-600 font-medium">
-                  {proposal.contractor_details?.business_name ||
-                    "Business Name Not Available"}
-                </p>
-                {proposal.contractor_details?.bio && (
-                  <p className="text-sm text-gray-500 mt-1">
-                    {proposal.contractor_details.bio}
-                  </p>
+            <div className="flex items-center gap-3.5">
+              <RandomAvatar
+                name={contractorName}
+                size={48}
+                className="rounded-full ring-1 ring-border shrink-0"
+              />
+              <div className="min-w-0">
+                <h4 className="font-semibold text-foreground text-base truncate">
+                  {contractorName}
+                </h4>
+                {proposal.contractor_details?.business_name &&
+                  proposal.contractor_details?.full_name && (
+                    <p className="text-xs text-muted-foreground truncate">
+                      {proposal.contractor_details.full_name}
+                    </p>
+                  )}
+                {proposal.contractor_details?.is_insurance_verified && (
+                  <span className="inline-flex items-center gap-1 text-[11px] text-emerald-600 dark:text-emerald-400 mt-0.5">
+                    <ShieldCheck className="h-3 w-3" />
+                    Verified Pro
+                  </span>
                 )}
               </div>
-
-
-
-              {/* Business Information */}
-              <div className="p-4 mb-4 bg-gray-50">
-                <h3 className="font-medium text-black mb-3">Business Information</h3>
-                <div className="space-y-3">
-                  {proposal.contractor_details?.service_location && (
-                    <div className="text-sm">
-                      <span className="font-medium text-black">Service Area:</span>
-                      <span className="text-gray-700 ml-2">{proposal.contractor_details.service_location}</span>
-                    </div>
-                  )}
-                  {proposal.contractor_details?.trade_category && proposal.contractor_details.trade_category.length > 0 && (
-                    <div className="text-sm">
-                      <span className="font-medium text-black">Specialties:</span>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {proposal.contractor_details.trade_category.map((category, index) => (
-                          <span key={index} className="bg-white text-black text-xs px-2 py-1">
-                            {category}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {proposal.contractor_details?.work_guarantee && (
-                    <div className="text-sm">
-                      <span className="font-medium text-black">Work Guarantee:</span>
-                      <span className="text-gray-700 ml-2">{proposal.contractor_details.work_guarantee} months</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Credentials */}
-              <div className="p-4 bg-gray-50">
-                <h3 className="font-medium text-black mb-3">Credentials</h3>
-                <div className="space-y-3">
-                  {proposal.contractor_details?.licenses && proposal.contractor_details.licenses.length > 0 && (
-                    <div className="text-sm">
-                      <span className="font-medium text-black">Licensed:</span>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {proposal.contractor_details.licenses.map((license, index) => (
-                          <span key={index} className="bg-white text-black text-xs px-2 py-1">
-                            {license}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {(proposal.contractor_details?.insurance_general_liability || proposal.contractor_details?.insurance_builders_risk) && (
-                    <div className="text-sm">
-                      <div className="font-medium text-black mb-1">Insurance Coverage:</div>
-                      <div className="text-gray-700 space-y-1">
-                        {proposal.contractor_details?.insurance_general_liability && (
-                          <div className="text-xs">General Liability: ${proposal.contractor_details.insurance_general_liability.toLocaleString()}</div>
-                        )}
-                        {proposal.contractor_details?.insurance_builders_risk && (
-                          <div className="text-xs">Builder&apos;s Risk: ${proposal.contractor_details.insurance_builders_risk.toLocaleString()}</div>
-                        )}
-                        {proposal.contractor_details?.insurance_expiry && (
-                          <div className="text-xs">Expires: {new Date(proposal.contractor_details.insurance_expiry).toLocaleDateString()}</div>
-                        )}
-                        {proposal.contractor_details?.is_insurance_verified && (
-                          <div className="text-xs text-black font-medium">✓ Verified</div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                  {proposal.contractor_details?.legal_entity_type && (
-                    <div className="text-sm">
-                      <span className="font-medium text-black">Business Type:</span>
-                      <span className="text-gray-700 ml-2">{proposal.contractor_details.legal_entity_type}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
             </div>
 
+            {proposal.contractor_details?.bio && (
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                {proposal.contractor_details.bio}
+              </p>
+            )}
 
-
-            {/* Timeline */}
-            <div className="bg-white p-6 shadow-sm">
-              <div className="flex items-center gap-3 mb-4">
-                <Clock4 className="h-5 w-5 text-black" />
-                <h2 className="text-2xl font-bold text-black">
-                  Timeline
-                </h2>
-              </div>
-
-              <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-gray-50">
-                  <span className="font-medium text-black">Proposed Start Date</span>
-                  <span className="text-gray-700 text-sm">
-                    {proposal.proposed_start_date
-                      ? formatDate(proposal.proposed_start_date)
-                      : "Not specified"}
-                  </span>
+            <dl className="space-y-2.5 text-xs pt-2">
+              {proposal.contractor_details?.service_location && (
+                <div className="flex justify-between py-1 border-b border-border/20">
+                  <dt className="text-muted-foreground">Service Area</dt>
+                  <dd className="font-medium text-foreground text-right">
+                    {proposal.contractor_details.service_location}
+                  </dd>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-gray-50">
-                  <span className="font-medium text-black">Proposed End Date</span>
-                  <span className="text-gray-700 text-sm">
-                    {proposal.proposed_end_date
-                      ? formatDate(proposal.proposed_end_date)
-                      : "Not specified"}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-orange-50">
-                  <span className="font-medium text-black">Proposed Duration</span>
-                  <span className="text-gray-700 text-sm">
-                    {proposal.proposed_start_date && proposal.proposed_end_date
-                      ? `${Math.ceil(
-                          (new Date(proposal.proposed_end_date).getTime() -
-                            new Date(proposal.proposed_start_date).getTime()) /
-                            (1000 * 60 * 60 * 24)
-                        )} days`
-                      : "Not specified"}
-                  </span>
-                </div>
-              </div>
-            </div>
+              )}
 
-            {/* Contact & Actions - Hidden for now */}
-            {/* 
-             <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-               <h2 className="text-lg font-semibold text-gray-900 mb-4">Contact & Actions</h2>
-               
-               <div className="space-y-3">
-                 <Button variant="outline" className="w-full">
-                   <Phone className="h-4 w-4 mr-2" />
-                   Call Contractor
-                 </Button>
-                 <Button variant="outline" className="w-full">
-                   <Mail className="h-4 w-4 mr-2" />
-                   Send Message
-                 </Button>
-                 <Button variant="outline" className="w-full" onClick={handleGeneratePDF}>
-                   <Download className="h-4 w-4 mr-2" />
-                   Download PDF
-                 </Button>
-                 <Button variant="outline" className="w-full">
-                   <Share2 className="h-4 w-4 mr-2" />
-                   Share
-                 </Button>
-               </div>
-             </div>
-             */}
+              {proposal.contractor_details?.work_guarantee && (
+                <div className="flex justify-between py-1 border-b border-border/20">
+                  <dt className="text-muted-foreground">Guarantee</dt>
+                  <dd className="font-medium text-foreground">
+                    {proposal.contractor_details.work_guarantee} Months Warranty
+                  </dd>
+                </div>
+              )}
+
+              {proposal.contractor_details?.insurance_general_liability && (
+                <div className="flex justify-between py-1 border-b border-border/20">
+                  <dt className="text-muted-foreground">Liability Coverage</dt>
+                  <dd className="font-mono font-medium text-foreground">
+                    ${proposal.contractor_details.insurance_general_liability.toLocaleString()}
+                  </dd>
+                </div>
+              )}
+
+              {proposal.contractor_details?.insurance_expiry && (
+                <div className="flex justify-between py-1 border-b border-border/20">
+                  <dt className="text-muted-foreground">Insurance Expiry</dt>
+                  <dd className="text-foreground">
+                    {formatDate(proposal.contractor_details.insurance_expiry)}
+                  </dd>
+                </div>
+              )}
+
+              {proposal.contractor_details?.legal_entity_type && (
+                <div className="flex justify-between py-1 border-b border-border/20">
+                  <dt className="text-muted-foreground">Business Structure</dt>
+                  <dd className="text-foreground">
+                    {proposal.contractor_details.legal_entity_type}
+                  </dd>
+                </div>
+              )}
+
+              {proposal.contractor_details?.email && (
+                <div className="flex justify-between py-1 border-b border-border/20">
+                  <dt className="text-muted-foreground">Email</dt>
+                  <dd className="font-mono text-muted-foreground truncate max-w-[160px]">
+                    {proposal.contractor_details.email}
+                  </dd>
+                </div>
+              )}
+
+              {proposal.contractor_details?.phone_number && (
+                <div className="flex justify-between py-1 border-b border-border/20">
+                  <dt className="text-muted-foreground">Phone</dt>
+                  <dd className="font-mono text-muted-foreground">
+                    {proposal.contractor_details.phone_number}
+                  </dd>
+                </div>
+              )}
+            </dl>
+
+            {proposal.contractor_details?.trade_category &&
+              proposal.contractor_details.trade_category.length > 0 && (
+                <div className="pt-2">
+                  <div className="text-[11px] text-muted-foreground mb-1.5 uppercase tracking-wider">
+                    Specialties
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    {proposal.contractor_details.trade_category.map((specialty, idx) => (
+                      <span
+                        key={idx}
+                        className="text-[11px] text-muted-foreground bg-muted/40 px-2 py-0.5 rounded"
+                      >
+                        {specialty}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
           </div>
-        </div>
+
+          {/* Timeline & Milestones */}
+          <div className="space-y-4 border-t border-border/40 pt-8">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Proposed Milestones
+            </h3>
+
+            <dl className="space-y-3 text-xs">
+              <div className="flex justify-between items-baseline py-1 border-b border-border/20">
+                <dt className="text-muted-foreground">Target Start</dt>
+                <dd className="font-semibold text-foreground">
+                  {formatDate(proposal.proposed_start_date)}
+                </dd>
+              </div>
+
+              <div className="flex justify-between items-baseline py-1 border-b border-border/20">
+                <dt className="text-muted-foreground">Estimated Completion</dt>
+                <dd className="font-semibold text-foreground">
+                  {formatDate(proposal.proposed_end_date)}
+                </dd>
+              </div>
+
+              <div className="flex justify-between items-baseline py-1 border-b border-border/20">
+                <dt className="text-muted-foreground">Total Work Duration</dt>
+                <dd className="font-semibold text-foreground">
+                  {durationDays ? `${durationDays} Days` : "Not specified"}
+                </dd>
+              </div>
+
+              {proposal.deposit_amount && proposal.deposit_amount > 0 ? (
+                <div className="flex justify-between items-baseline py-1 border-b border-border/20">
+                  <dt className="text-muted-foreground">Initial Deposit</dt>
+                  <dd className="font-semibold text-foreground">
+                    {formatCurrency(proposal.deposit_amount)}
+                    {proposal.deposit_due_on && (
+                      <span className="block text-[10px] text-muted-foreground font-normal">
+                        Due: {formatDate(proposal.deposit_due_on)}
+                      </span>
+                    )}
+                  </dd>
+                </div>
+              ) : null}
+            </dl>
+          </div>
+        </aside>
       </div>
 
-      {/* Accept Confirmation Dialog */}
+      {/* Confirmation Dialogs */}
       <Dialog open={showAcceptDialog} onOpenChange={setShowAcceptDialog}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Accept Proposal</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to accept this contractor&apos;s proposal? This will automatically reject all other proposals for this project.
+            <DialogTitle className="text-lg font-semibold">
+              Accept Proposal
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground mt-1">
+              You are selecting the proposal of{" "}
+              <strong className="text-foreground">{formatCurrency(totalAmount)}</strong> from{" "}
+              <strong className="text-foreground">{contractorName}</strong>.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter>
+
+          <p className="text-xs text-muted-foreground border-l-2 border-amber-500 pl-3 py-1 my-1">
+            Accepting will decline other proposals on this project and move the project to the Proposal Selected stage.
+          </p>
+
+          <DialogFooter className="gap-2 sm:gap-0 mt-4">
             <Button
-              variant="outline"
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowAcceptDialog(false)}
+              disabled={actionLoading}
+            >
+              Cancel
+            </Button>
+            <Button
+              size="sm"
+              onClick={handleAcceptProposal}
+              disabled={actionLoading}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium"
+            >
+              {actionLoading ? "Accepting..." : "Confirm Acceptance"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showRejectDialog} onOpenChange={setShowRejectDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-semibold">
+              Decline Proposal
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground mt-1">
+              Provide feedback to the contractor explaining why this proposal was declined.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="my-2">
+            <Textarea
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              placeholder="e.g. Budget constraints, scheduling conflict, or scope adjustment..."
+              rows={4}
+              disabled={actionLoading}
+              className="text-xs resize-none"
+            />
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-0 mt-2">
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => {
-                setShowAcceptDialog(false);
+                setShowRejectDialog(false);
+                setRejectReason("");
               }}
               disabled={actionLoading}
             >
               Cancel
             </Button>
             <Button
-              onClick={handleAcceptProposal}
-              disabled={actionLoading}
-              variant="outline"
+              variant="destructive"
+              size="sm"
+              onClick={handleRejectProposal}
+              disabled={actionLoading || !rejectReason.trim()}
             >
-              {actionLoading ? "Accepting..." : "Accept Proposal"}
+              {actionLoading ? "Declining..." : "Confirm Decline"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
+      {/* PDF Contract Preview Modal */}
       <PDFPreviewModal
         isOpen={showPDFPreview}
         onClose={() => {
@@ -1231,44 +1336,6 @@ export default function HomeownerProposalViewPage({
           setShowRejectDialog(true);
         }}
       />
-
-      {/* Reject Confirmation Dialog */}
-      <Dialog open={showRejectDialog} onOpenChange={setShowRejectDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Reject Proposal</DialogTitle>
-            <DialogDescription>
-              Provide a reason so the contractor can update and resubmit the contract.
-            </DialogDescription>
-          </DialogHeader>
-          <Textarea
-            value={rejectReason}
-            onChange={(e) => setRejectReason(e.target.value)}
-            placeholder="Tell the contractor what needs to be fixed..."
-            rows={4}
-            disabled={actionLoading}
-          />
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setShowRejectDialog(false);
-                setRejectReason("");
-              }}
-              disabled={actionLoading}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleRejectProposal}
-              disabled={actionLoading || !rejectReason.trim()}
-              variant="outline"
-            >
-              {actionLoading ? "Rejecting..." : "Reject Proposal"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

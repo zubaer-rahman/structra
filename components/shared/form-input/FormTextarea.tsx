@@ -2,6 +2,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { AlertCircle } from "lucide-react";
 
 export interface FormTextareaProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
@@ -33,36 +34,46 @@ const FormTextarea = React.forwardRef<HTMLTextAreaElement, FormTextareaProps>(
   ) => {
     const textareaId =
       id || `form-textarea-${Math.random().toString(36).substr(2, 9)}`;
+    const hasError = Boolean(error || isInvalid);
+    const errorMessage = error || validationMessage;
 
     return (
-      <div className={cn("space-y-2", containerClassName)}>
+      <div className={cn("space-y-1.5", containerClassName)}>
         {label && (
-          <Label
-            htmlFor={textareaId}
-            className={cn(
-              "text-sm font-medium block",
-              isInvalid ? "text-red-700" : "text-gray-700"
+          <div className="flex items-center justify-between">
+            <Label
+              htmlFor={textareaId}
+              className="text-xs font-semibold text-gray-700 dark:text-gray-300"
+            >
+              {label}
+              {required && <span className="text-red-500 font-bold ml-1">*</span>}
+            </Label>
+            {hasError && (
+              <span className="text-xs font-medium text-red-500">Required</span>
             )}
-          >
-            {label}
-            {required && <span className="text-red-500 ml-1">*</span>}
-          </Label>
+          </div>
         )}
         <Textarea
           id={textareaId}
           rows={rows}
           className={cn(
-            "focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-blue-500",
-            (error || isInvalid) && "border-red-500 bg-red-50 focus-visible:border-red-500",
+            "transition-all text-sm dark:bg-[#161616] dark:text-white",
+            hasError
+              ? "border-red-500 focus-visible:ring-red-400 bg-red-50/20 dark:bg-red-950/20"
+              : "border-gray-200 dark:border-white/10 focus-visible:ring-2 focus-visible:ring-orange-500/20 focus-visible:border-orange-500",
             className
           )}
           ref={ref}
           {...props}
         />
-        {helperText && <p className="text-xs text-gray-500">{helperText}</p>}
-        {error && <p className="text-sm text-red-500">{error}</p>}
-        {!error && isInvalid && validationMessage && (
-          <p className="text-sm text-red-500">{validationMessage}</p>
+        {helperText && !hasError && (
+          <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">{helperText}</p>
+        )}
+        {hasError && errorMessage && (
+          <p className="text-xs text-red-500 flex items-center gap-1 mt-1">
+            <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
+            <span>{errorMessage}</span>
+          </p>
         )}
       </div>
     );
@@ -71,3 +82,4 @@ const FormTextarea = React.forwardRef<HTMLTextAreaElement, FormTextareaProps>(
 FormTextarea.displayName = "FormTextarea";
 
 export { FormTextarea };
+

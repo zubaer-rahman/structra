@@ -22,6 +22,7 @@ import { generateProposalPDFBlob } from '@/utils/helpers/pdfPreviewGenerator'
 import PDFPreviewModal from '@/components/shared/PDFPreviewModal'
 import toast from 'react-hot-toast'
 import Breadcrumbs from '@/components/shared/Breadcrumbs'
+import { LoadingSpinner } from '@/components/shared'
 
 export default function SubmitProposalPage() {
   const { user, userRole, loading } = useAuth()
@@ -87,22 +88,29 @@ export default function SubmitProposalPage() {
       setProposalsLoading(true)
       const supabase = createClient()
       
-      const { data, error } = await supabase
+      let data = null
+      const { data: proposalData, error } = await supabase
         .from('proposals')
         .select('id, status, created_at')
         .eq('project', projectId)
         .eq('contractor', user.id)
-        .eq('is_deleted', 'no')
         .order('created_at', { ascending: false })
 
-      if (error) {
-        console.error('Error fetching existing proposals:', error)
-        return
+      if (error && (error.code === '42703' || error.message?.includes('does not exist'))) {
+        const { data: fallbackData } = await supabase
+          .from('proposals')
+          .select('id, status, created_at')
+          .eq('project_id', projectId)
+          .eq('contractor_id', user.id)
+          .order('created_at', { ascending: false })
+        data = fallbackData
+      } else {
+        data = proposalData
       }
 
       setExistingProposals(data || [])
     } catch (error) {
-      console.error('Error checking existing proposals:', error)
+      console.warn('Error checking existing proposals:', error)
     } finally {
       setProposalsLoading(false)
     }
@@ -320,17 +328,20 @@ export default function SubmitProposalPage() {
         const supabase = createClient()
         const { data: profileData, error: profileError } = await supabase
           .from('contractor_profiles')
-          .select('work_guarantee_statement, phone_number, address')
+          .select('work_guarantee_statement, address')
           .eq('user_id', user.id)
           .single()
 
         if (profileError && profileError.code !== 'PGRST116') {
-          console.error('Error fetching contractor profile:', profileError.message)
+          console.warn('Error fetching contractor profile:', profileError.message)
         } else if (profileData) {
-          setContractorProfile(profileData)
+          setContractorProfile({
+            ...profileData,
+            phone_number: (user as unknown as { phone?: string; phone_number?: string }).phone || (user as unknown as { phone?: string; phone_number?: string }).phone_number || '',
+          })
         }
       } catch (error) {
-        console.error('Error fetching contractor profile:', error)
+        console.warn('Error fetching contractor profile:', error)
       }
     }
     
@@ -607,7 +618,7 @@ export default function SubmitProposalPage() {
       }
       
       toast.success("Your proposal has been submitted successfully. The homeowner will review it and get back to you.")
-      router.push('/contractor/my-projects')
+      router.push('/contractor/proposals')
     } catch (error) {
       console.error('Error submitting proposal:', error)
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
@@ -730,32 +741,32 @@ export default function SubmitProposalPage() {
 
   if (loading || projectLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Loading...</div>
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <LoadingSpinner size="lg" text="Loading project details..." />
       </div>
     )
   }
 
   if (error && !project) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg text-red-600">{error}</div>
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="text-lg text-red-600 dark:text-red-400">{error}</div>
       </div>
     )
   }
 
-      if (!user || userRole !== USER_ROLES.CONTRACTOR) {
+  if (!user || userRole !== USER_ROLES.CONTRACTOR) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Access denied. Only contractors can submit proposals.</div>
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="text-lg text-gray-900 dark:text-white">Access denied. Only contractors can submit proposals.</div>
       </div>
     )
   }
 
   if (!project) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Project not found or no longer accepting proposals.</div>
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="text-lg text-gray-900 dark:text-white">Project not found or no longer accepting proposals.</div>
       </div>
     )
   }
@@ -785,7 +796,7 @@ export default function SubmitProposalPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-6">
+    <div className="space-y-6">
       {/* Breadcrumbs */}
       <div className="mb-4">
         <Breadcrumbs

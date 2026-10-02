@@ -45,48 +45,11 @@ export default function ProjectsPage({ projects, userRole, className = '', onPro
   }, [router, userRole])
 
   const handleEditProject = useCallback((project: Project) => {
-    const guardAndNavigate = async () => {
-      if (userRole === USER_ROLES.HOMEOWNER) {
-        // Block editing if project is already past proposal selection
-        if (
-          project.status === PROJECT_STATUSES.PROPOSAL_SELECTED ||
-          project.status === PROJECT_STATUSES.IN_PROGRESS ||
-          project.status === PROJECT_STATUSES.COMPLETED
-        ) {
-          toast.error('Project editing is disabled after selecting a proposal')
-          return
-        }
-
-        // Draft projects have no accepted proposals
-        if (project.status === PROJECT_STATUSES.DRAFT) {
-          router.push(`/homeowner/projects/edit/${project.id}`)
-          return
-        }
-
-        try {
-          const supabase = createClient()
-          const { data: selectedProposal, error } = await supabase
-            .from('proposals')
-            .select('id')
-            .eq('project_id', project.id)
-            .eq('status', 'accepted')
-            .maybeSingle()
-
-          if (!error && selectedProposal) {
-            toast.error('Project editing is disabled after selecting a proposal')
-            return
-          }
-        } catch (error) {
-          console.error('Error checking project edit eligibility:', error)
-        }
-
-        router.push(`/homeowner/projects/edit/${project.id}`)
-      } else {
-        router.push(`/projects/edit/${project.id}`)
-      }
+    if (userRole === USER_ROLES.HOMEOWNER) {
+      router.push(`/homeowner/projects/edit/${project.id}`)
+    } else {
+      router.push(`/projects/edit/${project.id}`)
     }
-
-    void guardAndNavigate()
   }, [router, userRole])
 
   const handleDeleteProject = useCallback(async (project: Project) => {
