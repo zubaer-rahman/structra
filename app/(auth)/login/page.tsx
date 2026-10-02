@@ -295,7 +295,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex-1 flex items-center justify-center">
+    <div className="flex-1 flex items-center justify-center py-6 sm:py-8">
       <div className="w-full max-w-lg space-y-6">
         <AuthHero
           title={

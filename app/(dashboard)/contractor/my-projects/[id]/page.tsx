@@ -274,7 +274,7 @@ export default function ContractorProposalViewPage({ params }: { params: Promise
           .from('proposals')
           .select(`
             *,
-            project:projects (
+            project:projects!proposals_project_fkey (
               id,
               project_title,
               statement_of_work,
@@ -419,9 +419,9 @@ export default function ContractorProposalViewPage({ params }: { params: Promise
         .from('proposals')
         .select(`
           *,
-          project:projects(*),
+          project:projects!proposals_project_fkey(*),
           homeowner_details:users!proposals_homeowner_fkey(*),
-          project_details:projects(*)
+          project_details:projects!proposals_project_fkey(*)
         `)
         .eq('id', projectData.proposal.id)
         .eq('contractor', user?.id)
@@ -542,20 +542,17 @@ export default function ContractorProposalViewPage({ params }: { params: Promise
   const StatusIcon = proposalStatusConfig.icon
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        {/* Breadcrumbs */}
-        <div className="bg-white px-2 sm:px-4 py-4 mb-4 sm:mb-6">
-          <div className="max-w-7xl mx-auto">
-            <Breadcrumbs
-              items={[
-                { label: 'Dashboard', href: '/contractor/dashboard' },
-                { label: 'My Projects', href: '/contractor/my-projects' },
-                { label: projectData?.project_title || 'Project Proposal', href: '#' }
-              ]}
-            />
-          </div>
-        </div>
+    <div className="space-y-6">
+      {/* Breadcrumbs */}
+      <div>
+        <Breadcrumbs
+          items={[
+            { label: 'Dashboard', href: '/contractor/dashboard' },
+            { label: 'My Projects', href: '/contractor/my-projects' },
+            { label: projectData?.project_title || 'Project Proposal', href: '#' }
+          ]}
+        />
+      </div>
 
 
         {/* Main Content Grid */}
@@ -1224,7 +1221,6 @@ export default function ContractorProposalViewPage({ params }: { params: Promise
 
           </div>
         </div>
-      </div>
 
       {/* PDF Preview Modal - Larger Size */}
       <PDFPreviewModal

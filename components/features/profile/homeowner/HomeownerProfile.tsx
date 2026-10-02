@@ -61,6 +61,13 @@ export function HomeownerProfile() {
     government_id_verified: false,
   });
 
+  const [initialFormData, setInitialFormData] = useState<{
+    first_name: string;
+    last_name: string;
+    phone_number: string;
+    address: LocationData;
+  } | null>(null);
+
   useEffect(() => {
     const fetchUserData = async () => {
       if (!user) return;
@@ -112,15 +119,20 @@ export function HomeownerProfile() {
           };
         }
 
-        setFormData({
+        const initialValues = {
           first_name: data?.first_name || "",
           last_name: data?.last_name || "",
           phone_number: data?.phone_number || "",
           address: addressData,
+        };
+
+        setFormData({
+          ...initialValues,
           profile_photo: data?.profile_photo || "",
           government_id: data?.government_id || null,
           government_id_verified: data?.government_id_verified || false,
         });
+        setInitialFormData(initialValues);
       } catch (error) {
         console.error("Error fetching user data:", error);
       } finally {
@@ -142,6 +154,20 @@ export function HomeownerProfile() {
   const isAddressValid = addressString.length > 0;
 
   const isFormValid = isFirstNameValid && isLastNameValid && isPhoneValid && isAddressValid;
+
+  const isDirty = useMemo(() => {
+    if (!initialFormData) return false;
+    return (
+      formData.first_name.trim() !== initialFormData.first_name.trim() ||
+      formData.last_name.trim() !== initialFormData.last_name.trim() ||
+      formData.phone_number.trim() !== initialFormData.phone_number.trim() ||
+      (formData.address?.address || "").trim() !== (initialFormData.address?.address || "").trim() ||
+      formData.address?.city !== initialFormData.address?.city ||
+      formData.address?.province !== initialFormData.address?.province ||
+      formData.address?.postalCode !== initialFormData.address?.postalCode ||
+      formData.address?.country !== initialFormData.address?.country
+    );
+  }, [formData, initialFormData]);
 
   const requiredFields = useMemo(() => [
     { key: 'first_name', label: 'First Name', valid: isFirstNameValid },
@@ -288,6 +314,12 @@ export function HomeownerProfile() {
       }
 
       await fetchUserProfile();
+      setInitialFormData({
+        first_name: trimmedFirstName,
+        last_name: trimmedLastName,
+        phone_number: trimmedPhone,
+        address: { ...formData.address },
+      });
       toast.success("Profile updated successfully!");
     } catch (error: any) {
       console.error("Error updating profile:", error);
@@ -318,7 +350,7 @@ export function HomeownerProfile() {
   }
 
   return (
-    <div className="space-y-8 pb-12">
+    <div className="space-y-8 pb-20">
       {/* Breadcrumb Navigation */}
       <Breadcrumbs />
 
@@ -725,16 +757,23 @@ export function HomeownerProfile() {
             userRole="homeowner"
             userName={`${formData.first_name} ${formData.last_name}`.trim()}
             userEmail={user?.email}
-            className="mb-0"
+            className="mb-2"
             cardClassName="rounded-2xl border border-gray-200/80 dark:border-white/10 shadow-xs bg-white dark:bg-[#141414]"
           />
 
           {/* Docked Action Bar */}
-          <div className="sticky bottom-4 z-20 bg-white/95 dark:bg-[#141414]/95 backdrop-blur-md border border-gray-200/90 dark:border-white/10 rounded-2xl p-4 sm:p-5 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="sticky bottom-4 z-20 !mt-8 sm:!mt-10 bg-white/95 dark:bg-[#141414]/95 backdrop-blur-md border border-gray-200/90 dark:border-white/10 rounded-2xl p-4 sm:p-5 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-sm">
-              {!isFormValid ? (
+              {!isDirty ? (
+                <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+                  <Check className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                  <span className="text-xs sm:text-sm font-medium">
+                    All profile information is up to date.
+                  </span>
+                </div>
+              ) : !isFormValid ? (
                 <div className="flex items-center gap-2 text-amber-800 dark:text-amber-300">
-                  <AlertCircle className="h-4 w-4 text-amber-500 dark:text-amber-400 flex-shrink-0" />
+                  <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400 flex-shrink-0" />
                   <span className="text-xs sm:text-sm font-medium">
                     Complete all required fields ({completedCount}/{requiredFields.length}) to save changes.
                   </span>
@@ -743,7 +782,7 @@ export function HomeownerProfile() {
                 <div className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300">
                   <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
                   <span className="text-xs sm:text-sm font-medium">
-                    All required fields are complete. Ready to save.
+                    Unsaved changes detected. Ready to save.
                   </span>
                 </div>
               )}
@@ -751,10 +790,10 @@ export function HomeownerProfile() {
 
             <Button 
               onClick={handleSave} 
-              disabled={saving || !isFormValid} 
+              disabled={saving || !isFormValid || !isDirty} 
               className={cn(
                 "gap-2 min-w-[170px] font-semibold h-11 px-6 rounded-xl transition-all shadow-xs",
-                !isFormValid || saving
+                !isFormValid || saving || !isDirty
                   ? "bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-gray-500 border border-gray-200 dark:border-white/10 cursor-not-allowed hover:bg-gray-100 dark:hover:bg-white/5"
                   : "bg-orange-600 hover:bg-orange-700 text-white shadow-sm hover:shadow cursor-pointer"
               )}

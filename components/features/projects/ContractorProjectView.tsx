@@ -92,42 +92,40 @@ export default function ContractorProjectView({
   }
 
   return (
-    <div className="min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
-        {/* Breadcrumb Navigation */}
-        <div className="mb-4 sm:mb-6">
-          <Breadcrumbs
-            items={[
-              { label: 'Dashboard', href: '/contractor/dashboard' },
-              { label: 'Projects', href: '/contractor/projects' },
-              { label: project.project_title || 'Project Details', href: '#' }
-            ]}
-          />
-        </div>
+    <div className="space-y-6">
+      {/* Breadcrumb Navigation */}
+      <div className="mb-4 sm:mb-6">
+        <Breadcrumbs
+          items={[
+            { label: 'Dashboard', href: '/contractor/dashboard' },
+            { label: 'Projects', href: '/contractor/projects' },
+            { label: project.project_title || 'Project Details', href: '#' }
+          ]}
+        />
+      </div>
 
-        {/* Project Header */}
-        <div className="mb-4 sm:mb-6">
-          <ContractorProjectViewHeader 
-            project={project} 
-            user={user}
-            onSubmitProposal={onSubmitProposal}
-          />
-        </div>
+      {/* Project Header */}
+      <div className="mb-4 sm:mb-6">
+        <ContractorProjectViewHeader 
+          project={project} 
+          user={user}
+          onSubmitProposal={onSubmitProposal}
+        />
+      </div>
 
-        {/* Navigation Tabs */}
-        <div className="mb-4 sm:mb-6 overflow-x-auto">
-          <ContractorProjectViewTabs
-            activeTab={activeTab}
-            onTabChange={setActiveTab}
-            availableTabs={getAvailableTabs()}
-            project={project}
-          />
-        </div>
+      {/* Navigation Tabs */}
+      <div className="mb-4 sm:mb-6 overflow-x-auto">
+        <ContractorProjectViewTabs
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          availableTabs={getAvailableTabs()}
+          project={project}
+        />
+      </div>
 
-        {/* Tab Content */}
-        <div className="overflow-hidden">
-          {renderTabContent()}
-        </div>
+      {/* Tab Content */}
+      <div className="overflow-hidden">
+        {renderTabContent()}
       </div>
     </div>
   )

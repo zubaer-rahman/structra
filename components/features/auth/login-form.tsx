@@ -14,6 +14,7 @@ import { AuthInput } from "@/components/shared/form-input";
 import { LoadingSpinner } from "@/components/shared";
 import { loginSchema, type LoginFormData } from "@/utils/validation";
 import Link from "next/link";
+import { DemoRoleLogin } from "./DemoRoleLogin";
 
 interface LoginFormProps {
   onSubmit: (data: { email: string; password: string }) => Promise<void>;
@@ -46,17 +47,32 @@ export function LoginForm({
   return (
     <div className="w-full max-w-lg mx-auto">
       <Card className="w-full">
-        <CardHeader className="text-center pb-6">
+        <CardHeader className="text-center pb-5">
           <CardTitle className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-orange-700 bg-clip-text text-transparent">
             Sign In
           </CardTitle>
-          <CardDescription className="text-base text-gray-600 dark:text-gray-400">
-            Access your account
+          <CardDescription className="text-base text-muted-foreground">
+            Access your account or explore the live platform
           </CardDescription>
         </CardHeader>
 
         <CardContent className="px-6 pb-6">
-          <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-5">
+          {/* Top Primary Action: 1-Click Interactive Demo */}
+          <DemoRoleLogin />
+
+          {/* Divider */}
+          <div className="relative my-4">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-border/70" />
+            </div>
+            <div className="relative flex justify-center text-xs">
+              <span className="bg-card px-2.5 text-muted-foreground font-normal">
+                Or continue with email &amp; password
+              </span>
+            </div>
+          </div>
+
+          <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-4">
             {error && (
               <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg text-sm">
                 {error}
@@ -103,11 +119,11 @@ export function LoginForm({
             </Button>
 
             <div className="text-center pt-2">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                No account?{" "}
+              <p className="text-xs text-muted-foreground">
+                Don&apos;t have an account?{" "}
                 <Link
                   href="/register"
-                  className="text-orange-600 hover:text-orange-700 font-medium transition-colors duration-200"
+                  className="text-muted-foreground hover:text-foreground underline underline-offset-4 transition-colors"
                 >
                   Sign up
                 </Link>

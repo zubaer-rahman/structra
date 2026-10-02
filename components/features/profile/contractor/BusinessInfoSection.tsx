@@ -3,12 +3,13 @@
 import { FormInput, FormSelect, FormTextarea, FormPhotoInput, FormDocumentInput } from "@/components/shared/form-input";
 import { CompanyLogoUpload } from "@/components/shared/form-input/CompanyLogoUpload";
 import { Badge } from "@/components/ui/badge";
-import { Briefcase, X, Upload, File, Image, Download } from "lucide-react";
+import { Briefcase, X, Upload, File, Image, Download, CheckCircle2, AlertCircle } from "lucide-react";
 import { AVAILABLE_TRADE_CATEGORIES, ALL_TRADE_CATEGORY_VALUES } from "@/utils/constants/trades";
 import { FileReference } from "@/server/database/schemas/base";
 import { supabaseStorageService } from "@/server/services/SupabaseStorageService";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { cn } from "@/lib/utils";
 
 interface BusinessInfoSectionProps {
   formData: {
@@ -32,6 +33,8 @@ interface BusinessInfoSectionProps {
   onCompanyLogoChange: (file: FileReference | null) => void;
   missingFields?: string[];
   isVerified?: boolean;
+  touched?: Record<string, boolean>;
+  onBlur?: (field: string) => void;
 }
 
 export function BusinessInfoSection({ 
@@ -44,10 +47,28 @@ export function BusinessInfoSection({
   onLicenseFileChange,
   onCompanyLogoChange,
   missingFields = [],
-  isVerified = false
+  isVerified = false,
+  touched = {},
+  onBlur
 }: BusinessInfoSectionProps) {
   const [uploadingPortfolio, setUploadingPortfolio] = useState(false);
   const [uploadingLicenses, setUploadingLicenses] = useState(false);
+
+  const isBusinessNameValid = (formData.business_name || "").trim().length > 0;
+  const cleanPhone = (formData.phone_number || "").trim();
+  const isPhoneValid = cleanPhone.length >= 7 && /^[+]?[(]?[0-9]{1,4}[)]?[-\s./0-9]{6,15}$/.test(cleanPhone);
+  const isTradeCategoryValid = (formData.trade_category || []).length > 0;
+
+  const completedCount = (isBusinessNameValid ? 1 : 0) + (isPhoneValid ? 1 : 0) + (isTradeCategoryValid ? 1 : 0);
+  const totalRequired = 3;
+
+  const isBusinessNameMissing = missingFields.includes("business_name") || missingFields.includes("Business Name");
+  const isPhoneMissing = missingFields.includes("phone_number") || missingFields.includes("Phone Number");
+  const isTradeCategoryMissing = missingFields.includes("trade_category") || missingFields.includes("Trade Category");
+
+  const isBusinessNameInvalid = (touched.business_name || isBusinessNameMissing) && !isBusinessNameValid;
+  const isPhoneInvalid = (touched.phone_number || isPhoneMissing) && !isPhoneValid;
+  const isTradeCategoryInvalid = (touched.trade_category || isTradeCategoryMissing) && !isTradeCategoryValid;
 
   const isFieldMissing = (fieldName: string) => missingFields.includes(fieldName);
   const getValidationMessage = (fieldName: string, displayName: string) => 
@@ -175,7 +196,7 @@ export function BusinessInfoSection({
   };
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-white/10">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-gray-100 dark:border-white/10 gap-3">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-950/40 border border-orange-100 dark:border-orange-500/20 flex items-center justify-center text-orange-600 dark:text-orange-400 flex-shrink-0">
             <Briefcase className="h-5 w-5" />
@@ -185,17 +206,34 @@ export function BusinessInfoSection({
             <p className="text-xs text-gray-500 dark:text-gray-400">Company details, trade specializations, and portfolio work</p>
           </div>
         </div>
+
+        <span className={cn(
+          "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold self-start sm:self-auto",
+          completedCount === totalRequired
+            ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/30"
+            : "bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-500/30"
+        )}>
+          {completedCount === totalRequired ? (
+            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+          ) : (
+            <AlertCircle className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
+          )}
+          {completedCount} of {totalRequired} Required Fields
+        </span>
       </div>
+
       <div className="space-y-5">
         <div>
           <FormInput
             label="Business Name"
             value={formData.business_name}
             onChange={(e) => onInputChange("business_name", e.target.value)}
+            onBlur={() => onBlur?.("business_name")}
             placeholder="Enter your legal or trade business name"
+            required={true}
             containerClassName="space-y-1.5"
-            isInvalid={isFieldMissing('business_name')}
-            validationMessage={getValidationMessage('business_name', 'Business Name')}
+            isInvalid={isBusinessNameInvalid}
+            validationMessage="Business name cannot be empty"
           />
         </div>
 
@@ -218,10 +256,12 @@ export function BusinessInfoSection({
             type="tel"
             value={formData.phone_number}
             onChange={(e) => onInputChange("phone_number", e.target.value)}
+            onBlur={() => onBlur?.("phone_number")}
             placeholder="Enter your business phone number"
+            required={true}
             containerClassName="space-y-1.5"
-            isInvalid={isFieldMissing('phone_number')}
-            validationMessage={getValidationMessage('phone_number', 'Business Phone Number')}
+            isInvalid={isPhoneInvalid}
+            validationMessage={cleanPhone.length === 0 ? "Phone number is required" : "Please enter a valid phone number (at least 7 digits)"}
           />
         </div>
 
@@ -230,6 +270,7 @@ export function BusinessInfoSection({
             label="Professional Bio"
             value={formData.bio}
             onChange={(e) => onInputChange("bio", e.target.value)}
+            onBlur={() => onBlur?.("bio")}
             placeholder="Describe your experience, expertise, and what sets you apart..."
             rows={4}
             helperText="This will be visible to potential clients"
@@ -256,9 +297,14 @@ export function BusinessInfoSection({
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
-              Trade Categories
-            </label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300">
+                Trade Categories <span className="text-red-500 font-bold">*</span>
+              </label>
+              {isTradeCategoryInvalid && (
+                <span className="text-xs font-medium text-red-500">Required</span>
+              )}
+            </div>
             <FormSelect
               placeholder="Select trade categories"
               value=""
@@ -279,8 +325,8 @@ export function BusinessInfoSection({
                   disabled: category.includes("(Coming Soon)")
                 }))}
               containerClassName="space-y-1.5"
-              isInvalid={isFieldMissing('trade_category')}
-              validationMessage={getValidationMessage('trade_category', 'Trade Categories')}
+              isInvalid={isTradeCategoryInvalid}
+              validationMessage="At least one trade category is required"
             />
             {formData.trade_category.length > 0 && (
               <div className="flex flex-wrap gap-2 mt-3">

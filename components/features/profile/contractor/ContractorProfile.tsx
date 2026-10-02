@@ -16,7 +16,7 @@ import {
   Check, 
   Loader2 
 } from "lucide-react";
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import toast from "react-hot-toast";
@@ -50,11 +50,16 @@ interface AddressType {
 export function ContractorProfile() {
   const { user, userRole, loading: authLoading, fetchUserProfile } = useAuth();
   const searchParams = useSearchParams();
-  // All React hooks must be called at the top level, before any conditional returns
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [processingVerification, setProcessingVerification] = useState(false);
+  const hasProcessedVerificationRef = useRef(false);
+
+  const handleBlur = (field: string) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+  };
   
   // Check verification status
   const { data: verificationStatus, isLoading: verificationLoading, refetch: refetchVerificationStatus } = trpc.users.checkVerificationStatus.useQuery(undefined, {
@@ -80,6 +85,8 @@ export function ContractorProfile() {
     } | null,
     government_id_verified: false,
   });
+
+  const [initialUserFormData, setInitialUserFormData] = useState<typeof userFormData | null>(null);
 
   // Contractor profile data (business info) - aligned with database schema
   const [contractorFormData, setContractorFormData] = useState<{
@@ -147,6 +154,8 @@ export function ContractorProfile() {
     company_logo_image: null,
     is_admin_verified: false,
   });
+
+  const [initialContractorFormData, setInitialContractorFormData] = useState<typeof contractorFormData | null>(null);
 
   // State for profile data
   const [userProfile, setUserProfile] = useState<Record<string, unknown> | null>(null);
@@ -226,16 +235,19 @@ export function ContractorProfile() {
         government_id_verified: (userProfile.government_id_verified as boolean) || false,
       };
       setUserFormData(newFormData);
+      setInitialUserFormData(newFormData);
+    } else if (!loading) {
+      setInitialUserFormData(userFormData);
     }
-  }, [userProfile]);
+  }, [userProfile, loading]);
 
   useEffect(() => {
     if (contractorProfile) {
       
-      setContractorFormData({
+      const newContractorData = {
         business_name: (contractorProfile.business_name as string) || "",
         bio: (contractorProfile.bio as string) || "",
-        legal_entity_type: (contractorProfile.legal_entity_type as LegalEntityType | "") || "",
+        legal_entity_type: ((contractorProfile.legal_entity_type as LegalEntityType | "") || "") as LegalEntityType | "",
         gst_hst_number: (contractorProfile.gst_hst_number as string) || "",
         wcb_number: (contractorProfile.wcb_number as string) || "",
         // service_location: (contractorProfile.service_location as string) || "", // REMOVED: Field requires exact address
@@ -269,9 +281,13 @@ export function ContractorProfile() {
         company_logo_image: (contractorProfile.company_logo_image as FileReference) || null,
         is_admin_verified: (contractorProfile.is_admin_verified as boolean) || false,
         is_insurance_verified: (contractorProfile.is_insurance_verified as boolean) || false,
-      });
+      };
+      setContractorFormData(newContractorData);
+      setInitialContractorFormData(newContractorData);
+    } else if (!loading) {
+      setInitialContractorFormData(contractorFormData);
     }
-  }, [contractorProfile]);
+  }, [contractorProfile, loading]);
 
   const handleVerificationSuccess = useCallback(async (sessionId?: string | null) => {
     if (processingVerification || !user?.id) return;
@@ -307,10 +323,8 @@ export function ContractorProfile() {
         // Refetch verification status
         await refetchVerificationStatus();
         
-        // Clean up URL
-        const newUrl = new URL(window.location.href);
-        newUrl.searchParams.delete('verification');
-        window.history.replaceState({}, document.title, newUrl.pathname + newUrl.search);
+        // Refetch user profile so is_verified_contractor updates immediately
+        await fetchUserProfile();
       } else {
         throw new Error(data.message || 'Verification failed');
       }
@@ -319,9 +333,18 @@ export function ContractorProfile() {
       console.error('Error processing verification success:', error);
       toast.error(error instanceof Error ? error.message : 'Failed to process verification');
     } finally {
+      // Always clean up URL params so it never loops
+      try {
+        const newUrl = new URL(window.location.href);
+        newUrl.searchParams.delete('verification');
+        newUrl.searchParams.delete('session_id');
+        window.history.replaceState({}, document.title, newUrl.pathname + newUrl.search);
+      } catch {
+        // ignore
+      }
       setProcessingVerification(false);
     }
-  }, [processingVerification, user?.id, refetchVerificationStatus]);
+  }, [processingVerification, user?.id, refetchVerificationStatus, fetchUserProfile]);
 
   const handleVerificationCancel = useCallback(async () => {
     if (!user?.id) return;
@@ -358,17 +381,38 @@ export function ContractorProfile() {
   useEffect(() => {
     const verification = searchParams.get('verification');
     const sessionId = searchParams.get('session_id');
-    if (verification === 'success' && user?.id && !processingVerification) {
+    if (verification === 'success' && user?.id && !hasProcessedVerificationRef.current) {
+      hasProcessedVerificationRef.current = true;
       handleVerificationSuccess(sessionId);
-    } else if (verification === 'cancelled' && user?.id) {
+    } else if (verification === 'cancelled' && user?.id && !hasProcessedVerificationRef.current) {
+      hasProcessedVerificationRef.current = true;
       // Clean up pending transactions and show cancellation message
       handleVerificationCancel();
       toast.error('Payment was cancelled. You can try again anytime.');
-      const newUrl = new URL(window.location.href);
-      newUrl.searchParams.delete('verification');
-      window.history.replaceState({}, document.title, newUrl.pathname + newUrl.search);
+      try {
+        const newUrl = new URL(window.location.href);
+        newUrl.searchParams.delete('verification');
+        newUrl.searchParams.delete('session_id');
+        window.history.replaceState({}, document.title, newUrl.pathname + newUrl.search);
+      } catch {
+        // ignore
+      }
     }
-  }, [searchParams, user?.id, processingVerification, handleVerificationSuccess, handleVerificationCancel]);
+  }, [searchParams, user?.id, handleVerificationSuccess, handleVerificationCancel]);
+
+  const isDirty = useMemo(() => {
+    if (!initialUserFormData || !initialContractorFormData) return false;
+
+    const userDirty =
+      userFormData.first_name.trim() !== initialUserFormData.first_name.trim() ||
+      userFormData.last_name.trim() !== initialUserFormData.last_name.trim() ||
+      userFormData.phone_number.trim() !== initialUserFormData.phone_number.trim();
+
+    const contractorDirty =
+      JSON.stringify(contractorFormData) !== JSON.stringify(initialContractorFormData);
+
+    return userDirty || contractorDirty;
+  }, [userFormData, initialUserFormData, contractorFormData, initialContractorFormData]);
 
   // Ensure user is authenticated - moved to render logic
   if (!user?.id) {
@@ -509,20 +553,36 @@ export function ContractorProfile() {
       const insuranceBuildersRisk = hasInsuranceDocument ? (contractorFormData.insurance_builders_risk || 0) : 0;
       const insuranceExpiry = hasInsuranceDocument ? (contractorFormData.insurance_expiry || null) : null;
 
-      // Generate unique slug for the contractor profile
+      // Mark required fields as touched on save
+      setTouched({
+        first_name: true,
+        last_name: true,
+        phone_number: true,
+        business_name: true,
+        trade_category: true,
+        address: true,
+      });
+
+      // Generate unique slug for the contractor profile safely
       const baseSlug = generateContractorSlug(
         user.full_name || 'contractor'
       );
       
-      // Get existing slugs to ensure uniqueness
-      const { data: existingProfiles } = await supabase
-        .from('contractor_profiles')
-        .select('slug')
-        .not('slug', 'is', null)
-        .neq('user_id', user.id); // Exclude current profile if updating
-      
-      const existingSlugs = existingProfiles?.map(p => p.slug) || [];
-      const uniqueSlug = generateUniqueSlug(baseSlug, existingSlugs);
+      let uniqueSlug: string | null = null;
+      try {
+        const { data: existingProfiles, error: slugQueryError } = await supabase
+          .from('contractor_profiles')
+          .select('slug')
+          .not('slug', 'is', null)
+          .neq('user_id', user.id);
+        
+        if (!slugQueryError && existingProfiles) {
+          const existingSlugs = existingProfiles?.map(p => p.slug).filter(Boolean) || [];
+          uniqueSlug = generateUniqueSlug(baseSlug, existingSlugs);
+        }
+      } catch (slugErr) {
+        console.warn("Could not query slugs (column may not exist in database yet):", slugErr);
+      }
 
       // Normalize admin-managed document fields to avoid persisting empty-string placeholders.
       const normalizedGstHstClearanceDocument =
@@ -538,8 +598,15 @@ export function ContractorProfile() {
           ? contractorFormData.insurance_certificate
           : null;
 
+      // Extract logo string from company_logo_image object or string
+      const logoUrl = typeof contractorFormData.company_logo_image === 'object' && contractorFormData.company_logo_image !== null
+        ? (contractorFormData.company_logo_image as { url?: string }).url || null
+        : typeof contractorFormData.company_logo_image === 'string'
+        ? contractorFormData.company_logo_image
+        : null;
+
       // Prepare contractor profile data
-      const contractorData = {
+      const contractorData: Record<string, any> = {
         ...contractorFormData,
         user_id: user.id,
         legal_entity_type: contractorFormData.legal_entity_type && contractorFormData.legal_entity_type.trim() !== '' ? contractorFormData.legal_entity_type : null,
@@ -550,6 +617,7 @@ export function ContractorProfile() {
         work_guarantee_statement: contractorFormData.work_guarantee_statement || null,
         insurance_upload: insuranceUploadUrl,
         company_logo_image: contractorFormData.company_logo_image || null,
+        logo: logoUrl || contractorFormData.logo || null,
         // Handle address - only include if it has meaningful data
         address: contractorFormData.address?.address ? contractorFormData.address : null,
         // Handle service_location - set to null since field is removed
@@ -557,27 +625,43 @@ export function ContractorProfile() {
         gst_hst_clearance_document: normalizedGstHstClearanceDocument,
         wcb_clearance_document: normalizedWcbClearanceDocument,
         insurance_certificate: normalizedInsuranceCertificate,
-        slug: uniqueSlug,
       };
+
+      if (uniqueSlug) {
+        contractorData.slug = uniqueSlug;
+      }
       
-      // Update or create contractor profile
-      if (contractorProfile) {
-        const { error: contractorUpdateError } = await supabase
-          .from("contractor_profiles")
-          .update(contractorData)
-          .eq("user_id", user.id);
+      // Update or create contractor profile with automatic resilience to missing schema columns
+      const savePayload: Record<string, any> = { ...contractorData };
+      let saveSuccess = false;
+      let lastSaveError: any = null;
 
-        if (contractorUpdateError) {
-          throw contractorUpdateError;
-        }
-      } else {
-        const { error: contractorCreateError } = await supabase
-          .from("contractor_profiles")
-          .insert(contractorData);
+      for (let attempt = 0; attempt < 15; attempt++) {
+        const query = contractorProfile
+          ? supabase.from("contractor_profiles").update(savePayload).eq("user_id", user.id)
+          : supabase.from("contractor_profiles").insert(savePayload);
 
-        if (contractorCreateError) {
-          throw contractorCreateError;
+        const { error: saveError } = await query;
+        if (!saveError) {
+          saveSuccess = true;
+          break;
         }
+
+        lastSaveError = saveError;
+        // Check for missing column in schema cache (PGRST204)
+        if (saveError.code === "PGRST204" || saveError.message?.includes("in the schema cache")) {
+          const match = saveError.message?.match(/Could not find the '([^']+)' column/);
+          if (match && match[1] && match[1] in savePayload) {
+            console.warn(`Column '${match[1]}' does not exist in remote contractor_profiles schema cache. Stripping and retrying.`);
+            delete savePayload[match[1]];
+            continue;
+          }
+        }
+        break;
+      }
+
+      if (!saveSuccess && lastSaveError) {
+        throw lastSaveError;
       }
 
       // Refetch data by calling the fetch function again
@@ -596,6 +680,8 @@ export function ContractorProfile() {
       // Update local state with refetched data
       setUserProfile(updatedUserData);
       setContractorProfile(updatedContractorData);
+      setInitialUserFormData(userFormData);
+      setInitialContractorFormData(contractorFormData);
       
       toast.success("Profile updated successfully!");
     } catch (error) {
@@ -674,7 +760,7 @@ export function ContractorProfile() {
   const completionPercentage = Math.round((completedCount / contractorRequiredFields.length) * 100);
 
   return (
-    <div className="space-y-8 pb-12">
+    <div className="space-y-8 pb-20">
       {/* Breadcrumb Navigation */}
       <Breadcrumbs />
 
@@ -863,6 +949,8 @@ export function ContractorProfile() {
                 }
               }}
               missingFields={missingFieldsBySection.personal || []}
+              touched={touched}
+              onBlur={handleBlur}
             />
           </div>
 
@@ -898,6 +986,8 @@ export function ContractorProfile() {
               onCompanyLogoChange={(file) => setContractorFormData(prev => ({ ...prev, company_logo_image: file }))}
               missingFields={missingFieldsBySection.business || []}
               isVerified={verificationStatus?.isVerified || false}
+              touched={touched}
+              onBlur={handleBlur}
             />
           </div>
 
@@ -931,6 +1021,8 @@ export function ContractorProfile() {
                 }
               }}
               missingFields={missingFieldsBySection.business || []}
+              touched={touched}
+              onBlur={handleBlur}
             />
           </div>
 
@@ -1066,29 +1158,36 @@ export function ContractorProfile() {
             userRole="contractor"
             userName={`${userFormData.first_name} ${userFormData.last_name}`.trim()}
             userEmail={user?.email}
-            className="mb-0"
+            className="mb-2"
             cardClassName="rounded-2xl border border-gray-200/80 dark:border-white/10 shadow-xs bg-white dark:bg-[#141414]"
           />
 
           {/* Docked Action Bar */}
-          <div className="sticky bottom-4 z-20 bg-white/95 dark:bg-[#141414]/95 backdrop-blur-md border border-gray-200/90 dark:border-white/10 rounded-2xl p-4 sm:p-5 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="sticky bottom-4 z-20 !mt-8 sm:!mt-10 bg-white/95 dark:bg-[#141414]/95 backdrop-blur-md border border-gray-200/90 dark:border-white/10 rounded-2xl p-4 sm:p-5 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-sm">
-              <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
-                {completionPercentage === 100 
-                  ? "All required contractor profile information is filled out."
-                  : `${completedCount} of ${contractorRequiredFields.length} profile requirements completed.`
-                }
-              </span>
+              {!isDirty ? (
+                <span className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
+                  <Check className="h-4 w-4 text-emerald-500 dark:text-emerald-400" />
+                  All profile information is up to date.
+                </span>
+              ) : (
+                <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {completionPercentage === 100 
+                    ? "Unsaved changes detected. Ready to save."
+                    : `${completedCount} of ${contractorRequiredFields.length} profile requirements completed.`
+                  }
+                </span>
+              )}
             </div>
 
             <Button 
               onClick={handleSave} 
-              disabled={saving} 
+              disabled={saving || !isDirty} 
               className={cn(
-                "gap-2 min-w-[170px] font-semibold h-11 px-6 rounded-xl transition-all shadow-xs cursor-pointer",
-                saving
+                "gap-2 min-w-[170px] font-semibold h-11 px-6 rounded-xl transition-all shadow-xs",
+                saving || !isDirty
                   ? "bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-gray-500 border border-gray-200 dark:border-white/10 cursor-not-allowed hover:bg-gray-100 dark:hover:bg-white/5"
-                  : "bg-orange-600 hover:bg-orange-700 text-white shadow-sm hover:shadow"
+                  : "bg-orange-600 hover:bg-orange-700 text-white shadow-sm hover:shadow cursor-pointer"
               )}
             >
               {saving ? (

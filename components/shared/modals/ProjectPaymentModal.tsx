@@ -8,6 +8,7 @@ import { toast } from 'react-hot-toast'
 import { BaseProject } from '@/server/services/ProjectService'
 import { clientConfig } from '@/config/client-env'
 import { createClient } from '@/lib/supabase'
+import { formatLocation } from '@/utils/helpers'
 
 interface ProjectPaymentModalProps {
   isOpen: boolean
@@ -85,10 +86,7 @@ export function ProjectPaymentModal({
               {project.project_title}
             </h3>
             <p className="text-xs text-muted-foreground">
-              {typeof project.location === 'object' && project.location ? 
-                `${project.location.city}, ${project.location.province}` : 
-                project.location || 'Location not specified'
-              }
+              {formatLocation(project.location)}
             </p>
           </div>
 

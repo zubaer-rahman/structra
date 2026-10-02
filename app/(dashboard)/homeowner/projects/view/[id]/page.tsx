@@ -836,7 +836,7 @@ export default function HomeownerProjectViewPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="w-full py-8">
         <div className="text-center">
           <LoadingSpinner size="lg" variant="default" text="Loading your project details..." />
         </div>
@@ -846,7 +846,7 @@ export default function HomeownerProjectViewPage() {
 
   if (error || !project || !user) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="w-full py-8">
         <div className="text-center text-red-600">
           {error || 'Project not found or you don\'t have access to view it'}
         </div>

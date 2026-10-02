@@ -1,10 +1,10 @@
 import * as React from "react";
-import { Camera, Upload, X, CheckCircle } from "lucide-react";
+import { Camera, Upload, X, CheckCircle, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { supabaseStorageService } from "@/server/services/SupabaseStorageService";
 import { LoadingSpinner } from "@/components/shared";
+import { cn } from "@/lib/utils";
 
 // Define the file type based on the validation schema
 type FileReference = {
@@ -123,38 +123,46 @@ export function CompanyLogoUpload({
 
   return (
     <div className={className}>
-      <Label htmlFor="company-logo-upload" className="text-sm font-medium text-gray-700">
-        {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
-      </Label>
+      {label && (
+        <div className="flex items-center justify-between mb-1.5">
+          <Label htmlFor="company-logo-upload" className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+            {label}
+            {required && <span className="text-red-500 font-bold ml-1">*</span>}
+          </Label>
+          {error && (
+            <span className="text-xs font-medium text-red-500">Required</span>
+          )}
+        </div>
+      )}
       
-      <div className="mt-2">
+      <div>
         {value ? (
-          <div className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
+          <div className="flex items-center space-x-4 p-4 border border-gray-200 dark:border-white/10 rounded-xl bg-gray-50/70 dark:bg-white/[0.03]">
             <div className="flex-shrink-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={value.url}
                 alt={value.filename}
-                className="h-16 w-16 object-cover rounded-lg border border-gray-200"
+                className="h-16 w-16 object-cover rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-black"
               />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">
+              <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
                 {value.filename}
               </p>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                 {value.size ? `${(value.size / 1024).toFixed(1)} KB` : 'Size unknown'}
               </p>
               {value.uploadedAt && (
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   Uploaded {new Date(value.uploadedAt).toLocaleDateString()}
                 </p>
               )}
             </div>
-            <div className="flex items-center space-x-2">
-              <div className="flex items-center text-green-600">
-                <CheckCircle className="h-4 w-4 mr-1" />
-                <span className="text-xs font-medium">Uploaded</span>
+            <div className="flex items-center space-x-3">
+              <div className="flex items-center text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-500/30 px-2.5 py-1 rounded-full text-xs font-medium">
+                <CheckCircle className="h-3.5 w-3.5 mr-1" />
+                <span>Uploaded</span>
               </div>
               {!disabled && (
                 <Button
@@ -162,7 +170,7 @@ export function CompanyLogoUpload({
                   variant="outline"
                   size="sm"
                   onClick={removeLogo}
-                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                  className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-950/30 border-gray-200 dark:border-white/10 h-8 w-8 p-0"
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -171,13 +179,15 @@ export function CompanyLogoUpload({
           </div>
         ) : (
           <div
-            className={`relative border-2 border-dashed rounded-lg p-6 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+            className={cn(
+              "relative border-2 border-dashed rounded-xl p-6 text-center transition-colors focus:outline-none",
               dragActive
-                ? "border-blue-400 bg-blue-50"
+                ? "border-orange-500 bg-orange-50/50 dark:bg-orange-950/20"
                 : error
-                ? "border-red-300 bg-red-50"
-                : "border-gray-300"
-            } ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+                ? "border-red-500 bg-red-50/20 dark:bg-red-950/20"
+                : "border-gray-200 dark:border-white/10 hover:border-orange-400/60 dark:hover:border-orange-500/40 bg-gray-50/50 dark:bg-white/[0.02]",
+              disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+            )}
             onDragEnter={handleDrag}
             onDragLeave={handleDrag}
             onDragOver={handleDrag}
@@ -196,21 +206,21 @@ export function CompanyLogoUpload({
             {uploading ? (
               <div className="flex flex-col items-center">
                 <LoadingSpinner size="sm" />
-                <p className="mt-2 text-sm text-gray-600">Uploading logo...</p>
+                <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">Uploading logo...</p>
               </div>
             ) : (
               <div className="flex flex-col items-center">
-                <Camera className="h-8 w-8 text-gray-400" />
+                <Camera className="h-8 w-8 text-gray-400 dark:text-gray-500" />
                 <div className="mt-2">
-                  <p className="text-sm text-gray-600">
-                    <span className="font-medium text-blue-600 hover:text-blue-500">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <span className="font-semibold text-orange-600 dark:text-orange-400 hover:underline">
                       Click to upload
                     </span>{" "}
                     or drag and drop
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">{placeholder}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{placeholder}</p>
                 </div>
-                <p className="text-xs text-gray-500 mt-2">
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
                   PNG, JPG, GIF up to {maxSize}MB
                 </p>
               </div>
@@ -219,11 +229,17 @@ export function CompanyLogoUpload({
         )}
         
         {uploadError && (
-          <p className="mt-2 text-sm text-red-600">{uploadError}</p>
+          <p className="mt-2 text-xs text-red-500 dark:text-red-400 flex items-center gap-1">
+            <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
+            <span>{uploadError}</span>
+          </p>
         )}
         
         {error && (
-          <p className="mt-2 text-sm text-red-600">{error}</p>
+          <p className="mt-2 text-xs text-red-500 dark:text-red-400 flex items-center gap-1">
+            <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
+            <span>{error}</span>
+          </p>
         )}
       </div>
     </div>

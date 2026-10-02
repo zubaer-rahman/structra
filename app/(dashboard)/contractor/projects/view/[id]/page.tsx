@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { ContractorProjectView } from '@/components/features/projects'
@@ -29,6 +29,7 @@ export default function ContractorProjectViewPage() {
   const [error, setError] = useState('')
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false)
   const [paymentProcessing, setPaymentProcessing] = useState(false)
+  const hasProcessedPaymentRef = useRef(false)
 
   const projectIdentifier = params.id as string
   const projectIdentifierIsUuid = useMemo(() => {
@@ -80,24 +81,6 @@ export default function ContractorProjectViewPage() {
     }
   };
 
-  // Check for payment success/cancelled parameter
-  useEffect(() => {
-    const paymentStatus = searchParams.get('payment')
-    if (paymentStatus === 'success' && user?.id && project) {
-      handleProjectPaymentSuccess()
-    } else if (paymentStatus === 'cancelled' && user?.id) {
-      const resolvedProjectId = project?.id || (projectIdentifierIsUuid ? projectIdentifier : '')
-      if (!resolvedProjectId) return
-
-      // Clean up pending transactions and show cancellation message
-      handleProjectPaymentCancel(resolvedProjectId)
-      toast.error('Payment was cancelled. You can try again anytime.')
-      const newUrl = new URL(window.location.href)
-      newUrl.searchParams.delete('payment')
-      router.replace(newUrl.pathname + newUrl.search)
-    }
-  }, [searchParams, user?.id, project, projectIdentifier, projectIdentifierIsUuid, router])
-
   const handleProjectPaymentSuccess = async () => {
     if (paymentProcessing || !user?.id || !project) return
     
@@ -131,24 +114,49 @@ export default function ContractorProjectViewPage() {
 
       if (data.success) {
         toast.success('Payment successful! You now have access to this project.')
-        setPaymentProcessing(false)
-        // Remove the payment parameter from URL
-        const newUrl = new URL(window.location.href)
-        newUrl.searchParams.delete('payment')
-        router.replace(newUrl.pathname + newUrl.search)
-        // Refetch project access status
-        refetchProjectAccess()
+        setError('')
       } else {
         throw new Error(data.message || 'Project payment failed');
       }
-      
     } catch (error) {
       console.error('Error processing project payment success:', error)
       toast.error(error instanceof Error ? error.message : 'Failed to process payment')
+    } finally {
       setShowPaymentSuccess(false)
       setPaymentProcessing(false)
+      // Always clean up URL query params
+      try {
+        const newUrl = new URL(window.location.href)
+        newUrl.searchParams.delete('payment')
+        newUrl.searchParams.delete('session_id')
+        router.replace(newUrl.pathname + (newUrl.searchParams.toString() ? '?' + newUrl.searchParams.toString() : ''))
+      } catch (err) {
+        console.warn('URL clean error:', err)
+      }
+      refetchProjectAccess()
     }
   }
+
+  // Check for payment success/cancelled parameter
+  useEffect(() => {
+    const paymentStatus = searchParams.get('payment')
+    if (paymentStatus === 'success' && user?.id && project && !hasProcessedPaymentRef.current) {
+      hasProcessedPaymentRef.current = true
+      handleProjectPaymentSuccess()
+    } else if (paymentStatus === 'cancelled' && user?.id && !hasProcessedPaymentRef.current) {
+      hasProcessedPaymentRef.current = true
+      const resolvedProjectId = project?.id || (projectIdentifierIsUuid ? projectIdentifier : '')
+      if (!resolvedProjectId) return
+
+      // Clean up pending transactions and show cancellation message
+      handleProjectPaymentCancel(resolvedProjectId)
+      toast.error('Payment was cancelled. You can try again anytime.')
+      const newUrl = new URL(window.location.href)
+      newUrl.searchParams.delete('payment')
+      newUrl.searchParams.delete('session_id')
+      router.replace(newUrl.pathname + (newUrl.searchParams.toString() ? '?' + newUrl.searchParams.toString() : ''))
+    }
+  }, [searchParams, user?.id, project, projectIdentifier, projectIdentifierIsUuid, router])
 
   // Fetch project by identifier (slug or ID)
   useEffect(() => {
@@ -234,8 +242,11 @@ export default function ContractorProjectViewPage() {
           hasAccess: accessQuery.data.hasAccess
         }
       })
+      if (accessQuery.data.hasAccess) {
+        setError('')
+      }
     } else if (accessQuery.error) {
-      setError('Failed to check project access')
+      console.warn('Project access check warning:', accessQuery.error)
     }
   }, [accessQuery.data, accessQuery.error]) // Only depend on access query data
 
@@ -288,7 +299,7 @@ export default function ContractorProjectViewPage() {
 
   if (error || !project || !user) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="w-full py-8">
         <div className="text-center text-red-600">
           {error || 'Project not found or you don&apos;t have access to view it'}
         </div>
@@ -307,7 +318,7 @@ export default function ContractorProjectViewPage() {
   // Hard access gate: blocked users must not view project details by direct URL.
   if (shouldCheckAccess && accessQuery.data && !accessQuery.data.hasAccess) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="w-full py-8">
         <div className="text-center text-red-600">
           You don&apos;t have access to view this project.
         </div>

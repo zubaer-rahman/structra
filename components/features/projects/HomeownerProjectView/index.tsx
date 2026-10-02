@@ -263,9 +263,8 @@ export default function HomeownerProjectView({
   };
 
   return (
-    <div className="min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
-        {/* Top Section with Breadcrumbs and Action Buttons */}
+    <div className="space-y-6">
+      {/* Top Section with Breadcrumbs and Action Buttons */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6">
           <div className="flex-shrink-0">
             <Breadcrumbs />
@@ -346,8 +345,7 @@ export default function HomeownerProjectView({
         </div>
 
         {/* Tab Content */}
-        <div className="  overflow-hidden">{renderTabContent()}</div>
-      </div>
+        <div className="overflow-hidden">{renderTabContent()}</div>
 
       {/* Payment Wall */}
       {showPaymentWall && (

@@ -83,7 +83,7 @@ export const proposalsRouter = router({
         })
         .select(`
           *,
-          project:projects (
+          project:projects!proposals_project_fkey (
             id,
             title,
             homeowner_id,
@@ -190,7 +190,7 @@ export const proposalsRouter = router({
         .from('proposals')
         .select(`
           *,
-          project:projects!inner (
+          project:projects!inner!proposals_project_fkey (
             id,
             title,
             description,
@@ -238,7 +238,7 @@ export const proposalsRouter = router({
         .from('proposals')
         .select(`
           *,
-          project:projects (
+          project:projects!proposals_project_fkey (
             id,
             title,
             description,
@@ -561,7 +561,7 @@ export const proposalsRouter = router({
       contractorId: z.string().uuid()
     }))
     .query(async ({ input, ctx }) => {
-      const { data, error } = await ctx.supabase
+      let queryResult = await ctx.supabase
         .from('proposals')
         .select(`
           id,
@@ -571,16 +571,27 @@ export const proposalsRouter = router({
         `)
         .eq('project', input.projectId)
         .eq('contractor', input.contractorId)
-        .eq('is_deleted', 'no')
         .order('created_at', { ascending: false })
 
-      if (error) {
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: error.message,
-        })
+      if (queryResult.error && (queryResult.error.code === '42703' || queryResult.error.message?.includes('does not exist'))) {
+        queryResult = await ctx.supabase
+          .from('proposals')
+          .select(`
+            id,
+            status,
+            created_at,
+            updated_at
+          `)
+          .eq('project_id', input.projectId)
+          .eq('contractor_id', input.contractorId)
+          .order('created_at', { ascending: false })
       }
 
-      return data
+      if (queryResult.error) {
+        console.warn('getByContractorAndProject error:', queryResult.error)
+        return []
+      }
+
+      return queryResult.data || []
     }),
 })

@@ -543,32 +543,7 @@ export const projectsRouter = router({
         })
       }
 
-      // Check if user has access to this project
-      const { data: projectViews, error: viewError } = await supabase
-        .from('project_views')
-        .select('id, is_active, expires_at, access_method, can_submit_proposal')
-        .eq('contractor', userId)
-        .eq('project', projectId)
-        .eq('is_active', 'yes')
-        .limit(1)
-
-      if (viewError) {
-        console.error('Error checking project access:', viewError)
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to check project access',
-        })
-      }
-
-      const projectView = projectViews && projectViews.length > 0 ? projectViews[0] : null
-      console.log('Project view found:', projectView)
-
-      const hasAccess = projectView && 
-        (!projectView.expires_at || new Date(projectView.expires_at) > new Date())
-      
-      console.log('Has access:', hasAccess, 'expires_at:', projectView?.expires_at)
-
-      // Check verification status
+      // 1. Check verification status
       const { data: verificationData } = await supabase
         .from('users')
         .select('is_verified_contractor')
@@ -577,12 +552,69 @@ export const projectsRouter = router({
 
       const isVerified = verificationData?.is_verified_contractor || false
 
+      // 2. Check project_views table (if exists)
+      let projectView: {
+        id: string
+        is_active: string
+        expires_at: string | null
+        access_method: string | null
+        can_submit_proposal: string | null
+      } | null = null
+      let hasViewAccess = false
+
+      try {
+        const { data: projectViews, error: viewError } = await supabase
+          .from('project_views')
+          .select('id, is_active, expires_at, access_method, can_submit_proposal')
+          .eq('contractor', userId)
+          .eq('project', projectId)
+          .eq('is_active', 'yes')
+          .limit(1)
+
+        if (!viewError && projectViews && projectViews.length > 0) {
+          projectView = projectViews[0]
+          hasViewAccess = !projectView.expires_at || new Date(projectView.expires_at) > new Date()
+        }
+      } catch (viewErr) {
+        console.warn('project_views check error or table missing:', viewErr)
+      }
+
+      // 3. Check transactions table (proof of PPV payment)
+      let hasTransactionAccess = false
+      let transactionExpiresAt: string | null = null
+
+      try {
+        const { data: transaction, error: txError } = await supabase
+          .from('transactions')
+          .select('id, valid_until, status')
+          .eq('user_id', userId)
+          .eq('project_id', projectId)
+          .eq('transaction_type', 'project_ppv')
+          .eq('status', 'succeeded')
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single()
+
+        if (!txError && transaction) {
+          const isValid = !transaction.valid_until || new Date(transaction.valid_until) > new Date()
+          if (isValid) {
+            hasTransactionAccess = true
+            transactionExpiresAt = transaction.valid_until || null
+          }
+        }
+      } catch (txErr) {
+        console.warn('transactions check error in checkProjectAccess:', txErr)
+      }
+
+      const hasAccess = hasViewAccess || hasTransactionAccess
+      const canSubmit = hasAccess ? (projectView ? projectView.can_submit_proposal === 'yes' : true) : false
+
       return {
         hasAccess: !!hasAccess,
-        canSubmitProposal: hasAccess ? projectView.can_submit_proposal === 'yes' : false,
+        canSubmitProposal: canSubmit,
         isVerified,
-        accessMethod: projectView?.access_method || null,
-        expiresAt: projectView?.expires_at || null,
+        accessMethod: projectView?.access_method || (hasTransactionAccess ? 'Manual Paywall' : null),
+        expiresAt: projectView?.expires_at || transactionExpiresAt || null,
       }
     }),
 })

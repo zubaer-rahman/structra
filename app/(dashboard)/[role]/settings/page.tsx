@@ -6,7 +6,7 @@ import { Settings, Clock, Sparkles } from 'lucide-react'
 const SettingsPage = async ({ params }: { params: Promise<{ role: string }> }) => {
   const { role } = await params
   return (
-    <div className="container mx-auto px-4 py-6 max-w-2xl">
+    <div className="max-w-2xl space-y-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900 mb-1">Settings</h1>
         <p className="text-gray-600 text-sm">Manage your account preferences</p>

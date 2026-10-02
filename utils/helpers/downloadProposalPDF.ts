@@ -11,9 +11,9 @@ export async function downloadProposalPDF(proposalId: string) {
       .from('proposals')
       .select(`
         *,
-        project:projects(*),
+        project:projects!proposals_project_fkey(*),
         homeowner_details:users!proposals_homeowner_fkey(*),
-        project_details:projects(*)
+        project_details:projects!proposals_project_fkey(*)
       `)
       .eq('id', proposalId)
       .single()

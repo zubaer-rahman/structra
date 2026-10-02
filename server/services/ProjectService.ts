@@ -614,7 +614,7 @@ export class ProjectService {
           estimated_cost,
           created_at,
           description,
-          project:projects(
+          project:projects!proposals_project_fkey(
             id,
             project_title,
             statement_of_work,
@@ -647,7 +647,7 @@ export class ProjectService {
       const { data: acceptedProposals, error: proposalsError } = await this.supabase
         .from("proposals")
         .select(`
-          project:projects(
+          project:projects!proposals_project_fkey(
             id,
             project_title,
             statement_of_work,

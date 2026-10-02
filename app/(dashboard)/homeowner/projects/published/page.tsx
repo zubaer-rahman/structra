@@ -41,7 +41,7 @@ export default function ProjectPublishedPage() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background text-foreground p-4">
       <div className="w-full max-w-md">
         <div className="text-center">
           {/* Success Icon */}

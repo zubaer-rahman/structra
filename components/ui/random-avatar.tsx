@@ -10,9 +10,11 @@ interface RandomAvatarProps {
 }
 
 const getInitials = (name: string): string => {
-  if (!name) return '';
-  return name
-    .split(' ')
+  if (!name) return 'U';
+  const clean = name.trim().replace(/^[^a-zA-Z0-9]+/, '');
+  if (!clean) return 'U';
+  return clean
+    .split(/\s+/)
     .map(word => word[0])
     .join('')
     .toUpperCase()
@@ -24,9 +26,10 @@ const generateSeed = (name: string): number => {
 };
 
 const getRandomColor = (name: string): string => {
+  // Use consistent vibrant brand orange-600
   const colors = [
-    "#EA580C", "#EA580C", "#EA580C", "#EA580C", // Force orange-600 for all avatars
-    "#EA580C", "#EA580C", "#EA580C", "#EA580C"  // Force orange-600 for all avatars
+    "#EA580C", "#EA580C", "#EA580C", "#EA580C",
+    "#EA580C", "#EA580C", "#EA580C", "#EA580C"
   ];
   const seed = generateSeed(name);
   return colors[seed % colors.length];
@@ -34,7 +37,7 @@ const getRandomColor = (name: string): string => {
 
 export const RandomAvatar: React.FC<RandomAvatarProps> = ({ 
   name, 
-  size = 48, 
+  size = 40, 
   className 
 }) => {
   const initials = getInitials(name);
@@ -42,30 +45,42 @@ export const RandomAvatar: React.FC<RandomAvatarProps> = ({
   
   const sizeClasses: Record<number, string> = {
     24: "w-6 h-6",
-    32: "w-8 h-8", 
+    28: "w-7 h-7",
+    32: "w-8 h-8",
+    36: "w-9 h-9",
     40: "w-10 h-10",
+    44: "w-11 h-11",
     48: "w-12 h-12",
     56: "w-14 h-14",
-    64: "w-16 h-16"
+    64: "w-16 h-16",
+    80: "w-20 h-20"
   };
+
+  const fontSize = Math.max(Math.round(size * 0.42), 12);
+  const isFluidWidth = className?.includes("w-full") || className?.includes("size-full");
+  const isFluidHeight = className?.includes("h-full") || className?.includes("size-full");
 
   return (
     <div 
       className={cn(
-        "relative rounded-full overflow-hidden flex items-center justify-center",
-        sizeClasses[size] || "w-12 h-12",
+        "relative rounded-full overflow-hidden flex items-center justify-center shrink-0 select-none",
+        sizeClasses[size] || "",
         className
       )}
       style={{ 
-        width: size, 
-        height: size,
+        width: isFluidWidth ? "100%" : size, 
+        height: isFluidHeight ? "100%" : size,
         backgroundColor: bgColor
       }}
     >
-      <span className="text-white font-semibold" style={{
-        fontSize: `${Math.max(size * 0.4, 14)}px`,
-        textShadow: '0 1px 2px rgba(0,0,0,0.3)'
-      }}>
+      <span 
+        className="font-bold text-white flex items-center justify-center text-center select-none leading-none tracking-normal" 
+        style={{
+          fontSize: `${fontSize}px`,
+          lineHeight: 1,
+          height: `${fontSize}px`
+        }}
+      >
         {initials}
       </span>
     </div>

@@ -150,57 +150,47 @@ export default function HomeownerDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-transparent relative">
-        <div className="relative flex items-center justify-center min-h-screen">
-          <LoadingSpinner 
-            text="Loading Your Dashboard"
-            subtitle="Preparing your construction project overview..."
-            size="lg"
-            variant="default"
-            className="text-center"
-          />
-        </div>
+      <div className="min-h-[50vh] flex items-center justify-center">
+        <LoadingSpinner 
+          text="Loading Your Dashboard"
+          subtitle="Preparing your construction project overview..."
+          size="lg"
+          variant="default"
+          className="text-center"
+        />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-transparent text-gray-900 dark:text-gray-100">
-      <div className="container mx-auto px-4 py-8">
-        {/* Error Display */}
-        {/* Error Display */}
+    <div className="space-y-6">
+      {/* Profile Completion Warning */}
+      <ProfileCompletionWarning />
 
-        {/* Dashboard Content */}
-        <div className="space-y-8">
-          {/* Profile Completion Warning */}
-          <ProfileCompletionWarning />
-
-          {/* Greeting */}
-          <div className="mb-6">
-            <h1 className="text-sm font-medium text-gray-800 dark:text-gray-100">
-              Hello, {user?.user_metadata?.full_name ? capitalizeWords(user.user_metadata.full_name) : user?.email?.split('@')[0] ? capitalizeWords(user.email.split('@')[0]) : 'There'}
-            </h1>
-            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Welcome to your project dashboard</p>
-          </div>
-
-          {/* Project Statistics */}
-          <ProjectStats 
-            stats={{
-              total: projects.length,
-              open: projects.filter(p => ['Draft', 'Open for Proposals'].includes(p.status)).length,
-              accepted: acceptedProposalsCount,
-              completed: projects.filter(p => p.status === PROJECT_STATUSES.COMPLETED).length
-            }}
-          />
-
-          {/* Recent Projects */}
-          <RecentProjects 
-            projects={projects.slice(0, 5)} 
-            onProjectDeleted={handleProjectDeleted}
-            projectProposalCounts={projectProposalCounts}
-          />
-        </div>
+      {/* Greeting */}
+      <div className="mb-4">
+        <h1 className="text-sm font-medium text-gray-800 dark:text-gray-100">
+          Hello, {user?.user_metadata?.full_name ? capitalizeWords(user.user_metadata.full_name) : user?.email?.split('@')[0] ? capitalizeWords(user.email.split('@')[0]) : 'There'}
+        </h1>
+        <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Welcome to your project dashboard</p>
       </div>
+
+      {/* Project Statistics */}
+      <ProjectStats 
+        stats={{
+          total: projects.length,
+          open: projects.filter(p => ['Draft', 'Open for Proposals'].includes(p.status)).length,
+          accepted: acceptedProposalsCount,
+          completed: projects.filter(p => p.status === PROJECT_STATUSES.COMPLETED).length
+        }}
+      />
+
+      {/* Recent Projects */}
+      <RecentProjects 
+        projects={projects.slice(0, 5)} 
+        onProjectDeleted={handleProjectDeleted}
+        projectProposalCounts={projectProposalCounts}
+      />
     </div>
   )
 }

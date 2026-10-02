@@ -240,7 +240,7 @@ export default function HomeownerProposalViewPage({
             last_modified_by,
             created_at,
             updated_at,
-            project:projects (
+            project:projects!proposals_project_fkey (
               id,
               project_title,
               statement_of_work,
@@ -653,20 +653,17 @@ export default function HomeownerProposalViewPage({
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        {/* Breadcrumbs */}
-        <div className="bg-white px-4 py-4 mb-6">
-          <div className="max-w-7xl mx-auto">
-            <Breadcrumbs
-              items={[
-                { label: "Dashboard", href: "/homeowner/dashboard" },
-                { label: "Proposals", href: "/homeowner/proposals" },
-                { label: proposal.project_details?.project_title || "Project Proposal", href: "#" },
-              ]}
-            />
-          </div>
-        </div>
+    <div className="space-y-6">
+      {/* Breadcrumbs */}
+      <div>
+        <Breadcrumbs
+          items={[
+            { label: "Dashboard", href: "/homeowner/dashboard" },
+            { label: "Proposals", href: "/homeowner/proposals" },
+            { label: proposal.project_details?.project_title || "Project Proposal", href: "#" },
+          ]}
+        />
+      </div>
 
         {/* Decision Header */}
         <div className="bg-white p-6 mb-6">
@@ -1179,7 +1176,6 @@ export default function HomeownerProposalViewPage({
              */}
           </div>
         </div>
-      </div>
 
       {/* Accept Confirmation Dialog */}
       <Dialog open={showAcceptDialog} onOpenChange={setShowAcceptDialog}>

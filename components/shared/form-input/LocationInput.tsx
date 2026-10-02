@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Search, MapPin, X, Loader2, Globe } from "lucide-react";
+import { Search, MapPin, X, Loader2, Globe, AlertCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -393,13 +393,18 @@ export function LocationInput({
   }, []);
 
   return (
-    <div className={`space-y-2 ${className}`}>
+    <div className={`space-y-1.5 ${className}`}>
       {/* Label */}
       {label && (
-        <Label htmlFor="location-input" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-          {label}
-          {required && <span className="text-red-500 ml-1 font-semibold">*</span>}
-        </Label>
+        <div className="flex items-center justify-between">
+          <Label htmlFor="location-input" className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+            {label}
+            {required && <span className="text-red-500 ml-1 font-bold">*</span>}
+          </Label>
+          {error && (
+            <span className="text-xs font-medium text-red-500">Required</span>
+          )}
+        </div>
       )}
 
       {/* Search Input */}
@@ -481,9 +486,12 @@ export function LocationInput({
 
       {/* Helper Text or Error */}
       {error ? (
-        <p className="text-xs text-red-500 mt-1">{error}</p>
+        <p className="text-xs text-red-500 flex items-center gap-1 mt-1">
+          <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
+          <span>{error}</span>
+        </p>
       ) : helperText ? (
-        <p className="text-xs text-gray-500 dark:text-gray-400">{helperText}</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">{helperText}</p>
       ) : null}
 
       {/* Selected Location Pill */}
