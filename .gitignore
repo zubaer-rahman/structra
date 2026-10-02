@@ -41,3 +41,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+
+# scripts — dev/seed/test only (never push to production)
+scripts/create_*.ts
+scripts/seed_*.ts
+scripts/fix_migrations.ts
+scripts/test_*.ts
+scripts/test_*.sql

@@ -132,23 +132,23 @@ export function FeaturedContractorsCarousel() {
   }
 
   return (
-    <section className="py-24 bg-transparent dark:bg-[#0A0A0A]">
+    <section className="py-10 sm:py-16 lg:py-20 bg-transparent dark:bg-[#0A0A0A]">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="flex items-center justify-between mb-12">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 sm:mb-12 gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center shrink-0">
               <Award className="w-5 h-5 text-orange-500" />
             </div>
             <div>
-              <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tighter uppercase italic">
+              <h2 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white tracking-tighter uppercase italic">
                 Featured <span className="text-orange-600 dark:text-orange-500">Master Builders</span>
               </h2>
               <p className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-[0.2em]">Institutional Grade Performance</p>
             </div>
           </div>
 
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
             {featuredContractors.length > cardsToShow && (
               <div className="flex items-center gap-2">
                 <Button
@@ -169,10 +169,10 @@ export function FeaturedContractorsCarousel() {
                 </Button>
               </div>
             )}
-            <Link href="/register?role=homeowner">
+            <Link href="/register?role=homeowner" className="flex-1 sm:flex-none">
               <Button
                 variant="outline"
-                className="bg-orange-500 border-none text-white hover:bg-orange-600 font-bold uppercase text-[10px] tracking-widest h-10 px-6 rounded-full"
+                className="w-full bg-orange-500 border-none text-white hover:bg-orange-600 font-bold uppercase text-[10px] tracking-widest h-10 px-6 rounded-full"
               >
                 View Full Network
               </Button>

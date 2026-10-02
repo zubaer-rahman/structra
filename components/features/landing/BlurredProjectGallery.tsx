@@ -252,21 +252,21 @@ export default function BlurredProjectGallery({ projectSlug }: BlurredProjectGal
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
       
-      <div className="pt-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="pt-20">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
           {/* Header */}
           <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <h1 className="text-3xl font-bold text-foreground line-clamp-2">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
                 {project.project_title}
               </h1>
-              <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground shrink-0">
                 <Lock className="w-4 h-4" />
                 <span>Limited Preview</span>
               </div>
             </div>
             
-            <div className="flex items-center space-x-6 text-sm text-muted-foreground">
+            <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
               <div className="flex items-center space-x-1">
                 <MapPin className="w-4 h-4" />
                 <span>{getLocationDisplay()}</span>

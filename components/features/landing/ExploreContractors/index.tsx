@@ -117,25 +117,25 @@ export default function ExploreContractors({ className = "" }: ExploreContractor
   }
 
   return (
-    <section className="py-40 bg-transparent dark:bg-[#0A0A0A] border-y border-gray-200 dark:border-white/5">
+    <section className="py-12 sm:py-20 lg:py-28 bg-transparent dark:bg-[#0A0A0A] border-y border-gray-200 dark:border-white/5">
       <div className={`max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 ${className}`}>
 
         {/* Section Header */}
-        <div className="flex flex-col items-center text-center mb-16">
+        <div className="flex flex-col items-center text-center mb-8 sm:mb-12">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-3 py-1 mb-6 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-600 dark:text-orange-500"
+            className="inline-flex items-center gap-2 px-3 py-1 mb-4 sm:mb-6 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-600 dark:text-orange-500"
           >
             <Wrench className="w-3.5 h-3.5" />
             <span className="text-[10px] font-black uppercase tracking-[0.2em]">Verified Talent</span>
           </motion.div>
 
-          <h2 className="text-4xl sm:text-5xl font-black text-gray-900 dark:text-white mb-6 tracking-tighter">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 dark:text-white mb-4 sm:mb-6 tracking-tighter">
             Elite Artisan <span className="text-orange-600 dark:text-orange-500">Network</span>
           </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto font-medium">
+          <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto font-medium px-2">
             Connect with the industry&apos;s most respected master contractors. Each member is rigorously verified for architectural excellence.
           </p>
         </div>

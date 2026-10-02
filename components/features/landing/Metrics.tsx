@@ -76,11 +76,11 @@ export function Metrics() {
   ];
 
   return (
-    <section className="py-40 bg-transparent dark:bg-[#0A0A0A] border-b border-gray-200/60 dark:border-white/5 relative overflow-hidden">
+    <section className="py-12 sm:py-20 lg:py-24 bg-transparent dark:bg-[#0A0A0A] border-b border-gray-200/60 dark:border-white/5 relative overflow-hidden">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-orange-500/50 to-transparent" />
       
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6">
           {stats.map((stat, index) => (
             <motion.div 
               key={index}
@@ -90,14 +90,14 @@ export function Metrics() {
               viewport={{ once: true }}
               className="text-center lg:text-left"
             >
-              <div className="inline-flex items-center gap-3 text-orange-500 mb-6 font-black uppercase tracking-[0.2em] text-[10px]">
-                <div className="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center">
+              <div className="inline-flex items-center gap-3 text-orange-500 mb-3 sm:mb-4 font-black uppercase tracking-[0.2em] text-[10px]">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center">
                   {stat.icon}
                 </div>
                 {stat.label}
               </div>
               <AnimatedCounter end={stat.value} duration={2} suffix={stat.suffix} />
-              <p className="text-sm text-gray-600 dark:text-gray-400 font-medium uppercase tracking-widest mt-4">
+              <p className="text-sm text-gray-600 dark:text-gray-400 font-medium uppercase tracking-widest mt-2 sm:mt-3">
                 {stat.desc}
               </p>
             </motion.div>

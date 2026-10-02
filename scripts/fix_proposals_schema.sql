@@ -35,7 +35,14 @@ ALTER TABLE public.proposals
   ADD COLUMN IF NOT EXISTS viewed_date TIMESTAMP WITH TIME ZONE,
   ADD COLUMN IF NOT EXISTS last_updated TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   ADD COLUMN IF NOT EXISTS created_by UUID REFERENCES public.users(id) ON DELETE CASCADE,
-  ADD COLUMN IF NOT EXISTS last_modified_by UUID REFERENCES public.users(id) ON DELETE CASCADE;
+  ADD COLUMN IF NOT EXISTS last_modified_by UUID REFERENCES public.users(id) ON DELETE CASCADE,
+  ADD COLUMN IF NOT EXISTS rejected_by UUID REFERENCES public.users(id) ON DELETE CASCADE,
+  ADD COLUMN IF NOT EXISTS rejection_reason TEXT,
+  ADD COLUMN IF NOT EXISTS rejection_reason_notes TEXT,
+  ADD COLUMN IF NOT EXISTS contract_reviewed BOOLEAN DEFAULT FALSE,
+  ADD COLUMN IF NOT EXISTS homeowner_contract_reviewed BOOLEAN DEFAULT FALSE,
+  ADD COLUMN IF NOT EXISTS contract_reviewed_at TIMESTAMP WITH TIME ZONE,
+  ADD COLUMN IF NOT EXISTS homeowner_contract_reviewed_at TIMESTAMP WITH TIME ZONE;
 
 -- Sync columns if project_id or contractor_id exist
 DO $$
