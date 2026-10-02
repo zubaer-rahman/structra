@@ -3,9 +3,8 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, Star, MapPin, Award, CheckCircle, Wrench } from "lucide-react";
+import { ChevronLeft, ChevronRight, Star, MapPin, Award, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase";
 import { User, ContractorProfile } from "@/server/database/interfaces";
 import LoadingSpinner from "@/components/shared/loading-spinner";
 
@@ -21,7 +20,7 @@ export function FeaturedContractorsCarousel() {
   const [loading, setLoading] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [cardsToShow, setCardsToShow] = useState(7);
+  const [cardsToShow, setCardsToShow] = useState(4);
 
   useEffect(() => {
     setIsClient(true);
@@ -31,7 +30,15 @@ export function FeaturedContractorsCarousel() {
   // Handle responsive design
   useEffect(() => {
     const handleResize = () => {
-      setCardsToShow(window.innerWidth < 768 ? 1 : 7);
+      if (window.innerWidth < 640) {
+        setCardsToShow(1);
+      } else if (window.innerWidth < 1024) {
+        setCardsToShow(2);
+      } else if (window.innerWidth < 1280) {
+        setCardsToShow(3);
+      } else {
+        setCardsToShow(4);
+      }
     };
 
     // Set initial value
@@ -44,73 +51,18 @@ export function FeaturedContractorsCarousel() {
   const fetchFeaturedContractors = async () => {
     try {
       setLoading(true);
-      const supabase = createClient();
+      const response = await fetch('/api/featured-contractors');
+      const data = await response.json();
 
-      // Fetch featured contractors
-      const { data, error } = await supabase
-        .from("contractor_profiles")
-        .select(`
-          *,
-          users!user_id (
-            id,
-            full_name,
-            first_name,
-            last_name,
-            email,
-            phone_number,
-            address,
-            profile_photo,
-            user_role,
-            is_verified_contractor,
-            is_active,
-            created_at
-          )
-        `)
-        .eq("users.user_role", "contractor")
-        .eq("users.is_active", true)
-        .eq("users.is_verified_contractor", true)
-        .eq("is_featured_contractor", true)
-        .order("created_at", { ascending: false })
-        .limit(12);
-
-      if (error) {
-        console.error("Error fetching featured contractors:", error);
-        return;
+      if (response.ok && data.contractors) {
+        setFeaturedContractors(data.contractors as ContractorWithProfile[]);
+      } else {
+        console.error("Error fetching featured contractors:", data.error);
+        setFeaturedContractors([]);
       }
-
-      // Transform data and calculate ratings for each contractor
-      const transformedData = await Promise.all(
-        (data || []).map(async (contractor) => {
-          // Get reviews for this contractor to calculate average rating
-          const { data: reviews, error: reviewsError } = await supabase
-            .from("reviews")
-            .select("rating")
-            .eq("recipient", contractor.user_id)
-            .eq("is_verified", "yes");
-
-          let averageRating = 0;
-          let ratingCount = 0;
-
-          if (!reviewsError && reviews && reviews.length > 0) {
-            const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
-            averageRating = totalRating / reviews.length;
-            ratingCount = reviews.length;
-          }
-
-          return {
-            ...contractor.users,
-            created_at: contractor.created_at,
-            contractor_profile: contractor,
-            slug: contractor.slug,
-            average_rating: Math.round(averageRating * 10) / 10, // Round to 1 decimal place
-            rating_count: ratingCount,
-          };
-        })
-      );
-
-      setFeaturedContractors(transformedData as unknown as ContractorWithProfile[]);
     } catch (error) {
       console.error("Error fetching featured contractors:", error);
+      setFeaturedContractors([]);
     } finally {
       setLoading(false);
     }
@@ -128,20 +80,39 @@ export function FeaturedContractorsCarousel() {
 
   const getContractorImage = (contractor: ContractorWithProfile) => {
     // Check for valid profile photo
-    if (contractor.profile_photo && 
-        typeof contractor.profile_photo === 'string' && 
-        contractor.profile_photo.trim() !== "") {
+    if (contractor.profile_photo &&
+      typeof contractor.profile_photo === 'string' &&
+      contractor.profile_photo.trim() !== "") {
       return contractor.profile_photo;
     }
-    
+
     // Check for valid logo
-    if (contractor.contractor_profile?.logo && 
-        typeof contractor.contractor_profile.logo === 'string' && 
-        contractor.contractor_profile.logo.trim() !== "") {
+    if (contractor.contractor_profile?.logo &&
+      typeof contractor.contractor_profile.logo === 'string' &&
+      contractor.contractor_profile.logo.trim() !== "") {
       return contractor.contractor_profile.logo;
     }
-    
+
     return "/images/placeholder-image.png";
+  };
+
+  const getContractorLocation = (contractor: ContractorWithProfile) => {
+    const rawAddr = contractor.contractor_profile?.address as unknown;
+    if (typeof rawAddr === "string" && rawAddr.trim()) {
+      const parts = rawAddr.split(",").map((p: string) => p.trim());
+      if (parts.length >= 2) {
+        return `${parts[1]}${parts[2] ? `, ${parts[2].split(" ")[0]}` : ""}`;
+      }
+      return rawAddr;
+    }
+    if (rawAddr && typeof rawAddr === "object") {
+      const addrObj = rawAddr as { city?: string | null; province?: string | null; state?: string | null };
+      const city = addrObj.city;
+      const prov = addrObj.province || addrObj.state;
+      if (city && prov) return `${city}, ${prov}`;
+      if (city) return city;
+    }
+    return "Vancouver, BC";
   };
 
   if (!isClient) {
@@ -166,19 +137,19 @@ export function FeaturedContractorsCarousel() {
         {/* Section Header */}
         <div className="flex items-center justify-between mb-12">
           <div className="flex items-center gap-4">
-             <div className="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center">
-                <Award className="w-5 h-5 text-orange-500" />
-             </div>
-             <div>
-                <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tighter uppercase italic">
-                  Featured <span className="text-orange-600 dark:text-orange-500">Master Builders</span>
-                </h2>
-                <p className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-[0.2em]">Institutional Grade Performance</p>
-             </div>
+            <div className="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center">
+              <Award className="w-5 h-5 text-orange-500" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tighter uppercase italic">
+                Featured <span className="text-orange-600 dark:text-orange-500">Master Builders</span>
+              </h2>
+              <p className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-[0.2em]">Institutional Grade Performance</p>
+            </div>
           </div>
-          
+
           <div className="flex items-center space-x-3">
-            {featuredContractors.length > 7 && (
+            {featuredContractors.length > cardsToShow && (
               <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
@@ -220,36 +191,36 @@ export function FeaturedContractorsCarousel() {
           </div>
         ) : (
           <div className="relative overflow-hidden">
-            <div 
+            <div
               className="flex transition-transform duration-500 ease-[cubic-bezier(0.2,0,0,1)]"
-              style={{ 
-                transform: `translateX(-${currentIndex * (100 / cardsToShow)}%)` 
+              style={{
+                transform: `translateX(-${currentIndex * (100 / cardsToShow)}%)`
               }}
             >
               {featuredContractors.map((contractor) => (
-                <div 
-                  key={contractor.id} 
-                  className="flex-shrink-0 px-3" 
-                  style={{ 
-                    width: `calc(100% / ${cardsToShow})` 
+                <div
+                  key={contractor.id}
+                  className="flex-shrink-0 px-3"
+                  style={{
+                    width: `calc(100% / ${cardsToShow})`
                   }}
                 >
-                  <Link href={`/new-contractor-view/${contractor.slug || contractor.id}`} className="group block">
+                  <Link href={`/contractors/${contractor.slug || contractor.id}`} className="group block">
                     <div className="relative aspect-[3/4] rounded-3xl overflow-hidden border border-gray-200 dark:border-white/10 bg-slate-900 dark:bg-white/5 shadow-sm dark:shadow-xl transition-all duration-500 group-hover:border-orange-500/40 group-hover:-translate-y-2">
                       <Image
                         src={getContractorImage(contractor)}
                         alt={contractor.full_name || 'Contractor'}
                         fill
-                        className="object-cover transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0 opacity-60 group-hover:opacity-100"
+                        className="object-cover transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0 opacity-80 group-hover:opacity-100"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
                           target.src = "/images/placeholder-image.png";
                         }}
                       />
-                      
+
                       {/* Premium Overlay */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
-                      
+
                       <div className="absolute inset-x-0 bottom-0 p-6 space-y-3">
                         <div className="flex items-center gap-2">
                           <div className="px-2 py-0.5 rounded bg-orange-500 text-[8px] font-black uppercase text-white tracking-widest">
@@ -262,15 +233,15 @@ export function FeaturedContractorsCarousel() {
                             </div>
                           )}
                         </div>
-                        
+
                         <h3 className="text-sm font-black text-white leading-tight line-clamp-2 uppercase tracking-tighter italic">
                           {contractor.contractor_profile?.business_name || contractor.full_name}
                         </h3>
-                        
-                        <div className="flex items-center gap-1.5 text-gray-500">
-                          <MapPin className="w-3 h-3" />
+
+                        <div className="flex items-center gap-1.5 text-gray-400">
+                          <MapPin className="w-3 h-3 text-orange-500" />
                           <span className="text-[9px] font-bold uppercase tracking-widest truncate">
-                              {contractor.contractor_profile?.address?.city || 'Elite Division'}
+                            {getContractorLocation(contractor)}
                           </span>
                         </div>
                       </div>

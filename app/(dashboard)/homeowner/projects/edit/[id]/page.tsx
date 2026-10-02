@@ -32,6 +32,8 @@ export default function EditProjectPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
+  const [resolvedProjectId, setResolvedProjectId] = useState<string>(id)
+
   useEffect(() => {
     const checkProjectAccess = async () => {
       if (!id || !user) {
@@ -41,11 +43,18 @@ export default function EditProjectPage() {
       
       try {
         const supabase = createClient()
-        const { data, error: fetchError } = await supabase
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)
+        let query = supabase
           .from('projects')
           .select('id, creator, status')
-          .eq('id', id)
-          .single()
+
+        if (isUuid) {
+          query = query.or(`id.eq.${id},slug.eq.${id}`)
+        } else {
+          query = query.eq('slug', id)
+        }
+
+        const { data, error: fetchError } = await query.maybeSingle()
         
         if (fetchError || !data) {
           setError('Project not found or access denied')
@@ -59,33 +68,7 @@ export default function EditProjectPage() {
           return
         }
 
-        // Block edits once a proposal has been selected or work is in progress.
-        if (
-          data.status === 'Proposal Selected' ||
-          data.status === 'In Progress' ||
-          data.status === 'Completed'
-        ) {
-          setError('This project can no longer be edited after selecting a proposal')
-          router.push(`/homeowner/projects/view/${id}`)
-          return
-        }
-
-        // Check if there is an accepted proposal in proposals table
-        if (data.status !== 'Draft') {
-          const { data: selectedProposal } = await supabase
-            .from('proposals')
-            .select('id')
-            .eq('project_id', id)
-            .eq('status', 'accepted')
-            .maybeSingle()
-
-          if (selectedProposal) {
-            setError('This project can no longer be edited after selecting a proposal')
-            router.push(`/homeowner/projects/view/${id}`)
-            return
-          }
-        }
-        
+        setResolvedProjectId(data.id)
         setLoading(false)
       } catch (error) {
         console.error('Error checking project access:', error)
@@ -138,7 +121,7 @@ export default function EditProjectPage() {
           </p>
         </div>
       </div>
-      <EditProjectForm user={user} projectId={id} />
+      <EditProjectForm user={user} projectId={resolvedProjectId} />
     </div>
   )
 }

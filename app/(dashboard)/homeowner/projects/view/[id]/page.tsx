@@ -202,12 +202,19 @@ export default function HomeownerProjectViewPage() {
       
       try {
         const supabase = createClient()
-        const { data, error: fetchError } = await supabase
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)
+        let query = supabase
           .from('projects')
           .select('*, project_certificate, title_awarded')
-          .eq('id', id)
           .eq('creator', user.id)
-          .single()
+
+        if (isUuid) {
+          query = query.or(`id.eq.${id},slug.eq.${id}`)
+        } else {
+          query = query.eq('slug', id)
+        }
+
+        const { data, error: fetchError } = await query.maybeSingle()
         
         if (fetchError) {
           throw fetchError
@@ -454,10 +461,6 @@ export default function HomeownerProjectViewPage() {
           status: PROPOSAL_STATUSES.ACCEPTED,
           is_selected: 'yes',
           accepted_date: new Date().toISOString(),
-          contract_reviewed: true,
-          homeowner_contract_reviewed: true,
-          contract_reviewed_at: new Date().toISOString(),
-          homeowner_contract_reviewed_at: new Date().toISOString(),
           last_updated: new Date().toISOString(),
           last_modified_by: user.id
         })
@@ -490,15 +493,14 @@ export default function HomeownerProjectViewPage() {
         .update({
           status: PROPOSAL_STATUSES.REJECTED,
           rejected_date: new Date().toISOString(),
-          rejection_reason: 'other',
-          rejection_reason_notes: 'Another proposal was selected by the homeowner',
+          notes: 'Another proposal was selected by the homeowner',
           is_selected: 'no',
           last_updated: new Date().toISOString(),
           last_modified_by: user.id
         })
         .eq('project', id)
         .neq('id', proposalId)
-        .in('status', [PROPOSAL_STATUSES.SUBMITTED, PROPOSAL_STATUSES.VIEWED])
+        .in('status', [PROPOSAL_STATUSES.SUBMITTED, 'pending', PROPOSAL_STATUSES.VIEWED])
       
       if (rejectError) {
         throw rejectError
@@ -541,7 +543,7 @@ export default function HomeownerProjectViewPage() {
         .eq('project', id)
         .eq('homeowner', user.id)
         .eq('is_deleted', 'no')
-        .in('status', ['submitted', 'viewed', 'accepted', 'rejected'])
+        .in('status', ['submitted', 'pending', 'viewed', 'accepted', 'rejected'])
         .order('created_at', { ascending: false })
       
       if (updatedProposals) {
@@ -749,8 +751,7 @@ export default function HomeownerProjectViewPage() {
         .update({
           status: PROPOSAL_STATUSES.REJECTED,
           rejected_date: new Date().toISOString(),
-          rejection_reason: reason || 'other',
-          rejection_reason_notes: notes,
+          notes: notes || reason || undefined,
           last_updated: new Date().toISOString(),
           last_modified_by: user.id
         })
@@ -789,7 +790,7 @@ export default function HomeownerProjectViewPage() {
         .eq('project', id)
         .eq('homeowner', user.id)
         .eq('is_deleted', 'no')
-        .in('status', [PROPOSAL_STATUSES.SUBMITTED, PROPOSAL_STATUSES.VIEWED, PROPOSAL_STATUSES.ACCEPTED, PROPOSAL_STATUSES.REJECTED])
+        .in('status', [PROPOSAL_STATUSES.SUBMITTED, 'pending', PROPOSAL_STATUSES.VIEWED, PROPOSAL_STATUSES.ACCEPTED, PROPOSAL_STATUSES.REJECTED])
         .order('created_at', { ascending: false })
       
       if (updatedProposals) {

@@ -31,7 +31,8 @@ export default function Navbar({
   const isDashboardPage =
     pathname.includes("/dashboard") ||
     pathname.includes("/homeowner") ||
-    pathname.includes("/contractor") ||
+    pathname.startsWith("/contractor/") ||
+    pathname === "/contractor" ||
     pathname.includes("/admin");
   
   // Auth page detection

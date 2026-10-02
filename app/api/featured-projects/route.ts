@@ -1,12 +1,12 @@
-import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function GET() {
   try {
-    const supabase = await createClient()
+    const supabase = createAdminClient()
     
-    // Get featured projects (admin selected) - only admin approved projects
-    const { data: featuredProjectsData, error: featuredError } = await supabase
+    // 1. Get featured projects (admin selected)
+    let { data: projectsData, error: projectsError } = await supabase
       .from("projects")
       .select(`
         id,
@@ -23,6 +23,7 @@ export async function GET() {
         project_photos,
         after_photo,
         is_featured_project,
+        title_awarded,
         slug,
         creator,
         created_at,
@@ -33,49 +34,97 @@ export async function GET() {
         )
       `)
       .eq("is_featured_project", true)
-      .eq("status", "Completed")
-      .eq("title_awarded", true)
-      .not("location", "is", null)
-      .order("substantial_completion", { ascending: false })
+      .order("created_at", { ascending: false })
       .limit(12);
 
-    if (featuredError) {
-      return NextResponse.json({ error: featuredError.message }, { status: 500 })
+    if (projectsError) {
+      console.error("Error fetching featured projects:", projectsError)
     }
 
-    if (!featuredProjectsData || featuredProjectsData.length === 0) {
+    // 2. Fallback: If no featured projects exist, fetch active public projects
+    if (!projectsData || projectsData.length === 0) {
+      const { data: fallbackProjects, error: fallbackError } = await supabase
+        .from("projects")
+        .select(`
+          id,
+          project_title,
+          statement_of_work,
+          budget,
+          category,
+          location,
+          project_type,
+          status,
+          start_date,
+          end_date,
+          substantial_completion,
+          project_photos,
+          after_photo,
+          is_featured_project,
+          title_awarded,
+          slug,
+          creator,
+          created_at,
+          homeowner:users!creator(
+            id,
+            full_name,
+            profile_photo
+          )
+        `)
+        .neq("status", "Draft")
+        .order("created_at", { ascending: false })
+        .limit(12);
+
+      if (!fallbackError && fallbackProjects) {
+        projectsData = fallbackProjects;
+      }
+    }
+
+    if (!projectsData || projectsData.length === 0) {
       return NextResponse.json({ projects: [] })
     }
 
-    // Get contractor data for each featured project
-    const processedFeaturedProjects = await Promise.all(
-      (featuredProjectsData || []).map(async (project) => {
-        // Get the selected proposal for this project
-        const { data: proposal, error: proposalError } = await supabase
+    // 3. Process contractor data for each project
+    const processedProjects = await Promise.all(
+      projectsData.map(async (project) => {
+        // Parse location if stored as JSON string
+        let parsedLocation = project.location;
+        if (typeof project.location === 'string') {
+          try {
+            parsedLocation = JSON.parse(project.location);
+          } catch {
+            parsedLocation = null;
+          }
+        }
+
+        // Get proposal for this project to associate contractor
+        const { data: proposal } = await supabase
           .from("proposals")
-          .select("contractor_id")
-          .eq("project_id", project.id)
-          .eq("status", "accepted")
+          .select("contractor_id, contractor, status")
+          .or(`project_id.eq.${project.id},project.eq.${project.id}`)
+          .in("status", ["accepted", "submitted"])
+          .order("status", { ascending: true }) // 'accepted' precedes 'submitted'
           .limit(1)
           .maybeSingle();
 
-        if (proposalError || !proposal?.contractor_id) {
+        const contractorUserId = proposal?.contractor_id || proposal?.contractor;
+
+        if (!contractorUserId) {
           return {
             ...project,
+            location: parsedLocation,
             contractor: null,
             feature_type: 'featured_project' as const
           };
         }
 
-        // Get contractor user data
-        const { data: contractorUser, error: contractorError } = await supabase
+        // Fetch contractor user and profile
+        const { data: contractorUser } = await supabase
           .from("users")
           .select("id, full_name, profile_photo")
-          .eq("id", proposal.contractor_id)
-          .single();
+          .eq("id", contractorUserId)
+          .maybeSingle();
 
-        // Get contractor profile data
-        const { data: contractorProfile, error: profileError } = await supabase
+        const { data: contractorProfile } = await supabase
           .from("contractor_profiles")
           .select(`
             id,
@@ -90,44 +139,24 @@ export async function GET() {
             portfolio,
             address
           `)
-          .eq("user_id", proposal.contractor_id)
+          .eq("user_id", contractorUserId)
           .maybeSingle();
-
-        if (contractorError || !contractorUser) {
-          return {
-            ...project,
-            contractor: null,
-            feature_type: 'featured_project' as const
-          };
-        }
 
         return {
           ...project,
-          contractor: {
+          location: parsedLocation,
+          contractor: contractorUser ? {
             id: contractorUser.id,
-            full_name: contractorUser.full_name,
-            profile_photo: contractorUser.profile_photo,
-            contractor_profile: contractorProfile
-          },
+            full_name: contractorUser.full_name || contractorProfile?.business_name || 'Contractor',
+            profile_photo: contractorUser.profile_photo || contractorProfile?.logo || '',
+            contractor_profile: contractorProfile || undefined
+          } : null,
           feature_type: 'featured_project' as const
         };
       })
     );
 
-    // Ensure contractor data is properly structured
-    const finalProjects = processedFeaturedProjects.map(project => ({
-      ...project,
-      contractor: project.contractor ? {
-        id: project.contractor.id,
-        full_name: project.contractor.full_name || 'Unknown Contractor',
-        profile_photo: project.contractor.profile_photo,
-        contractor_profile: project.contractor.contractor_profile
-      } : null,
-      slug: project.slug
-    }));
-
-    return NextResponse.json({ projects: finalProjects })
-    
+    return NextResponse.json({ projects: processedProjects })
   } catch (error) {
     console.error('Error fetching featured projects:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

@@ -8,7 +8,7 @@ export const migration_035_add_address_to_contractor_profiles: Migration = {
   up: async (db) => {
     await db.execute(`
       ALTER TABLE contractor_profiles 
-      ADD COLUMN address JSONB;
+      ADD COLUMN IF NOT EXISTS address JSONB;
     `);
   },
   down: async (db) => {

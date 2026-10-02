@@ -1,13 +1,12 @@
 'use client'
 
 import React, { useMemo } from 'react'
-import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
-import { Search, MapPin, Star, Shield } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { Search, MapPin, Star, Shield, Map } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { User, ContractorProfile } from '@/server/database/interfaces'
 import Image from 'next/image'
+import Link from 'next/link'
 import LeafletInteractiveMap, { MapItem } from '@/components/shared/LeafletInteractiveMap'
 
 interface ContractorWithProfile extends Omit<User, 'contractor_profile'> {
@@ -28,10 +27,6 @@ interface MapViewProps {
   searchQuery: string
 }
 
-const getContractorProfile = (contractor: ContractorWithProfile): ContractorProfile | null => {
-  return contractor.contractor_profile || null
-}
-
 export default function GoogleMapView({
   contractors,
   selectedContractor,
@@ -41,168 +36,142 @@ export default function GoogleMapView({
   onSearch,
   searchQuery,
 }: MapViewProps) {
-  // Convert contractors with coordinates into MapItems for the free Leaflet map
   const mapItems = useMemo<MapItem[]>(() => {
     const list: MapItem[] = []
     contractors.forEach((contractor) => {
-      const profile = getContractorProfile(contractor)
+      const profile = contractor.contractor_profile
       const lat = Number(profile?.address?.latitude)
       const lng = Number(profile?.address?.longitude)
       if (!lat || !lng) return
 
       const name = profile?.business_name || `${contractor.first_name || ''} ${contractor.last_name || ''}`.trim() || 'Contractor'
-      const ratingText = contractor.average_rating
-        ? `★ ${contractor.average_rating.toFixed(1)} (${contractor.rating_count || 0})`
-        : undefined
-
       list.push({
         id: String(contractor.id || contractor.slug || ''),
         title: name,
         subtitle: profile?.address?.city
           ? `${profile.address.city}, ${profile.address.province || ''}`
-          : profile?.address?.address || 'Verified Locale',
+          : profile?.service_location || 'Verified Locale',
         latitude: lat,
         longitude: lng,
-        badge: profile?.trade_category?.[0] || (profile?.is_admin_verified ? 'Verified Master' : undefined),
-        priceOrRating: ratingText,
+        badge: Array.isArray(profile?.trade_category) ? profile.trade_category[0] : profile?.trade_category,
+        priceOrRating: contractor.average_rating
+          ? `★ ${contractor.average_rating.toFixed(1)} (${contractor.rating_count || 0} reviews)`
+          : 'Verified Professional',
         linkUrl: `/contractors/${contractor.slug || contractor.id}`,
-        linkText: 'View Contractor Profile',
+        linkText: 'View Profile →',
       })
     })
     return list
   }, [contractors])
 
+  const hasMapData = mapItems.length > 0
+
   return (
-    <div className="flex flex-col lg:grid lg:grid-cols-4 gap-0 min-h-[600px] bg-white dark:bg-black">
-      {/* Sidebar with Search and Contractor Cards */}
-      <div className="lg:col-span-1 overflow-hidden order-2 lg:order-1 border-r border-gray-200 dark:border-white/5 flex flex-col h-[600px]">
-        {/* Search header */}
-        <div className="p-6 border-b border-gray-200 dark:border-white/5 space-y-4 flex-shrink-0 bg-gray-50/70 dark:bg-black/40">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-orange-600 flex items-center justify-center text-white font-bold text-xs">
-              02
+    <div className="flex flex-col lg:grid lg:grid-cols-4 gap-0 min-h-[600px] bg-white dark:bg-[#0A0A0A]">
+      {/* ── Sidebar ── */}
+      <div className="lg:col-span-1 order-2 lg:order-1 border-r border-gray-200 dark:border-white/5 flex flex-col h-[600px]">
+
+        {/* Sidebar header */}
+        <div className="p-5 border-b border-gray-200 dark:border-white/5 space-y-3 flex-shrink-0">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-orange-600 flex items-center justify-center">
+              <Shield className="w-3.5 h-3.5 text-white" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">
-                Elite Network
-              </h2>
-              <p className="text-[10px] text-gray-500 dark:text-gray-400 font-bold uppercase tracking-widest">
-                Verified Master Contractors
+              <p className="text-xs font-black text-gray-900 dark:text-white uppercase tracking-wider">Network</p>
+              <p className="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">
+                {contractors.length} Verified
               </p>
             </div>
           </div>
 
-          <div className="relative group">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500 group-focus-within:text-orange-500 transition-colors" />
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
             <Input
-              placeholder="Search trade or territory..."
+              placeholder="Search trade or city..."
               value={searchQuery}
               onChange={(e) => onSearch(e.target.value)}
-              className="pl-10 h-10 bg-white dark:bg-white/[0.03] border-gray-200 dark:border-white/5 focus:border-orange-500/50 text-xs text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 rounded-xl transition-all"
+              className="pl-9 h-9 bg-gray-50 dark:bg-white/[0.03] border-gray-200 dark:border-white/5 text-xs rounded-xl"
             />
           </div>
         </div>
 
-        {/* Contractor List */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-3 bg-slate-50/50 dark:bg-black/20">
+        {/* Contractor list */}
+        <div className="flex-1 overflow-y-auto space-y-1.5 p-3">
           {contractors.length === 0 ? (
             <div className="py-12 text-center">
-              <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">
-                Zero network profiles found
+              <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">
+                No contractors found
               </p>
             </div>
           ) : (
             contractors.map((contractor, index) => {
-              const profile = getContractorProfile(contractor)
+              const profile = contractor.contractor_profile
               if (!profile) return null
+              const name = profile.business_name || `${contractor.first_name || ''} ${contractor.last_name || ''}`.trim()
+              const location = profile.address?.city
+                ? `${profile.address.city}, ${profile.address.province || ''}`
+                : profile.service_location || null
+              const isSelected = selectedContractor?.id === contractor.id
 
               return (
-                <motion.div
+                <div
                   key={contractor.id || `contractor-${index}`}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.04 }}
                   onClick={() => onContractorClick(contractor)}
                   className={cn(
-                    'p-4 rounded-2xl border cursor-pointer transition-all duration-300 group relative overflow-hidden',
-                    selectedContractor?.id === contractor.id
-                      ? 'border-orange-500/60 bg-orange-500/10 shadow-[0_0_20px_rgba(234,88,12,0.15)]'
-                      : 'border-gray-200/80 dark:border-white/5 bg-white dark:bg-white/[0.02] hover:bg-gray-100/60 dark:hover:bg-white/[0.06] hover:border-gray-300 dark:hover:border-white/10 shadow-sm dark:shadow-none'
+                    'p-3.5 rounded-xl border cursor-pointer transition-all duration-200 group',
+                    isSelected
+                      ? 'border-orange-500/40 bg-orange-500/8 dark:bg-orange-500/10'
+                      : 'border-transparent hover:border-gray-200 dark:hover:border-white/5 hover:bg-gray-50 dark:hover:bg-white/[0.03]'
                   )}
                 >
-                  <div className="relative z-10 space-y-3">
-                    <div className="flex items-center gap-3">
-                      <div className="relative w-10 h-10 flex-shrink-0">
-                        <Image
-                          src={contractor.profile_photo || '/assets/avatar.png'}
-                          alt={`${contractor.first_name || ''} ${contractor.last_name || ''}`}
-                          fill
-                          className="rounded-full object-cover border border-gray-200 dark:border-white/10"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement
-                            target.src = '/assets/avatar.png'
-                          }}
-                        />
-                        {profile.is_admin_verified && (
-                          <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-orange-600 rounded-full flex items-center justify-center border border-white dark:border-[#0A0A0A]">
-                            <Shield className="w-2.5 h-2.5 text-white" />
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-xs text-gray-900 dark:text-white line-clamp-1 group-hover:text-orange-500 transition-colors">
-                          {profile.business_name || `${contractor.first_name || ''} ${contractor.last_name || ''}`}
-                        </h3>
-                        <p className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest truncate">
-                          {contractor.first_name} {contractor.last_name}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col gap-1.5">
-                      <div className="flex items-center gap-1.5 text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                        <MapPin className="h-3 w-3 text-orange-500 flex-shrink-0" />
-                        <span className="truncate">
-                          {profile.address?.city && profile.address?.province
-                            ? `${profile.address.city}, ${profile.address.province}`
-                            : profile.address?.address || 'Verified Locale'}
-                        </span>
-                      </div>
-
-                      {contractor.average_rating && contractor.rating_count && contractor.rating_count > 0 && (
-                        <div className="flex items-center gap-1.5 text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                          <Star className="h-3 w-3 text-yellow-500 fill-yellow-500 flex-shrink-0" />
-                          <span className="text-gray-900 dark:text-white font-bold">
-                            {contractor.average_rating.toFixed(1)}{' '}
-                            <span className="text-gray-400 dark:text-gray-500">({contractor.rating_count})</span>
-                          </span>
+                  <div className="flex items-center gap-2.5">
+                    <div className="relative w-9 h-9 shrink-0">
+                      <Image
+                        src={contractor.profile_photo || '/assets/avatar.png'}
+                        alt={name}
+                        fill
+                        className="rounded-lg object-cover"
+                        onError={(e) => { (e.target as HTMLImageElement).src = '/assets/avatar.png' }}
+                      />
+                      {profile.is_admin_verified && (
+                        <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 rounded-full border border-white dark:border-[#0A0A0A] flex items-center justify-center">
+                          <Shield className="w-2 h-2 text-white" />
                         </div>
                       )}
                     </div>
-
-                    {profile.trade_category && profile.trade_category.length > 0 && (
-                      <div className="flex flex-wrap gap-1 pt-1">
-                        {profile.trade_category.slice(0, 1).map((trade, tIdx) => (
-                          <Badge
-                            key={tIdx}
-                            variant="outline"
-                            className="bg-gray-100 dark:bg-white/5 border-gray-200 dark:border-white/10 text-[9px] font-black uppercase text-gray-600 dark:text-gray-400 px-2 py-0"
-                          >
-                            {trade}
-                          </Badge>
-                        ))}
+                    <div className="flex-1 min-w-0">
+                      <p className={cn(
+                        'text-xs font-bold truncate transition-colors',
+                        isSelected ? 'text-orange-500' : 'text-gray-900 dark:text-white group-hover:text-orange-500'
+                      )}>
+                        {name}
+                      </p>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        {location && (
+                          <span className="flex items-center gap-1 text-[10px] text-gray-400 truncate">
+                            <MapPin className="w-2.5 h-2.5 text-orange-400 shrink-0" />
+                            {location}
+                          </span>
+                        )}
+                        {contractor.average_rating && contractor.rating_count && contractor.rating_count > 0 && (
+                          <span className="flex items-center gap-0.5 text-[10px] font-bold text-gray-600 dark:text-gray-300 shrink-0">
+                            <Star className="w-2.5 h-2.5 fill-yellow-400 text-yellow-400" />
+                            {contractor.average_rating.toFixed(1)}
+                          </span>
+                        )}
                       </div>
-                    )}
+                    </div>
                   </div>
-                </motion.div>
+                </div>
               )
             })
           )}
         </div>
       </div>
 
-      {/* Interactive Free OpenStreetMap Leaflet Map */}
-      <div className="lg:col-span-3 order-1 lg:order-2 h-full min-h-[600px] relative">
+      {/* ── Map Panel ── */}
+      <div className="lg:col-span-3 order-1 lg:order-2 relative min-h-[400px] lg:min-h-[600px]">
         <LeafletInteractiveMap
           items={mapItems}
           center={mapCenter}

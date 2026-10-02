@@ -8,7 +8,7 @@ export const migration_042_add_insurance_certificate: Migration = {
   up: async (db) => {
     await db.execute(`
       ALTER TABLE contractor_profiles 
-      ADD COLUMN insurance_certificate JSONB;
+      ADD COLUMN IF NOT EXISTS insurance_certificate JSONB;
     `);
 
     await db.execute(`

@@ -34,12 +34,12 @@ export default function SiteAmenitiesDisplay({
     }
 
     return (
-      <Card key={category} className="mb-4">
+      <Card key={category} className="mb-4 bg-white dark:bg-[#141414] border-neutral-200 dark:border-white/10 shadow-sm">
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-lg">
+          <CardTitle className="flex items-center gap-2 text-lg text-neutral-900 dark:text-white">
             {CATEGORY_LABELS[categoryKey as keyof typeof CATEGORY_LABELS]}
             {selectedAmenities.length > 0 && (
-              <Badge variant="secondary" className="ml-2">
+              <Badge variant="secondary" className="ml-2 bg-neutral-100 dark:bg-white/10 text-neutral-700 dark:text-neutral-300">
                 {selectedAmenities.length} available
               </Badge>
             )}
@@ -50,14 +50,14 @@ export default function SiteAmenitiesDisplay({
           {selectedAmenities.length > 0 && (
             <div className="mb-4">
               <div className="flex items-center gap-2 mb-2">
-                <CheckCircle className="h-4 w-4 text-green-600" />
-                <span className="text-sm font-medium text-green-700">Available</span>
+                <CheckCircle className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">Available</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {selectedAmenities.map((amenity) => {
                   const label = AMENITY_LABELS[amenity as keyof typeof AMENITY_LABELS] || amenity;
                   return (
-                    <Badge key={amenity} variant="default" className="bg-green-100 text-green-800 border-green-200">
+                    <Badge key={amenity} variant="default" className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20 hover:bg-emerald-500/20">
                       {label}
                     </Badge>
                   );
@@ -70,14 +70,14 @@ export default function SiteAmenitiesDisplay({
           {notIncluded.length > 0 && (
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <XCircle className="h-4 w-4 text-red-500" />
-                <span className="text-sm font-medium text-red-700">Not Included</span>
+                <XCircle className="h-4 w-4 text-rose-500 dark:text-rose-400" />
+                <span className="text-sm font-medium text-rose-700 dark:text-rose-300">Not Included</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {notIncluded.map((amenity) => {
                   const label = AMENITY_LABELS[amenity as keyof typeof AMENITY_LABELS] || amenity;
                   return (
-                    <Badge key={amenity} variant="outline" className="text-red-600 border-red-200">
+                    <Badge key={amenity} variant="outline" className="text-neutral-600 dark:text-neutral-400 border-neutral-200 dark:border-white/10 bg-neutral-50 dark:bg-white/[0.02]">
                       {label}
                     </Badge>
                   );
@@ -96,10 +96,10 @@ export default function SiteAmenitiesDisplay({
 
   if (!hasAnyAmenities && !hasNotIncluded) {
     return (
-      <Card className={className}>
+      <Card className={`bg-neutral-50 dark:bg-white/[0.02] border-neutral-200 dark:border-white/10 ${className}`}>
         <CardContent className="pt-6">
-          <div className="text-center text-gray-500">
-            <Info className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+          <div className="text-center text-neutral-500 dark:text-neutral-400">
+            <Info className="h-8 w-8 mx-auto mb-2 text-neutral-400 dark:text-neutral-500" />
             <p>No site amenities information available</p>
             <p className="text-sm mt-1">Contact the homeowner for details about site amenities</p>
           </div>
@@ -112,22 +112,21 @@ export default function SiteAmenitiesDisplay({
     <div className={className}>
       {/* Header */}
       <div className="mb-6">
-        <h3 className="text-xl font-semibold text-gray-900 mb-2">Site Amenities</h3>
-        <p className="text-gray-600 text-sm">
+        <h3 className="text-xl font-semibold text-neutral-900 dark:text-white mb-2">Site Amenities</h3>
+        <p className="text-neutral-600 dark:text-neutral-400 text-sm">
           Available amenities and facilities at the project site
         </p>
       </div>
 
       {/* Important Notice for Contractors */}
-      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
+      <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 mb-6">
         <div className="flex items-start gap-3">
-          <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+          <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
           <div>
-            <h4 className="font-medium text-amber-900">Important Information</h4>
-            <p className="text-sm text-amber-700 mt-1">
-              Review the available amenities carefully. Items marked as &quot;Not Included&quot; 
-              will need to be provided by you or arranged separately. Pay special attention 
-              to sanitation facilities as they are critical for contractor operations.
+            <h4 className="font-medium text-amber-900 dark:text-amber-200">Important Information</h4>
+            <p className="text-sm text-amber-800/80 dark:text-amber-300/80 mt-1 leading-relaxed">
+              Review available amenities carefully. Items marked as &quot;Not Included&quot; 
+              will need to be provided by the contractor or arranged separately.
             </p>
           </div>
         </div>

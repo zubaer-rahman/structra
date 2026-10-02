@@ -39,7 +39,7 @@ export function CertificateTabContent({ project, user, userRole }: CertificateTa
           // Check if there's a selected/accepted proposal for this project by this contractor
           const { data: proposal, error } = await supabase
             .from('proposals')
-            .select('id, is_selected, status, contract_reviewed, homeowner_contract_reviewed')
+            .select('*')
             .eq('project', project.id)
             .eq('contractor', user.id)
             .eq('is_selected', 'yes')

@@ -117,11 +117,22 @@ export class ProposalService {
 
       console.log("Inserting proposal data:", proposalInsertData)
 
-      const { data, error } = await this.supabase
+      let { data, error } = await this.supabase
         .from('proposals')
         .insert(proposalInsertData)
         .select('*')
         .single()
+
+      if (error && error.message?.includes('proposals_status_check')) {
+        console.warn('proposals_status_check failed for status "submitted", retrying with "pending"...')
+        const retry = await this.supabase
+          .from('proposals')
+          .insert({ ...proposalInsertData, status: 'pending' })
+          .select('*')
+          .single()
+        data = retry.data
+        error = retry.error
+      }
 
       if (error) {
         console.error("Database insertion error:", error)

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,9 +11,12 @@ export async function GET(request: NextRequest) {
 
     console.log('Search params:', { location, limit });
 
-    const supabase = await createClient();
+    const supabase = createAdminClient();
     console.log('Supabase client created');
 
+    // Note: Supabase PostgREST does NOT support .eq() on joined-table columns
+    // (e.g. "users.is_active") — those filters are silently ignored.
+    // We only filter on contractor_profiles columns and use is_admin_verified as the gate.
     let query = supabase
       .from("contractor_profiles")
       .select(`
@@ -33,20 +36,20 @@ export async function GET(request: NextRequest) {
           created_at
         )
       `)
-      .eq("users.user_role", "contractor")
-      .eq("users.is_active", true)
-      .eq("users.is_verified_contractor", true)
       .eq("is_admin_verified", true);
 
-    // Apply filters
+    // Location filter — applied when the user types a search term
     if (location) {
-      // When searching for a specific location, search across all countries
-      // Use a more robust location search that includes country field
-      query = query.or(`address->>city.ilike.%${location}%,address->>province.ilike.%${location}%,address->>address.ilike.%${location}%,address->>country.ilike.%${location}%,business_name.ilike.%${location}%`);
-    } else {
-      // Default to Canada when no specific location is provided
-      query = query.eq("address->>country", "Canada");
+      query = query.or(
+        `address->city.ilike.%${location}%,` +
+        `address->province.ilike.%${location}%,` +
+        `address->address.ilike.%${location}%,` +
+        `address->country.ilike.%${location}%,` +
+        `business_name.ilike.%${location}%,` +
+        `service_location.ilike.%${location}%`
+      );
     }
+    // No country restriction on default load — show all verified contractors
 
     // Get the data
     console.log('Executing query...');
@@ -67,7 +70,6 @@ export async function GET(request: NextRequest) {
     // Transform data and calculate ratings for each contractor
     const transformedData = await Promise.all(
       (data || []).map(async (contractor) => {
-        // Get reviews for this contractor to calculate average rating
         const { data: reviews, error: reviewsError } = await supabase
           .from("reviews")
           .select("rating")
@@ -84,11 +86,11 @@ export async function GET(request: NextRequest) {
         }
 
         return {
-          ...contractor.users, // User data as main object
-          created_at: contractor.created_at, // Use contractor profile's created_at for joined date
-          contractor_profile: contractor, // Profile data nested
-          slug: contractor.slug, // Add slug to the main object for easy access
-          average_rating: Math.round(averageRating * 10) / 10, // Round to 1 decimal place
+          ...contractor.users,
+          created_at: contractor.created_at,
+          contractor_profile: contractor,
+          slug: contractor.slug,
+          average_rating: Math.round(averageRating * 10) / 10,
           rating_count: ratingCount,
         };
       })

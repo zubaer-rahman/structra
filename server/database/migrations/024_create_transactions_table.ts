@@ -8,7 +8,7 @@ export const migration_026_create_transactions_table: Migration = {
   up: async (db) => {
     // Create transactions table
     await db.execute(`
-      CREATE TABLE public.transactions (
+      CREATE TABLE IF NOT EXISTS public.transactions (
         -- Base schema fields
         id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -71,17 +71,28 @@ export const migration_026_create_transactions_table: Migration = {
       );
     `)
     
+    // Add missing columns if they don't exist
+    await db.execute(`
+      DO $$
+      BEGIN
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='transactions' AND column_name='subscription_id') THEN
+          ALTER TABLE public.transactions ADD COLUMN IF NOT EXISTS subscription_id UUID REFERENCES subscriptions(id) ON DELETE SET NULL;
+        END IF;
+      END
+      $$;
+    `);
+    
     // Create indexes for performance
     await db.execute(`
-      CREATE INDEX idx_transactions_user_id ON public.transactions(user_id);
-      CREATE INDEX idx_transactions_project_id ON public.transactions(project_id);
-      CREATE INDEX idx_transactions_subscription_id ON public.transactions(subscription_id);
-      CREATE INDEX idx_transactions_transaction_type ON public.transactions(transaction_type);
-      CREATE INDEX idx_transactions_status ON public.transactions(status);
-      CREATE INDEX idx_transactions_amount ON public.transactions(amount);
-      CREATE INDEX idx_transactions_created_at ON public.transactions(created_at);
-      CREATE INDEX idx_transactions_stripe_payment_intent_id ON public.transactions(stripe_payment_intent_id);
-      CREATE INDEX idx_transactions_stripe_customer_id ON public.transactions(stripe_customer_id);
+      CREATE INDEX IF NOT EXISTS idx_transactions_user_id ON public.transactions(user_id);
+      CREATE INDEX IF NOT EXISTS idx_transactions_project_id ON public.transactions(project_id);
+      CREATE INDEX IF NOT EXISTS idx_transactions_subscription_id ON public.transactions(subscription_id);
+      CREATE INDEX IF NOT EXISTS idx_transactions_transaction_type ON public.transactions(transaction_type);
+      CREATE INDEX IF NOT EXISTS idx_transactions_status ON public.transactions(status);
+      CREATE INDEX IF NOT EXISTS idx_transactions_amount ON public.transactions(amount);
+      CREATE INDEX IF NOT EXISTS idx_transactions_created_at ON public.transactions(created_at);
+      CREATE INDEX IF NOT EXISTS idx_transactions_stripe_payment_intent_id ON public.transactions(stripe_payment_intent_id);
+      CREATE INDEX IF NOT EXISTS idx_transactions_stripe_customer_id ON public.transactions(stripe_customer_id);
     `)
     
     // Add table comments

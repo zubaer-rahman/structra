@@ -99,10 +99,6 @@ export function HomeownerProposalTable({
           status: PROPOSAL_STATUSES.ACCEPTED,
           is_selected: 'yes',
           accepted_date: now,
-          contract_reviewed: true,
-          homeowner_contract_reviewed: true,
-          contract_reviewed_at: now,
-          homeowner_contract_reviewed_at: now,
           last_updated: now,
         })
         .eq('id', selectedProposal.id)
@@ -127,14 +123,13 @@ export function HomeownerProposalTable({
         .update({
           status: PROPOSAL_STATUSES.REJECTED,
           rejected_date: now,
-          rejection_reason: 'other',
-          rejection_reason_notes: 'Another proposal was selected by the homeowner',
+          notes: 'Another proposal was selected by the homeowner',
           is_selected: 'no',
           last_updated: now,
         })
         .eq('project', selectedProposal.project)
         .neq('id', selectedProposal.id)
-        .in('status', [PROPOSAL_STATUSES.SUBMITTED, PROPOSAL_STATUSES.VIEWED])
+        .in('status', [PROPOSAL_STATUSES.SUBMITTED, 'pending', PROPOSAL_STATUSES.VIEWED])
 
       if (rejectOthersError) throw rejectOthersError
 
@@ -176,8 +171,7 @@ export function HomeownerProposalTable({
         .update({
           status: PROPOSAL_STATUSES.REJECTED,
           rejected_date: now,
-          rejection_reason: 'other',
-          rejection_reason_notes: trimmedReason,
+          notes: trimmedReason,
           is_selected: 'no',
           last_updated: now,
         })
@@ -221,17 +215,22 @@ export function HomeownerProposalTable({
   }
 
   const getStatusBadgeStyle = (status: string) => {
-    const badgeStyles = {
-      'pending': 'bg-yellow-100 text-yellow-800 border-yellow-300',
-      'submitted': 'bg-yellow-100 text-yellow-800 border-yellow-300',
-      'viewed': 'bg-blue-100 text-blue-800 border-blue-300',
-      'accepted': 'bg-green-100 text-green-800 border-green-300',
-      'rejected': 'bg-red-100 text-red-800 border-red-300',
-      'withdrawn': 'bg-gray-100 text-gray-800 border-gray-300',
-      'expired': 'bg-gray-100 text-gray-800 border-gray-300',
-      'draft': 'bg-gray-100 text-gray-800 border-gray-300'
+    switch (status?.toLowerCase()) {
+      case 'accepted':
+        return 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30'
+      case 'rejected':
+        return 'bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/30'
+      case 'viewed':
+        return 'bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-500/30'
+      case 'withdrawn':
+      case 'expired':
+      case 'draft':
+        return 'bg-muted text-muted-foreground border-border'
+      case 'pending':
+      case 'submitted':
+      default:
+        return 'bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/30'
     }
-    return badgeStyles[status as keyof typeof badgeStyles] || 'bg-gray-100 text-gray-800 border-gray-200'
   }
 
   const getDisplayStatus = (status: string) => {
@@ -262,21 +261,21 @@ export function HomeownerProposalTable({
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            className="h-auto p-0 font-semibold text-left justify-start w-full text-gray-600"
+            className="h-auto p-0 font-semibold text-left justify-start w-full text-muted-foreground hover:text-foreground text-xs uppercase tracking-wider"
           >
             Project
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <ArrowUpDown className="ml-1.5 h-3.5 w-3.5" />
           </Button>
         )
       },
       cell: ({ row }) => {
         const proposal = row.original
         return (
-          <div className="space-y-1">
-            <div className="font-medium text-gray-900">
+          <div className="space-y-0.5">
+            <div className="font-medium text-foreground text-sm group-hover:underline">
               {proposal.project_details?.project_title || 'Unknown Project'}
             </div>
-            <div className="text-sm text-gray-500 line-clamp-1">
+            <div className="text-xs text-muted-foreground line-clamp-1">
               {proposal.title}
             </div>
           </div>
@@ -290,17 +289,17 @@ export function HomeownerProposalTable({
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            className="h-auto p-0 font-semibold text-left justify-start w-full text-gray-600"
+            className="h-auto p-0 font-semibold text-left justify-start w-full text-muted-foreground hover:text-foreground text-xs uppercase tracking-wider"
           >
             Contractor
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <ArrowUpDown className="ml-1.5 h-3.5 w-3.5" />
           </Button>
         )
       },
       cell: ({ row }) => {
         const proposal = row.original
         return (
-          <div className="font-medium text-gray-900">
+          <div className="font-medium text-foreground text-sm">
             {proposal.contractor_profile?.full_name
               ? proposal.contractor_profile.full_name
                   .split(" ")
@@ -322,21 +321,21 @@ export function HomeownerProposalTable({
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            className="h-auto p-0 font-semibold text-left justify-start w-full text-gray-600"
+            className="h-auto p-0 font-semibold text-left justify-start w-full text-muted-foreground hover:text-foreground text-xs uppercase tracking-wider"
           >
             Amount
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <ArrowUpDown className="ml-1.5 h-3.5 w-3.5" />
           </Button>
         )
       },
       cell: ({ row }) => {
         const proposal = row.original
         return (
-          <div className="space-y-1">
-            <div className="font-medium text-gray-900">
+          <div className="space-y-0.5">
+            <div className="font-semibold text-foreground font-mono text-sm">
               {formatCurrency(proposal.total_amount || 0)}
             </div>
-            <div className="text-sm text-gray-500">
+            <div className="text-xs text-muted-foreground font-mono">
               Deposit: {formatCurrency(proposal.deposit_amount || 0)}
             </div>
           </div>
@@ -350,10 +349,10 @@ export function HomeownerProposalTable({
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            className="h-auto p-0 font-semibold text-left justify-start w-full text-gray-600"
+            className="h-auto p-0 font-semibold text-left justify-start w-full text-muted-foreground hover:text-foreground text-xs uppercase tracking-wider"
           >
             Status
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <ArrowUpDown className="ml-1.5 h-3.5 w-3.5" />
           </Button>
         )
       },
@@ -362,10 +361,10 @@ export function HomeownerProposalTable({
         const status = row.getValue('status') as string
         const displayStatus = getDisplayStatus(status)
         return (
-          <div className="flex flex-col gap-2">
+          <div>
             <Badge 
               variant="outline" 
-              className={`capitalize border ${getStatusBadgeStyle(status)}`}
+              className={`capitalize border text-xs px-2.5 py-0.5 font-medium ${getStatusBadgeStyle(status)}`}
             >
               {displayStatus}
             </Badge>
@@ -380,27 +379,27 @@ export function HomeownerProposalTable({
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            className="h-auto p-0 font-semibold text-left justify-start w-full text-gray-600"
+            className="h-auto p-0 font-semibold text-left justify-start w-full text-muted-foreground hover:text-foreground text-xs uppercase tracking-wider"
           >
             Timeline
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <ArrowUpDown className="ml-1.5 h-3.5 w-3.5" />
           </Button>
         )
       },
       cell: ({ row }) => {
         const proposal = row.original
         return (
-          <div className="space-y-1">
-            <div className="flex items-center gap-1.5 text-sm text-gray-600">
-              <Calendar className="h-3 w-3 text-gray-400" />
+          <div className="space-y-0.5">
+            <div className="flex items-center gap-1.5 text-xs text-foreground">
+              <Calendar className="h-3 w-3 text-muted-foreground" />
               <span>
                 {proposal.proposed_start_date && proposal.proposed_end_date
                   ? `${formatDate(proposal.proposed_start_date)} - ${formatDate(proposal.proposed_end_date)}`
                   : "Dates TBD"}
               </span>
             </div>
-            <div className="flex items-center gap-1.5 text-sm text-gray-500">
-              <Clock className="h-3 w-3 text-gray-400" />
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <Clock className="h-3 w-3 text-muted-foreground" />
               <span>
                 {proposal.proposed_start_date && proposal.proposed_end_date
                   ? calculateDuration(proposal.proposed_start_date, proposal.proposed_end_date)
@@ -413,7 +412,7 @@ export function HomeownerProposalTable({
     },
     {
       id: 'actions',
-      header: () => <span className="text-gray-600 font-semibold">Actions</span>,
+      header: () => <span className="text-muted-foreground font-semibold text-xs uppercase tracking-wider">Actions</span>,
       cell: ({ row }) => {
         const proposal = row.original
         const canTakeAction = proposal.status === PROPOSAL_STATUSES.SUBMITTED || proposal.status === PROPOSAL_STATUSES.VIEWED
@@ -430,16 +429,16 @@ export function HomeownerProposalTable({
                   e.stopPropagation()
                   handlePreviewPDF(proposal)
                 }}
-                className="h-8 px-3 text-xs border-green-200 text-green-700 hover:bg-green-50"
+                className="h-7 px-2.5 text-xs border-emerald-500/30 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10"
               >
                 <EyeIcon className="h-3 w-3 mr-1" />
-                Review Contract
+                Review
               </Button>
               <Button
                 size="sm"
                 onClick={(e) => handleAcceptClick(e, proposal)}
                 variant="outline"
-                className="h-8 px-3 text-xs"
+                className="h-7 px-2.5 text-xs border-emerald-500/30 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10"
               >
                 <CheckCircle className="h-3 w-3 mr-1" />
                 Accept
@@ -448,7 +447,7 @@ export function HomeownerProposalTable({
                 size="sm"
                 onClick={(e) => handleRejectClick(e, proposal)}
                 variant="outline"
-                className="h-8 px-3 text-xs"
+                className="h-7 px-2.5 text-xs border-rose-500/30 text-rose-700 dark:text-rose-400 hover:bg-rose-500/10"
               >
                 <XCircle className="h-3 w-3 mr-1" />
                 Reject
@@ -467,10 +466,10 @@ export function HomeownerProposalTable({
                   e.stopPropagation()
                   handlePreviewPDF(proposal)
                 }}
-                className="h-8 px-3 text-xs border-green-200 text-green-700 hover:bg-green-50"
+                className="h-7 px-2.5 text-xs border-emerald-500/30 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10"
               >
                 <EyeIcon className="h-3 w-3 mr-1" />
-                Review Contract
+                Contract
               </Button>
               
               {isAccepted && (
@@ -481,10 +480,10 @@ export function HomeownerProposalTable({
                     e.stopPropagation()
                     await downloadProposalPDF(proposal.id)
                   }}
-                  className="h-8 px-3 text-xs border-blue-200 text-blue-700 hover:bg-blue-50"
+                  className="h-7 px-2.5 text-xs border-blue-500/30 text-blue-700 dark:text-blue-400 hover:bg-blue-500/10"
                 >
                   <FileDown className="h-3 w-3 mr-1" />
-                  Download PDF
+                  PDF
                 </Button>
               )}
             </div>
@@ -499,10 +498,10 @@ export function HomeownerProposalTable({
               e.stopPropagation()
               router.push(`/homeowner/proposals/${proposal.id}`)
             }}
-            className="h-8 px-3 text-xs border-orange-200 text-orange-700 hover:bg-orange-50"
+            className="h-7 px-2.5 text-xs"
           >
             <Eye className="h-3 w-3 mr-1" />
-            View Details
+            Details
           </Button>
         )
       },
@@ -521,14 +520,14 @@ export function HomeownerProposalTable({
   })
 
   return (
-    <div className="rounded-md border bg-white">
+    <div className="rounded-xl border border-border/60 bg-card overflow-hidden">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} className="border-b border-gray-200">
+            <TableRow key={headerGroup.id} className="border-b border-border/60 bg-muted/30 hover:bg-muted/30">
               {headerGroup.headers.map((header) => {
                 return (
-                  <TableHead key={header.id} className="bg-gray-50 font-semibold text-gray-900 p-4">
+                  <TableHead key={header.id} className="p-3.5 text-muted-foreground font-medium">
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -547,11 +546,11 @@ export function HomeownerProposalTable({
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && 'selected'}
-                className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
+                className="border-b border-border/30 hover:bg-muted/30 cursor-pointer transition-colors group"
                 onClick={() => handleRowClick(row.original.id)}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} className="py-4 px-4">
+                  <TableCell key={cell.id} className="py-3 px-3.5">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
@@ -559,7 +558,7 @@ export function HomeownerProposalTable({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground text-sm">
                 No proposals found.
               </TableCell>
             </TableRow>
@@ -608,16 +607,17 @@ export function HomeownerProposalTable({
 
       {/* Accept Confirmation Dialog */}
       <Dialog open={showAcceptDialog} onOpenChange={setShowAcceptDialog}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Accept Proposal</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to accept this proposal? This will reject other active proposals for this project.
+            <DialogTitle className="text-lg font-semibold">Accept Proposal</DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground mt-1">
+              Are you sure you want to accept this proposal? This will automatically reject other competing proposals for this project.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter>
+          <DialogFooter className="gap-2 sm:gap-0 mt-2">
             <Button
               variant="outline"
+              size="sm"
               onClick={() => {
                 setShowAcceptDialog(false)
               }}
@@ -626,9 +626,10 @@ export function HomeownerProposalTable({
               Cancel
             </Button>
             <Button
+              size="sm"
               onClick={handleConfirmAccept}
               disabled={actionLoading}
-              className="bg-green-600 hover:bg-green-700 text-white"
+              className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium"
             >
               {actionLoading ? 'Accepting...' : 'Accept Proposal'}
             </Button>
@@ -638,11 +639,11 @@ export function HomeownerProposalTable({
 
       {/* Reject Confirmation Dialog */}
       <Dialog open={showRejectDialog} onOpenChange={setShowRejectDialog}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Reject Proposal</DialogTitle>
-            <DialogDescription>
-              Provide a reason so the contractor can revise and resubmit.
+            <DialogTitle className="text-lg font-semibold">Decline Proposal</DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground mt-1">
+              Provide feedback so the contractor understands why the proposal was declined.
             </DialogDescription>
           </DialogHeader>
           <Textarea
@@ -651,10 +652,12 @@ export function HomeownerProposalTable({
             placeholder="Tell the contractor what needs to be fixed..."
             rows={4}
             disabled={actionLoading}
+            className="text-xs resize-none"
           />
-          <DialogFooter>
+          <DialogFooter className="gap-2 sm:gap-0 mt-2">
             <Button
               variant="outline"
+              size="sm"
               onClick={() => {
                 setShowRejectDialog(false)
                 setRejectReason('')
@@ -664,15 +667,17 @@ export function HomeownerProposalTable({
               Cancel
             </Button>
             <Button
+              variant="destructive"
+              size="sm"
               onClick={handleConfirmReject}
               disabled={actionLoading || !rejectReason.trim()}
-              variant="outline"
             >
-              {actionLoading ? 'Rejecting...' : 'Reject Proposal'}
+              {actionLoading ? 'Declining...' : 'Decline Proposal'}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
     </div>
   )
 }

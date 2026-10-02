@@ -618,7 +618,7 @@ export default function SubmitProposalPage() {
       }
       
       toast.success("Your proposal has been submitted successfully. The homeowner will review it and get back to you.")
-      router.push('/contractor/my-projects')
+      router.push('/contractor/proposals')
     } catch (error) {
       console.error('Error submitting proposal:', error)
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'

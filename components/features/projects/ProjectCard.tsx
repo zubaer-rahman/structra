@@ -130,8 +130,7 @@ export default function ProjectCard({ projects, onProjectClick, onViewProject, o
                     <Eye className="h-3 w-3 mr-1" />
                     View
                   </Button>
-                  {project.status !== PROJECT_STATUSES.PROPOSAL_SELECTED && 
-                   project.status !== PROJECT_STATUSES.COMPLETED && (
+                  {onEditProject && (
                     <Button
                       variant="outline"
                       size="sm"
@@ -139,7 +138,7 @@ export default function ProjectCard({ projects, onProjectClick, onViewProject, o
                         e.stopPropagation()
                         onEditProject?.(project)
                       }}
-                      className="h-8 px-3 text-xs"
+                      className="h-8 px-3 text-xs text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-950/30"
                     >
                       <Edit className="h-3 w-3 mr-1" />
                       Edit

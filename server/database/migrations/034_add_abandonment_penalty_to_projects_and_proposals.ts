@@ -9,13 +9,13 @@ export const migration034_add_abandonment_penalty_to_projects_and_proposals: Mig
     // Add abandonment_penalty column to projects table
     await db.execute(`
       ALTER TABLE projects 
-      ADD COLUMN abandonment_penalty DECIMAL(10,2) DEFAULT 0.00 NOT NULL;
+      ADD COLUMN IF NOT EXISTS abandonment_penalty DECIMAL(10,2) DEFAULT 0.00 NOT NULL;
     `);
 
     // Add abandonment_penalty column to proposals table
     await db.execute(`
       ALTER TABLE proposals 
-      ADD COLUMN abandonment_penalty DECIMAL(10,2) DEFAULT 0.00 NOT NULL;
+      ADD COLUMN IF NOT EXISTS abandonment_penalty DECIMAL(10,2) DEFAULT 0.00 NOT NULL;
     `);
 
     // Update existing projects to calculate abandonment penalty from delay penalty

@@ -103,7 +103,7 @@ export default function RecentProposals({ proposals }: RecentProposalsProps) {
     if (target.closest('[data-dropdown-trigger]') || target.closest('[data-dropdown-content]')) {
       return
     }
-    router.push(`/contractor/my-projects/${proposalId}`)
+    router.push(`/contractor/proposals/${proposalId}`)
   }
 
   return (
@@ -224,7 +224,7 @@ export default function RecentProposals({ proposals }: RecentProposalsProps) {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" data-dropdown-content>
                             <DropdownMenuItem asChild>
-                              <Link href={`/contractor/my-projects/${proposal.id}`} className="flex items-center">
+                              <Link href={`/contractor/proposals/${proposal.id}`} className="flex items-center">
                                 <Edit className="h-4 w-4 mr-2" />
                                 View Proposal
                               </Link>
@@ -329,7 +329,7 @@ export default function RecentProposals({ proposals }: RecentProposalsProps) {
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" data-dropdown-content>
                             <DropdownMenuItem asChild>
-                              <Link href={`/contractor/my-projects/${proposal.id}`} className="flex items-center">
+                              <Link href={`/contractor/proposals/${proposal.id}`} className="flex items-center">
                                 <Edit className="h-4 w-4 mr-2" />
                                 View Proposal
                               </Link>
@@ -349,7 +349,7 @@ export default function RecentProposals({ proposals }: RecentProposalsProps) {
           
           {/* View All link centered below the table */}
           <div className="flex justify-center pt-4">
-            <Link href="/contractor/my-projects" className="text-orange-600 hover:text-orange-700 font-medium text-sm transition-colors">
+            <Link href="/contractor/proposals" className="text-primary hover:underline font-medium text-sm transition-colors">
               View All Proposals
             </Link>
           </div>

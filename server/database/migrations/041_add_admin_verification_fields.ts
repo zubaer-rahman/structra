@@ -8,10 +8,10 @@ export const migration_041_add_admin_verification_fields: Migration = {
   up: async (db) => {
     await db.execute(`
       ALTER TABLE contractor_profiles 
-      ADD COLUMN gst_hst_clearance_document JSONB,
-      ADD COLUMN wcb_clearance_document JSONB,
-      ADD COLUMN is_admin_verified BOOLEAN DEFAULT FALSE,
-      ADD COLUMN admin_verification_date TIMESTAMP WITH TIME ZONE;
+      ADD COLUMN IF NOT EXISTS gst_hst_clearance_document JSONB,
+      ADD COLUMN IF NOT EXISTS wcb_clearance_document JSONB,
+      ADD COLUMN IF NOT EXISTS is_admin_verified BOOLEAN DEFAULT FALSE,
+      ADD COLUMN IF NOT EXISTS admin_verification_date TIMESTAMP WITH TIME ZONE;
     `);
 
     await db.execute(`

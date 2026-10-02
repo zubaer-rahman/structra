@@ -310,7 +310,7 @@ export default function HomeownerProjectView({
                 </span>
               </Button>
             )}
-            {onEdit && !hasSelectedProposal && project.status !== PROJECT_STATUSES.PROPOSAL_SELECTED && project.status !== PROJECT_STATUSES.COMPLETED && (
+            {onEdit && (
               <Button
                 onClick={onEdit}
                 variant="ghost"

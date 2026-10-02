@@ -8,7 +8,7 @@ export const migration_047_create_signatures_table: Migration = {
   up: async (db) => {
     // Create signatures table
     await db.execute(`
-      CREATE TABLE public.signatures (
+      CREATE TABLE IF NOT EXISTS public.signatures (
         -- Base schema fields
         id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -46,28 +46,28 @@ export const migration_047_create_signatures_table: Migration = {
 
     // Create indexes for performance
     await db.execute(`
-      CREATE INDEX idx_signatures_user_id ON public.signatures(user_id);
+      CREATE INDEX IF NOT EXISTS idx_signatures_user_id ON public.signatures(user_id);
     `)
     
     await db.execute(`
-      CREATE INDEX idx_signatures_document_id ON public.signatures(document_id);
+      CREATE INDEX IF NOT EXISTS idx_signatures_document_id ON public.signatures(document_id);
     `)
     
     await db.execute(`
-      CREATE INDEX idx_signatures_document_type ON public.signatures(document_type);
+      CREATE INDEX IF NOT EXISTS idx_signatures_document_type ON public.signatures(document_type);
     `)
     
     await db.execute(`
-      CREATE INDEX idx_signatures_status ON public.signatures(status);
+      CREATE INDEX IF NOT EXISTS idx_signatures_status ON public.signatures(status);
     `)
     
     await db.execute(`
-      CREATE INDEX idx_signatures_created_at ON public.signatures(created_at);
+      CREATE INDEX IF NOT EXISTS idx_signatures_created_at ON public.signatures(created_at);
     `)
 
     // Create signature_audit_logs table for tracking signature events
     await db.execute(`
-      CREATE TABLE public.signature_audit_logs (
+      CREATE TABLE IF NOT EXISTS public.signature_audit_logs (
         id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
         
@@ -89,21 +89,21 @@ export const migration_047_create_signatures_table: Migration = {
 
     // Create indexes for audit logs
     await db.execute(`
-      CREATE INDEX idx_signature_audit_logs_signature_id ON public.signature_audit_logs(signature_id);
+      CREATE INDEX IF NOT EXISTS idx_signature_audit_logs_signature_id ON public.signature_audit_logs(signature_id);
     `)
     
     await db.execute(`
-      CREATE INDEX idx_signature_audit_logs_created_at ON public.signature_audit_logs(created_at);
+      CREATE INDEX IF NOT EXISTS idx_signature_audit_logs_created_at ON public.signature_audit_logs(created_at);
     `)
 
     // Add signature fields to agreements table
     await db.execute(`
       ALTER TABLE public.agreements 
-      ADD COLUMN homeowner_signature_id UUID REFERENCES public.signatures(id) ON DELETE SET NULL,
-      ADD COLUMN contractor_signature_id UUID REFERENCES public.signatures(id) ON DELETE SET NULL,
-      ADD COLUMN signature_deadline TIMESTAMP WITH TIME ZONE,
-      ADD COLUMN signature_reminder_sent_at TIMESTAMP WITH TIME ZONE,
-      ADD COLUMN fully_signed_at TIMESTAMP WITH TIME ZONE;
+      ADD COLUMN IF NOT EXISTS homeowner_signature_id UUID REFERENCES public.signatures(id) ON DELETE SET NULL,
+      ADD COLUMN IF NOT EXISTS contractor_signature_id UUID REFERENCES public.signatures(id) ON DELETE SET NULL,
+      ADD COLUMN IF NOT EXISTS signature_deadline TIMESTAMP WITH TIME ZONE,
+      ADD COLUMN IF NOT EXISTS signature_reminder_sent_at TIMESTAMP WITH TIME ZONE,
+      ADD COLUMN IF NOT EXISTS fully_signed_at TIMESTAMP WITH TIME ZONE;
     `)
 
     // Create function to generate signature hash
@@ -175,6 +175,7 @@ export const migration_047_create_signatures_table: Migration = {
     `)
 
     await db.execute(`
+      DROP TRIGGER IF EXISTS signatures_audit_trigger ON public.signatures;
       CREATE TRIGGER signatures_audit_trigger
         AFTER INSERT OR UPDATE OR DELETE ON public.signatures
         FOR EACH ROW

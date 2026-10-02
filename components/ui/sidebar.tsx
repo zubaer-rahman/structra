@@ -54,8 +54,8 @@ export function Sidebar({
             iconType: "projects",
           },
           {
-            name: "My Projects",
-            href: "/contractor/my-projects",
+            name: "My Proposals",
+            href: "/contractor/proposals",
             icon: "proposals",
             iconType: "proposals",
           },

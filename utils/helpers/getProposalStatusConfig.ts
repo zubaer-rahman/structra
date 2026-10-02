@@ -16,6 +16,12 @@ export function getProposalStatusConfig(status: string): ProposalStatusConfig {
       color: 'text-blue-700', 
       bgColor: 'bg-blue-50' 
     },
+    'pending': { 
+      label: 'Submitted', 
+      icon: FileText, 
+      color: 'text-blue-700', 
+      bgColor: 'bg-blue-50' 
+    },
     [PROPOSAL_STATUSES.ACCEPTED]: { 
       label: 'Accepted', 
       icon: CheckCircle2, 

@@ -10,47 +10,48 @@ export function Hero() {
   const { user } = useAuth();
   
   return (
-    <section className="relative pt-40 pb-32 sm:pt-48 sm:pb-40 lg:pt-56 lg:pb-56 overflow-hidden bg-transparent dark:bg-[#0A0A0A]">
-      {/* Premium Background Elements */}
-      <div className="absolute inset-0 -z-10 bg-transparent dark:bg-[#0A0A0A]">
+    <section className="relative pt-40 pb-32 sm:pt-48 sm:pb-40 lg:pt-56 lg:pb-56 overflow-hidden">
+      {/* Premium Background Elements - Single unified background visible in both light & dark mode */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
         {/* 3D Perspective Grid */}
-        <div className="absolute inset-0 opacity-[0.07] dark:opacity-[0.15]" 
-             style={{ 
-               backgroundImage: `
-                 linear-gradient(currentColor 1px, transparent 1px),
-                 linear-gradient(90deg, currentColor 1px, transparent 1px)
-               `,
-               backgroundSize: '100px 100px',
-               transform: 'perspective(1000px) rotateX(60deg) translateY(-100px)',
-               transformOrigin: 'top'
-             }} 
+        <div 
+          className="absolute inset-0 opacity-[0.10] dark:opacity-[0.26]" 
+          style={{ 
+            backgroundImage: `
+              linear-gradient(currentColor 1px, transparent 1px),
+              linear-gradient(90deg, currentColor 1px, transparent 1px)
+            `,
+            backgroundSize: '100px 100px',
+            transform: 'perspective(1000px) rotateX(60deg) translateY(-100px)',
+            transformOrigin: 'top'
+          }} 
         />
         
         {/* Glowing Structural Lines */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,rgba(234,88,12,0.15),transparent_70%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-15%,rgba(234,88,12,0.18),transparent_70%)] dark:bg-[radial-gradient(circle_at_50%_-15%,rgba(234,88,12,0.32),transparent_75%)]" />
         
         {/* Moving Atmospheric Glows */}
         <motion.div 
           animate={{ 
-            opacity: [0.2, 0.4, 0.2],
+            opacity: [0.25, 0.45, 0.25],
             scale: [1, 1.2, 1],
             x: [-20, 20, -20]
           }}
           transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-[-20%] left-[-10%] w-[800px] h-[800px] bg-orange-600/10 rounded-full blur-[140px]" 
+          className="absolute top-[-20%] left-[-10%] w-[800px] h-[800px] bg-orange-600/15 dark:bg-orange-500/25 rounded-full blur-[140px]" 
         />
         <motion.div 
           animate={{ 
-            opacity: [0.1, 0.3, 0.1],
+            opacity: [0.15, 0.35, 0.15],
             scale: [1.2, 1, 1.2],
             y: [-30, 30, -30]
           }}
           transition={{ duration: 20, repeat: Infinity, ease: "easeInOut", delay: 5 }}
-          className="absolute bottom-[-20%] right-[-10%] w-[1000px] h-[1000px] bg-blue-600/5 rounded-full blur-[180px]" 
+          className="absolute bottom-[-20%] right-[-10%] w-[1000px] h-[1000px] bg-blue-600/10 dark:bg-blue-600/20 rounded-full blur-[180px]" 
         />
 
         {/* Noise Texture Overlay */}
-        <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+        <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
       </div>
 
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">

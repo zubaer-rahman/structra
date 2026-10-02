@@ -1,54 +1,16 @@
 "use client";
 
 import React from "react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { 
-  MapPin, 
-  Shield,
-  Star
-} from "lucide-react";
+import { MapPin, Shield, Star, Wrench, ExternalLink } from "lucide-react";
 import { User, ContractorProfile } from "@/server/database/interfaces";
 import Image from "next/image";
-
-// Helper function to safely access contractor profile
-const getContractorProfile = (contractor: ContractorWithProfile): ContractorProfile | null => {
-  return contractor.contractor_profile || null;
-};
-
-// Helper function to render star rating
-const renderStars = (rating: number) => {
-  const stars = [];
-  const fullStars = Math.floor(rating);
-  const hasHalfStar = rating % 1 !== 0;
-  
-  for (let i = 0; i < fullStars; i++) {
-    stars.push(
-      <Star key={i} className="h-3 w-3 text-yellow-400 fill-yellow-400" />
-    );
-  }
-  
-  if (hasHalfStar) {
-    stars.push(
-      <Star key="half" className="h-3 w-3 text-yellow-400 fill-yellow-400 opacity-50" />
-    );
-  }
-  
-  const emptyStars = 5 - Math.ceil(rating);
-  for (let i = 0; i < emptyStars; i++) {
-    stars.push(
-      <Star key={`empty-${i}`} className="h-3 w-3 text-gray-300" />
-    );
-  }
-  
-  return stars;
-};
+import Link from "next/link";
 
 interface ContractorWithProfile extends Omit<User, 'contractor_profile'> {
-  contractor_profile?: ContractorProfile; // This will be the actual profile object from our query
+  contractor_profile?: ContractorProfile;
   average_rating?: number;
   rating_count?: number;
-  slug?: string; // SEO-friendly URL slug from contractor profile
+  slug?: string;
 }
 
 interface ContractorCardProps {
@@ -57,105 +19,90 @@ interface ContractorCardProps {
   formatDate: (dateString: string) => string;
 }
 
-export default function ContractorCard({
-  contractor,
-  selectedContractor,
-  formatDate
-}: ContractorCardProps) {
+export default function ContractorCard({ contractor, selectedContractor, formatDate }: ContractorCardProps) {
   const isSelected = selectedContractor?.id === contractor.id;
-  const profile = getContractorProfile(contractor);
+  const profile = contractor.contractor_profile;
+  const name = profile?.business_name || `${contractor.first_name || ""} ${contractor.last_name || ""}`.trim() || "Contractor";
+  const location = profile?.address?.city && profile?.address?.province
+    ? `${profile.address.city}, ${profile.address.province}`
+    : profile?.service_location || null;
+  const trades: string[] = Array.isArray(profile?.trade_category)
+    ? profile.trade_category
+    : profile?.trade_category ? [profile.trade_category] : [];
+  const href = `/contractors/${contractor.slug || contractor.id}`;
 
   return (
-    <Card 
-      className={`cursor-pointer transition-all hover:shadow-sm border ${
-        isSelected 
-          ? 'border-orange-500 bg-orange-50/50 dark:bg-orange-500/10' 
-          : 'border-gray-200 dark:border-white/10 bg-white dark:bg-[#141414] hover:border-gray-300 dark:hover:border-white/20'
-      }`}
-    >
-      <CardHeader className="pb-3">
-        <div className="flex items-start gap-3">
-          {/* Profile Picture */}
-          <div className="relative flex-shrink-0">
-            <Image
-              src={contractor.profile_photo || "/assets/avatar.png"}
-              alt={contractor.full_name || "Contractor profile picture"}
-              width={48}
-              height={48}
-              className="rounded-full object-cover"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = "/assets/avatar.png";
-              }}
-            />
-          </div>
-          
-          <div className="flex-1 min-w-0">
-            <h3 className="font-medium text-base text-gray-900 dark:text-white mb-1 line-clamp-1">
-              {profile?.business_name || contractor.full_name}
-            </h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-1">
-              {contractor.full_name}
-            </p>
-          </div>
-        </div>
-      </CardHeader>
+    <Link href={href} className="block group focus:outline-none" tabIndex={0}>
+      <div className={`relative p-5 rounded-2xl border transition-all duration-300 bg-white dark:bg-white/[0.02] ${
+        isSelected
+          ? "border-orange-500/50 shadow-[0_0_0_1px_rgba(234,88,12,0.3),0_8px_24px_rgba(234,88,12,0.12)]"
+          : "border-gray-200/80 dark:border-white/5 hover:border-gray-300 dark:hover:border-white/10 hover:shadow-md dark:hover:shadow-none"
+      }`}>
 
-      <CardContent className="space-y-3">
-        {/* Rating */}
-        {contractor.average_rating && contractor.average_rating > 0 && (
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1">
-              {renderStars(contractor.average_rating)}
-            </div>
-            <span className="text-xs text-gray-600 dark:text-gray-400">
-              {contractor.average_rating.toFixed(1)} ({contractor.rating_count} review{contractor.rating_count !== 1 ? 's' : ''})
-            </span>
+        {/* Verified badge */}
+        {profile?.is_admin_verified && (
+          <div className="absolute top-4 right-4 flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+            <Shield className="w-2.5 h-2.5 text-emerald-500" />
+            <span className="text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Verified</span>
           </div>
         )}
 
-        {/* Trade Categories */}
-        {profile?.trade_category && profile.trade_category.length > 0 && (
-          <div className="flex flex-wrap gap-1">
-            {profile.trade_category.slice(0, 3).map((trade, index) => (
-              <span 
-                key={`${contractor.id}-card-trade-${index}-${trade}`}
-                className="px-2 py-1 text-xs bg-gray-100 dark:bg-white/5 text-gray-700 dark:text-gray-300 rounded"
-              >
-                {trade}
+        {/* Avatar + Name */}
+        <div className="flex items-center gap-3 mb-4">
+          <div className="relative w-12 h-12 shrink-0">
+            <Image
+              src={contractor.profile_photo || "/assets/avatar.png"}
+              alt={name}
+              fill
+              className="rounded-xl object-cover"
+              onError={(e) => { (e.target as HTMLImageElement).src = "/assets/avatar.png"; }}
+            />
+          </div>
+          <div className="flex-1 min-w-0 pr-16">
+            <h3 className="font-bold text-sm text-gray-900 dark:text-white truncate group-hover:text-orange-500 transition-colors">
+              {name}
+            </h3>
+            <p className="text-[10px] text-gray-500 dark:text-gray-400 font-medium truncate mt-0.5">
+              {contractor.first_name} {contractor.last_name}
+            </p>
+          </div>
+        </div>
+
+        {/* Trade tags */}
+        {trades.length > 0 && (
+          <div className="flex flex-wrap gap-1 mb-3">
+            {trades.slice(0, 2).map((t, i) => (
+              <span key={i} className="px-2 py-0.5 rounded-md bg-orange-500/8 dark:bg-orange-500/10 border border-orange-500/15 text-[10px] font-bold text-orange-600 dark:text-orange-400 uppercase tracking-wider">
+                {t}
               </span>
             ))}
-            {profile.trade_category.length > 3 && (
-              <span className="px-2 py-1 text-xs text-gray-500 dark:text-gray-400">
-                +{profile.trade_category.length - 3} more
-              </span>
+            {trades.length > 2 && (
+              <span className="px-2 py-0.5 text-[10px] font-bold text-gray-400 dark:text-gray-500">+{trades.length - 2}</span>
             )}
           </div>
         )}
 
-        {/* Footer */}
-        <div className="pt-2 border-t border-gray-100 dark:border-white/10">
-          <div className="flex items-center justify-between text-xs text-gray-400 mb-3">
-            <span>Joined {formatDate(contractor.created_at)}</span>
-            <span className="text-gray-500">Contractor</span>
+        {/* Meta row */}
+        <div className="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-white/5">
+          <div className="flex items-center gap-3">
+            {location && (
+              <span className="flex items-center gap-1 text-[10px] text-gray-500 dark:text-gray-400 font-medium">
+                <MapPin className="w-3 h-3 text-orange-500" />
+                <span className="truncate max-w-[90px]">{location}</span>
+              </span>
+            )}
+            {contractor.average_rating && contractor.rating_count && contractor.rating_count > 0 ? (
+              <span className="flex items-center gap-1 text-[10px] font-bold text-gray-900 dark:text-white">
+                <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                {contractor.average_rating.toFixed(1)}
+              </span>
+            ) : null}
           </div>
-          <Button 
-            size="sm" 
-            className="w-full"
-            onClick={() => {
-              if (contractor.slug) {
-                window.open(`/profile/${contractor.slug}`, '_blank')
-              } else {
-                // Fallback to user_id if no slug available
-                console.warn('No slug available for contractor:', contractor.full_name, 'using user_id as fallback')
-                window.open(`/profile/${contractor.id}`, '_blank')
-              }
-            }}
-          >
-            View Profile
-          </Button>
+          <span className="flex items-center gap-0.5 text-[10px] font-bold text-orange-500 group-hover:gap-1.5 transition-all">
+            Profile <ExternalLink className="w-3 h-3" />
+          </span>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </Link>
   );
 }
